@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORLAVEN — Premium Leather Goods</title>
+    <meta name="description" content="Premium leather jackets, bags, and accessories. Crafted for those who lead.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- 1. ANNOUNCEMENT BAR (Auto-rotating) -->
+    <!-- ============================================ -->
+    <div class="announcement-bar" id="announcementBar">
+        <div class="announcement-container">
+            <div class="announcement-slider">
+                <div class="announcement-message active">
+                    🚚 FREE SHIPPING ON ORDERS $100+
+                    <span class="separator">|</span>
+                    🔄 60-DAY RETURNS
+                    <span class="separator">|</span>
+                    🎁 USE CODE: <strong>ORLAVEN15</strong> — 15% OFF FIRST ORDER
+                </div>
+                <div class="announcement-message">
+                    ⚡ NEW DROP: "Midnight Series" — Only 200 made
+                    <span class="separator">|</span>
+                    <strong>67% SOLD</strong>
+                    <span class="separator">|</span>
+                    <a href="#shop">SHOP NOW →</a>
+                </div>
+                <div class="announcement-message">
+                    🏆 LIFETIME WARRANTY on all leather pieces
+                    <span class="separator">|</span>
+                    ⭐ Rated 4.9/5 by 12,847 customers
+                </div>
+            </div>
+            <button class="announcement-close" id="announcementClose" aria-label="Close announcement">×</button>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 2. HEADER / NAVIGATION (Split-Screen Style) -->
+    <!-- ============================================ -->
+    <header class="header" id="header">
+        <div class="header-container">
+
+            <!-- LEFT NAV -->
+            <nav class="nav-left">
+                <a href="#new" class="nav-link nav-highlight">NEW</a>
+                <a href="#men" class="nav-link">MEN</a>
+                <a href="#women" class="nav-link">WOMEN</a>
+            </nav>
+
+            <!-- LOGO (Center) -->
+            <a href="/" class="logo">
+                <span class="logo-text">ORLAVEN</span>
+                <span class="logo-tagline">PREMIUM LEATHER</span>
+            </a>
+
+            <!-- RIGHT NAV -->
+            <nav class="nav-right">
+                <a href="#customize" class="nav-link">CUSTOMIZE</a>
+                <a href="#sale" class="nav-link nav-sale">SALE</a>
+                <a href="#brand" class="nav-link">BRAND</a>
+
+                <div class="nav-icons">
+                    <button class="icon-btn" aria-label="Search">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Wishlist">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Account">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </button>
+                    <button class="icon-btn cart-btn" aria-label="Cart">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        <span class="cart-count">0</span>
+                    </button>
+                </div>
+
+                <!-- Mobile hamburger -->
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+
+        </div>
+
+        <!-- MOBILE MENU (hidden by default) -->
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-content">
+                <a href="#new">NEW</a>
+                <a href="#men">MEN</a>
+                <a href="#women">WOMEN</a>
+                <a href="#customize">CUSTOMIZE</a>
+                <a href="#sale">SALE</a>
+                <a href="#brand">BRAND</a>
+                <div class="mobile-icons">
+                    <a href="#search">🔍 Search</a>
+                    <a href="#wishlist">♡ Wishlist</a>
+                    <a href="#account">👤 Account</a>
+                    <a href="#cart">🛒 Cart (0)</a>
+                </div>
+            </div>
+        </div>
+
+    </header>
+
+    <!-- ============================================ -->
+    <!-- 3. PLACEHOLDER (Hero will go here next) -->
+    <!-- ============================================ -->
+    <main>
+        <section class="hero-placeholder">
+            <div class="container">
+                <p style="text-align: center; padding: 100px 20px; color: #888; font-family: 'Inter', sans-serif;">
+                    ↑ Announcement Bar + Header are READY ✅<br>
+                    <small style="display:block; margin-top:10px;">Hero section will go here next. For now, scroll up and try resizing the browser to test responsiveness.</small>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="js/script.js"></script>
+</body>
+</html>
