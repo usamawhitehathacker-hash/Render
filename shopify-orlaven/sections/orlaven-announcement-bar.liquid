@@ -1,0 +1,280 @@
+{%- comment -%}
+  ============================================
+  ORLAVEN — Announcement Bar Section
+  Copy this file's content into:
+  Shopify Admin → Online Store → Themes → Edit Code → Sections → Add new section
+  Name: orlaven-announcement-bar
+  ============================================
+{%- endcomment -%}
+
+<div class="orlaven-announcement-bar" id="orlavenAnnouncementBar"
+     data-rotation-speed="{{ section.settings.rotation_speed | default: 5000 }}">
+  <div class="orlaven-announcement-container">
+    <div class="orlaven-announcement-slider">
+      {%- for block in section.blocks -%}
+        <div class="orlaven-announcement-message {% if forloop.first %}active{% endif %}"
+             {{ block.shopify_attributes }}>
+          {{ block.settings.message }}
+        </div>
+      {%- endfor -%}
+    </div>
+    {%- if section.settings.show_close_button -%}
+      <button class="orlaven-announcement-close" id="orlavenAnnouncementClose"
+              aria-label="Close announcement">×</button>
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  .orlaven-announcement-bar {
+    background-color: {{ section.settings.bg_color }};
+    color: {{ section.settings.text_color }};
+    padding: 0;
+    height: {{ section.settings.bar_height }}px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1001;
+    transition: height 0.3s ease;
+  }
+
+  .orlaven-announcement-bar.hidden { height: 0; }
+
+  .orlaven-announcement-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 0 64px;
+  }
+
+  .orlaven-announcement-slider {
+    flex: 1;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .orlaven-announcement-message {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: {{ section.settings.font_size }}px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    white-space: nowrap;
+    padding: 0 20px;
+  }
+
+  .orlaven-announcement-message > p { margin: 0; }
+
+  .orlaven-announcement-message.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .orlaven-announcement-message strong {
+    color: {{ section.settings.accent_color }};
+    font-weight: 600;
+  }
+
+  .orlaven-announcement-message a {
+    color: {{ section.settings.accent_color }};
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    margin-left: 4px;
+  }
+
+  .orlaven-announcement-close {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: {{ section.settings.text_color }};
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0.6;
+    width: 24px;
+    height: 24px;
+    line-height: 1;
+  }
+
+  .orlaven-announcement-close:hover { opacity: 1; }
+
+  @media (max-width: 768px) {
+    .orlaven-announcement-message {
+      font-size: 11px;
+      white-space: normal;
+      line-height: 1.3;
+    }
+    .orlaven-announcement-container {
+      padding: 0 40px;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const messages = document.querySelectorAll('#orlavenAnnouncementBar .orlaven-announcement-message');
+    const bar = document.getElementById('orlavenAnnouncementBar');
+    const closeBtn = document.getElementById('orlavenAnnouncementClose');
+    const speed = parseInt(bar.dataset.rotationSpeed, 10) || 5000;
+
+    let current = 0;
+    let timer;
+
+    function rotate() {
+      if (messages.length <= 1) return;
+      messages[current].classList.remove('active');
+      current = (current + 1) % messages.length;
+      messages[current].classList.add('active');
+    }
+
+    function startRotation() { timer = setInterval(rotate, speed); }
+    function stopRotation() { clearInterval(timer); }
+
+    if (messages.length > 1) {
+      startRotation();
+      bar.addEventListener('mouseenter', stopRotation);
+      bar.addEventListener('mouseleave', startRotation);
+    }
+
+    if (closeBtn) {
+      try {
+        if (sessionStorage.getItem('orlaven_announcement_closed') === 'true') {
+          bar.classList.add('hidden');
+          stopRotation();
+        }
+      } catch(e) {}
+
+      closeBtn.addEventListener('click', function() {
+        bar.classList.add('hidden');
+        stopRotation();
+        try { sessionStorage.setItem('orlaven_announcement_closed', 'true'); } catch(e) {}
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Orlaven Announcement Bar",
+  "tag": "section",
+  "class": "orlaven-announcement-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#0A0A0A"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color (highlights)",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "range",
+      "id": "bar_height",
+      "label": "Bar height (px)",
+      "min": 30,
+      "max": 60,
+      "step": 2,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size (px)",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Behavior"
+    },
+    {
+      "type": "range",
+      "id": "rotation_speed",
+      "label": "Rotation speed (ms)",
+      "min": 3000,
+      "max": 10000,
+      "step": 500,
+      "default": 5000
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close_button",
+      "label": "Show close button",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Announcement message",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "message",
+          "label": "Message",
+          "default": "<p>FREE SHIPPING ON ORDERS $100+</p>"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "Orlaven Announcement Bar",
+      "blocks": [
+        {
+          "type": "message",
+          "settings": {
+            "message": "<p>🚚 FREE SHIPPING ON ORDERS $100+ | 🔄 60-DAY RETURNS | 🎁 USE CODE: <strong>ORLAVEN15</strong> — 15% OFF</p>"
+          }
+        },
+        {
+          "type": "message",
+          "settings": {
+            "message": "<p>⚡ NEW DROP: \"Midnight Series\" — Only 200 made | <strong>67% SOLD</strong> | <a href=\"/collections/new\">SHOP NOW →</a></p>"
+          }
+        },
+        {
+          "type": "message",
+          "settings": {
+            "message": "<p>🏆 LIFETIME WARRANTY on all leather pieces | ⭐ Rated 4.9/5 by 12,847 customers</p>"
+          }
+        }
+      ]
+    }
+  ],
+  "enabled_on": {
+    "groups": ["header"]
+  }
+}
+{% endschema %}
