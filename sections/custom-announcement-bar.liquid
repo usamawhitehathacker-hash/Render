@@ -21,10 +21,9 @@
   assign countdown_date = section.settings.countdown_date
   assign countdown_end_action = section.settings.countdown_end_action
   assign countdown_end_message = section.settings.countdown_end_message
-  assign message_count = section.blocks.size
 -%}
 
-{%- if enable_bar and message_count > 0 -%}
+{%- if enable_bar and section.blocks.size > 0 -%}
   {{ 'custom-announcement-bar.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'custom-announcement-bar.js' | asset_url }}" defer="defer"></script>
 
@@ -40,7 +39,7 @@
     data-countdown-date="{{ countdown_date }}"
     data-countdown-end-action="{{ countdown_end_action }}"
     data-countdown-end-message="{{ countdown_end_message }}"
-    data-message-count="{{ message_count }}"
+    data-message-count="{{ section.blocks.size }}"
     style="
       --announcement-bg: {{ bg_color }};
       --announcement-text: {{ text_color }};
@@ -55,13 +54,13 @@
     aria-label="Announcement"
   >
     <div class="announcement-bar__inner">
-      {%- if show_arrows and message_count > 1 -%}
-        <button class="announcement-bar__arrow announcement-bar__arrow--prev" aria-label="Previous announcement" type="button">
+      {%- if show_arrows and section.blocks.size > 1 -%}
+        <button class="announcement-bar__arrow announcement-bar__arrow--prev" aria-label="Previous announcement" aria-controls="announcement-messages" type="button">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
         </button>
       {%- endif -%}
 
-      <div class="announcement-bar__messages">
+      <div class="announcement-bar__messages" id="announcement-messages" role="list">
         {%- for block in section.blocks -%}
           {%- liquid
             assign msg_bg = block.settings.override_bg
@@ -71,16 +70,17 @@
             assign msg_content = block.settings.message_text
             assign has_bg_override = false
             assign has_text_override = false
-            if msg_bg != blank
+            if msg_bg != blank and msg_bg != bg_color
               assign has_bg_override = true
             endif
-            if msg_text != blank
+            if msg_text != blank and msg_text != text_color
               assign has_text_override = true
             endif
           -%}
           <div
             class="announcement-bar__message{% if forloop.first %} is-active{% endif %}"
             data-index="{{ forloop.index0 }}"
+            role="listitem"
             {{ block.shopify_attributes }}
             {% if has_bg_override or has_text_override %}
               style="{% if has_bg_override %}--message-bg: {{ msg_bg }};{% endif %}{% if has_text_override %}--message-text: {{ msg_text }};{% endif %}"
@@ -113,18 +113,6 @@
               {%- endif -%}
 
               <span class="announcement-bar__text">{{ msg_content }}</span>
-
-              {%- if show_countdown -%}
-                <span class="announcement-bar__countdown" aria-live="polite">
-                  <span class="countdown__item"><span class="countdown__value" data-countdown-days>00</span><span class="countdown__label">d</span></span>
-                  <span class="countdown__separator">:</span>
-                  <span class="countdown__item"><span class="countdown__value" data-countdown-hours>00</span><span class="countdown__label">h</span></span>
-                  <span class="countdown__separator">:</span>
-                  <span class="countdown__item"><span class="countdown__value" data-countdown-mins>00</span><span class="countdown__label">m</span></span>
-                  <span class="countdown__separator">:</span>
-                  <span class="countdown__item"><span class="countdown__value" data-countdown-secs>00</span><span class="countdown__label">s</span></span>
-                </span>
-              {%- endif -%}
             </span>
 
             {%- if msg_link != blank -%}
@@ -134,8 +122,20 @@
         {%- endfor -%}
       </div>
 
-      {%- if show_arrows and message_count > 1 -%}
-        <button class="announcement-bar__arrow announcement-bar__arrow--next" aria-label="Next announcement" type="button">
+      {%- if show_countdown and countdown_date != blank -%}
+        <span class="announcement-bar__countdown" aria-live="polite" aria-atomic="true">
+          <span class="countdown__item"><span class="countdown__value" data-countdown-days>00</span><span class="countdown__label">d</span></span>
+          <span class="countdown__separator">:</span>
+          <span class="countdown__item"><span class="countdown__value" data-countdown-hours>00</span><span class="countdown__label">h</span></span>
+          <span class="countdown__separator">:</span>
+          <span class="countdown__item"><span class="countdown__value" data-countdown-mins>00</span><span class="countdown__label">m</span></span>
+          <span class="countdown__separator">:</span>
+          <span class="countdown__item"><span class="countdown__value" data-countdown-secs>00</span><span class="countdown__label">s</span></span>
+        </span>
+      {%- endif -%}
+
+      {%- if show_arrows and section.blocks.size > 1 -%}
+        <button class="announcement-bar__arrow announcement-bar__arrow--next" aria-label="Next announcement" aria-controls="announcement-messages" type="button">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       {%- endif -%}

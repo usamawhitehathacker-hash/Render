@@ -55,9 +55,11 @@ if (!customElements.get('custom-announcement-bar')) {
     bindEvents() {
       if (this.prevBtn) {
         this.prevBtn.addEventListener('click', this.handlePrev.bind(this));
+        this.prevBtn.addEventListener('keydown', this.handleArrowKey.bind(this, 'prev'));
       }
       if (this.nextBtn) {
         this.nextBtn.addEventListener('click', this.handleNext.bind(this));
+        this.nextBtn.addEventListener('keydown', this.handleArrowKey.bind(this, 'next'));
       }
       if (this.closeBtn) {
         this.closeBtn.addEventListener('click', this.handleClose.bind(this));
@@ -65,6 +67,17 @@ if (!customElements.get('custom-announcement-bar')) {
       if (this.pauseOnHover) {
         this.addEventListener('mouseenter', this.handleMouseEnter.bind(this));
         this.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+      }
+    }
+
+    handleArrowKey(direction, e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (direction === 'prev') {
+          this.handlePrev();
+        } else {
+          this.handleNext();
+        }
       }
     }
 
