@@ -1,0 +1,33 @@
+{% comment %}
+  ============================================================
+  SNIPPET: Mega Menu Column
+  ============================================================
+  Renders a single column in the mega dropdown.
+  
+  Parameters:
+  - col_title: (string) Column heading text
+  - linklist_handle: (string) Handle of the linklist to render
+  - column_index: (number) Column index for styling
+  ============================================================
+{% endcomment %}
+
+<div class="cmm__column cmm__column--{{ column_index }}">
+  {%- if col_title != blank -%}
+    <h3 class="cmm__column-title">{{ col_title }}</h3>
+  {%- endif -%}
+  
+  {%- if linklist_handle != blank -%}
+    {%- assign column_linklist = linklists[linklist_handle] -%}
+    {%- if column_linklist.links.size > 0 -%}
+      <ul class="cmm__column-list">
+        {%- for link in column_linklist.links -%}
+          <li class="cmm__column-item">
+            <a href="{{ link.url }}" class="cmm__column-link">
+              {{ link.title }}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  {%- endif -%}
+</div>

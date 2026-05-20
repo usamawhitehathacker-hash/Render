@@ -1,0 +1,766 @@
+{% comment %}
+  ============================================================
+  SECTION: Custom Mega Menu (Premium Full-Width)
+  ============================================================
+  Style: Jacket Maker / Prada inspired
+  Author: Custom Build
+  Version: 1.1.0 (Fixed)
+  
+  Features:
+  - Full-width dropdown
+  - Multi-column layout (3-6 columns)
+  - Featured images
+  - Promotional banner support
+  - Mobile-responsive drawer
+  - 35+ customization settings
+  
+  Dependencies:
+  - assets/custom-mega-menu.css
+  - assets/custom-mega-menu.js
+  - snippets/mega-menu-column.liquid
+  - snippets/mega-menu-promo.liquid
+  ============================================================
+{% endcomment %}
+
+{{ 'custom-mega-menu.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'custom-mega-menu.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign section_id = section.id
+  assign menu = section.settings.main_menu
+  
+  assign bg_color = section.settings.bg_color
+  assign text_color = section.settings.text_color
+  assign hover_color = section.settings.hover_color
+  assign dropdown_bg = section.settings.dropdown_bg
+  assign dropdown_text = section.settings.dropdown_text
+  assign dropdown_heading = section.settings.dropdown_heading
+  assign border_color = section.settings.border_color
+  assign accent_color = section.settings.accent_color
+  
+  assign menu_height = section.settings.menu_height
+  assign dropdown_padding = section.settings.dropdown_padding
+  assign font_size_main = section.settings.font_size_main
+  assign font_size_sub = section.settings.font_size_sub
+  assign font_weight = section.settings.font_weight
+  assign letter_spacing = section.settings.letter_spacing
+  
+  assign anim_duration = section.settings.anim_duration
+  assign anim_type = section.settings.anim_type
+  
+  assign sticky_enabled = section.settings.sticky_enabled
+-%}
+
+{%- style -%}
+  #MegaMenu-{{ section_id }} {
+    --mm-bg: {{ bg_color }};
+    --mm-text: {{ text_color }};
+    --mm-hover: {{ hover_color }};
+    --mm-dropdown-bg: {{ dropdown_bg }};
+    --mm-dropdown-text: {{ dropdown_text }};
+    --mm-dropdown-heading: {{ dropdown_heading }};
+    --mm-border: {{ border_color }};
+    --mm-accent: {{ accent_color }};
+    
+    --mm-height: {{ menu_height }}px;
+    --mm-dropdown-padding: {{ dropdown_padding }}px;
+    --mm-font-main: {{ font_size_main }}px;
+    --mm-font-sub: {{ font_size_sub }}px;
+    --mm-font-weight: {{ font_weight }};
+    --mm-letter-spacing: {{ letter_spacing }}px;
+    
+    --mm-duration: {{ anim_duration }}ms;
+  }
+  
+  @media screen and (max-width: 989px) {
+    #MegaMenu-{{ section_id }} {
+      --mm-height: {{ section.settings.mobile_menu_height }}px;
+      --mm-font-main: {{ section.settings.mobile_font_size }}px;
+    }
+  }
+{%- endstyle -%}
+
+<custom-mega-menu 
+  id="MegaMenu-{{ section_id }}"
+  class="cmm cmm--{{ anim_type }}{% if sticky_enabled %} cmm--sticky{% endif %}"
+  data-section-id="{{ section_id }}"
+  data-trigger="{{ section.settings.trigger_type }}"
+  data-mobile-style="{{ section.settings.mobile_style }}"
+>
+  
+  {%- comment -%} ============ TOP BAR (Optional) ============ {%- endcomment -%}
+  {%- if section.settings.show_top_bar -%}
+    <div class="cmm__top-bar">
+      <div class="cmm__container">
+        <div class="cmm__top-bar-inner">
+          {%- if section.settings.top_bar_text != blank -%}
+            <p class="cmm__top-bar-text">{{ section.settings.top_bar_text }}</p>
+          {%- endif -%}
+          
+          {%- if section.settings.show_currency_selector -%}
+            <div class="cmm__top-bar-actions">
+              {%- form 'localization' -%}
+                <select name="currency_code" class="cmm__currency-select" onchange="this.form.submit()">
+                  {%- for currency in shop.enabled_currencies -%}
+                    <option value="{{ currency.iso_code }}"{% if currency.iso_code == cart.currency.iso_code %} selected{% endif %}>
+                      {{ currency.iso_code }} {{ currency.symbol }}
+                    </option>
+                  {%- endfor -%}
+                </select>
+              {%- endform -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+  
+  {%- comment -%} ============ MAIN HEADER ============ {%- endcomment -%}
+  <header class="cmm__header">
+    <div class="cmm__container">
+      <div class="cmm__header-inner">
+        
+        {%- comment -%} Mobile menu toggle {%- endcomment -%}
+        <button 
+          type="button" 
+          class="cmm__mobile-toggle" 
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="MegaMenuMobile-{{ section_id }}"
+        >
+          <span class="cmm__mobile-toggle-line"></span>
+          <span class="cmm__mobile-toggle-line"></span>
+          <span class="cmm__mobile-toggle-line"></span>
+        </button>
+        
+        {%- comment -%} Logo {%- endcomment -%}
+        <div class="cmm__logo">
+          <a href="{{ routes.root_url }}" class="cmm__logo-link">
+            {%- if section.settings.logo != blank -%}
+              {%- assign logo_height = section.settings.logo_height | default: 40 -%}
+              <img 
+                src="{{ section.settings.logo | image_url: width: 400 }}" 
+                srcset="{{ section.settings.logo | image_url: width: 100 }} 100w, {{ section.settings.logo | image_url: width: 200 }} 200w, {{ section.settings.logo | image_url: width: 300 }} 300w, {{ section.settings.logo | image_url: width: 400 }} 400w"
+                class="cmm__logo-image"
+                height="{{ logo_height }}"
+                width="auto"
+                alt="{{ shop.name | escape }}"
+                loading="eager"
+              >
+            {%- else -%}
+              <span class="cmm__logo-text">{{ shop.name }}</span>
+            {%- endif -%}
+          </a>
+        </div>
+        
+        {%- comment -%} ============ MAIN NAVIGATION ============ {%- endcomment -%}
+        <nav class="cmm__nav" aria-label="Main navigation">
+          <ul class="cmm__menu" role="menubar">
+            
+            {%- for link in menu.links -%}
+              {%- assign link_index = forloop.index0 -%}
+              {%- assign has_matching_block = false -%}
+              {%- assign current_block = null -%}
+              {%- assign link_handle = link.title | handleize -%}
+              
+              {%- comment -%} Find matching block for this menu link {%- endcomment -%}
+              {%- for block in section.blocks -%}
+                {%- if block.settings.menu_link_handle == link_handle -%}
+                  {%- assign has_matching_block = true -%}
+                  {%- assign current_block = block -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+              
+              <li class="cmm__menu-item{% if link.links.size > 0 or has_matching_block %} cmm__menu-item--has-dropdown{% endif %}" 
+                  role="none">
+                
+                <a 
+                  href="{{ link.url }}" 
+                  class="cmm__menu-link"
+                  role="menuitem"
+                  {% if link.links.size > 0 or has_matching_block %}aria-haspopup="true" aria-expanded="false"{% endif %}
+                >
+                  {{ link.title }}
+                  {%- if link.links.size > 0 or has_matching_block -%}
+                    <svg class="cmm__menu-arrow" xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="none">
+                      <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                  {%- endif -%}
+                </a>
+                
+                {%- comment -%} ============ DROPDOWN PANEL ============ {%- endcomment -%}
+                {%- if has_matching_block -%}
+                  <div class="cmm__dropdown" 
+                       data-link-index="{{ link_index }}"
+                       {{ current_block.shopify_attributes }}>
+                    <div class="cmm__container">
+                      <div class="cmm__dropdown-grid" 
+                           style="--columns: {{ current_block.settings.columns }}">
+                        
+                        {%- comment -%} Render columns {%- endcomment -%}
+                        {%- for i in (1..6) -%}
+                          {%- assign col_links_key = 'col_' | append: i | append: '_links' -%}
+                          {%- assign col_title_key = 'col_' | append: i | append: '_title' -%}
+                          {%- assign col_links = current_block.settings[col_links_key] -%}
+                          {%- assign col_title = current_block.settings[col_title_key] -%}
+                          
+                          {%- if col_links != blank or col_title != blank -%}
+                            {%- render 'mega-menu-column', 
+                               col_title: col_title, 
+                               linklist_handle: col_links,
+                               column_index: i -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                        
+                        {%- comment -%} Featured image / promo {%- endcomment -%}
+                        {%- if current_block.settings.featured_image != blank -%}
+                          {%- render 'mega-menu-promo', 
+                             featured_image: current_block.settings.featured_image,
+                             promo_heading: current_block.settings.promo_heading,
+                             promo_subheading: current_block.settings.promo_subheading,
+                             promo_button_text: current_block.settings.promo_button_text,
+                             promo_button_link: current_block.settings.promo_button_link -%}
+                        {%- endif -%}
+                        
+                      </div>
+                    </div>
+                  </div>
+                
+                {%- elsif link.links.size > 0 -%}
+                  {%- comment -%} Fallback: simple dropdown if no block configured {%- endcomment -%}
+                  <div class="cmm__dropdown cmm__dropdown--simple" data-link-index="{{ link_index }}">
+                    <div class="cmm__container">
+                      <ul class="cmm__simple-list">
+                        {%- for sublink in link.links -%}
+                          <li class="cmm__simple-item">
+                            <a href="{{ sublink.url }}" class="cmm__simple-link">
+                              {{ sublink.title }}
+                            </a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    </div>
+                  </div>
+                {%- endif -%}
+                
+              </li>
+            {%- endfor -%}
+            
+          </ul>
+        </nav>
+        
+        {%- comment -%} ============ HEADER ACTIONS ============ {%- endcomment -%}
+        <div class="cmm__actions">
+          
+          {%- if section.settings.show_search -%}
+            <button type="button" class="cmm__action-btn cmm__search-btn" aria-label="Search">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </button>
+          {%- endif -%}
+          
+          {%- if shop.customer_accounts_enabled -%}
+            <a href="{{ routes.account_url }}" class="cmm__action-btn" aria-label="Account">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </a>
+          {%- endif -%}
+          
+          <a href="{{ routes.cart_url }}" class="cmm__action-btn cmm__cart-btn" aria-label="Cart">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"/>
+              <circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            <span class="cmm__cart-count" data-cart-count>{{ cart.item_count }}</span>
+          </a>
+          
+        </div>
+        
+      </div>
+    </div>
+  </header>
+  
+  {%- comment -%} ============ DROPDOWN BACKDROP ============ {%- endcomment -%}
+  <div class="cmm__backdrop" aria-hidden="true"></div>
+  
+  {%- comment -%} ============ MOBILE DRAWER ============ {%- endcomment -%}
+  <div class="cmm__mobile-drawer" 
+       id="MegaMenuMobile-{{ section_id }}"
+       aria-hidden="true">
+    <div class="cmm__mobile-drawer-inner">
+      
+      <div class="cmm__mobile-header">
+        <span class="cmm__mobile-title">Menu</span>
+        <button type="button" class="cmm__mobile-close" aria-label="Close menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      
+      <nav class="cmm__mobile-nav">
+        <ul class="cmm__mobile-list">
+          {%- for link in menu.links -%}
+            <li class="cmm__mobile-item{% if link.links.size > 0 %} cmm__mobile-item--has-children{% endif %}">
+              {%- if link.links.size > 0 -%}
+                <button type="button" class="cmm__mobile-link cmm__mobile-toggle-sub" aria-expanded="false">
+                  <span>{{ link.title }}</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M3 5L6 8L9 5" stroke="currentColor" stroke-width="1.5"/>
+                  </svg>
+                </button>
+                <ul class="cmm__mobile-sublist">
+                  <li class="cmm__mobile-subitem">
+                    <a href="{{ link.url }}" class="cmm__mobile-sublink cmm__mobile-sublink--all">
+                      View All {{ link.title }}
+                    </a>
+                  </li>
+                  {%- for sublink in link.links -%}
+                    <li class="cmm__mobile-subitem">
+                      <a href="{{ sublink.url }}" class="cmm__mobile-sublink">
+                        {{ sublink.title }}
+                      </a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- else -%}
+                <a href="{{ link.url }}" class="cmm__mobile-link">{{ link.title }}</a>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+      
+    </div>
+  </div>
+  
+</custom-mega-menu>
+
+{% schema %}
+{
+  "name": "Custom Mega Menu",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Menu Source"
+    },
+    {
+      "type": "link_list",
+      "id": "main_menu",
+      "label": "Main menu",
+      "default": "main-menu",
+      "info": "Set up your menu in Navigation, then link blocks below to specific menu items."
+    },
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "label": "Logo height",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Top Announcement Bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_bar",
+      "label": "Show top bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "top_bar_text",
+      "label": "Top bar text",
+      "default": "FREE WORLDWIDE SHIPPING ON ORDERS OVER $200"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_currency_selector",
+      "label": "Show currency selector",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Colors - Header"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Header background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Menu text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "hover_color",
+      "label": "Hover color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#E5E5E5"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color (badges and buttons)",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Colors - Dropdown"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_bg",
+      "label": "Dropdown background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_text",
+      "label": "Dropdown link color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_heading",
+      "label": "Dropdown heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Layout and Sizing"
+    },
+    {
+      "type": "range",
+      "id": "menu_height",
+      "label": "Header height",
+      "min": 50,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "dropdown_padding",
+      "label": "Dropdown padding",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "font_size_main",
+      "label": "Main menu font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "font_size_sub",
+      "label": "Submenu font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Menu font weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "select",
+      "id": "anim_type",
+      "label": "Animation style",
+      "options": [
+        { "value": "fade", "label": "Fade" },
+        { "value": "slide-down", "label": "Slide Down" },
+        { "value": "slide-up", "label": "Slide Up" },
+        { "value": "zoom", "label": "Zoom" }
+      ],
+      "default": "slide-down"
+    },
+    {
+      "type": "range",
+      "id": "anim_duration",
+      "label": "Animation duration",
+      "min": 100,
+      "max": 800,
+      "step": 50,
+      "unit": "ms",
+      "default": 300
+    },
+    {
+      "type": "select",
+      "id": "trigger_type",
+      "label": "Open dropdown on",
+      "options": [
+        { "value": "hover", "label": "Hover" },
+        { "value": "click", "label": "Click" }
+      ],
+      "default": "hover"
+    },
+    {
+      "type": "header",
+      "content": "Sticky Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_enabled",
+      "label": "Sticky on scroll",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Header Actions"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search icon",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Mobile Settings"
+    },
+    {
+      "type": "select",
+      "id": "mobile_style",
+      "label": "Mobile menu style",
+      "options": [
+        { "value": "drawer-left", "label": "Drawer (left)" },
+        { "value": "drawer-right", "label": "Drawer (right)" },
+        { "value": "fullscreen", "label": "Full screen" }
+      ],
+      "default": "drawer-left"
+    },
+    {
+      "type": "range",
+      "id": "mobile_menu_height",
+      "label": "Mobile header height",
+      "min": 50,
+      "max": 90,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "mobile_font_size",
+      "label": "Mobile font size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mega_dropdown",
+      "name": "Mega Dropdown",
+      "limit": 8,
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_link_handle",
+          "label": "Menu link handle",
+          "info": "Enter the handle of the menu link this dropdown belongs to (e.g., shop, men, women). Find handles in Navigation."
+        },
+        {
+          "type": "range",
+          "id": "columns",
+          "label": "Number of columns",
+          "min": 2,
+          "max": 6,
+          "step": 1,
+          "default": 4
+        },
+        {
+          "type": "header",
+          "content": "Column 1"
+        },
+        {
+          "type": "text",
+          "id": "col_1_title",
+          "label": "Column 1 heading"
+        },
+        {
+          "type": "link_list",
+          "id": "col_1_links",
+          "label": "Column 1 menu"
+        },
+        {
+          "type": "header",
+          "content": "Column 2"
+        },
+        {
+          "type": "text",
+          "id": "col_2_title",
+          "label": "Column 2 heading"
+        },
+        {
+          "type": "link_list",
+          "id": "col_2_links",
+          "label": "Column 2 menu"
+        },
+        {
+          "type": "header",
+          "content": "Column 3"
+        },
+        {
+          "type": "text",
+          "id": "col_3_title",
+          "label": "Column 3 heading"
+        },
+        {
+          "type": "link_list",
+          "id": "col_3_links",
+          "label": "Column 3 menu"
+        },
+        {
+          "type": "header",
+          "content": "Column 4"
+        },
+        {
+          "type": "text",
+          "id": "col_4_title",
+          "label": "Column 4 heading"
+        },
+        {
+          "type": "link_list",
+          "id": "col_4_links",
+          "label": "Column 4 menu"
+        },
+        {
+          "type": "header",
+          "content": "Column 5 (optional)"
+        },
+        {
+          "type": "text",
+          "id": "col_5_title",
+          "label": "Column 5 heading"
+        },
+        {
+          "type": "link_list",
+          "id": "col_5_links",
+          "label": "Column 5 menu"
+        },
+        {
+          "type": "header",
+          "content": "Column 6 (optional)"
+        },
+        {
+          "type": "text",
+          "id": "col_6_title",
+          "label": "Column 6 heading"
+        },
+        {
+          "type": "link_list",
+          "id": "col_6_links",
+          "label": "Column 6 menu"
+        },
+        {
+          "type": "header",
+          "content": "Featured Image and Promo"
+        },
+        {
+          "type": "image_picker",
+          "id": "featured_image",
+          "label": "Featured image"
+        },
+        {
+          "type": "text",
+          "id": "promo_heading",
+          "label": "Promo heading",
+          "default": "New Collection"
+        },
+        {
+          "type": "text",
+          "id": "promo_subheading",
+          "label": "Promo subheading",
+          "default": "Discover the latest arrivals"
+        },
+        {
+          "type": "text",
+          "id": "promo_button_text",
+          "label": "Button text",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "promo_button_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Mega Menu",
+      "blocks": [
+        { "type": "mega_dropdown" },
+        { "type": "mega_dropdown" }
+      ]
+    }
+  ]
+}
+{% endschema %}

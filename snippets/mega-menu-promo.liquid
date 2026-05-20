@@ -1,0 +1,47 @@
+{% comment %}
+  ============================================================
+  SNIPPET: Mega Menu Promo
+  ============================================================
+  Renders a promotional image/banner inside the mega dropdown.
+  
+  Parameters:
+  - featured_image: (image object) The promo image
+  - promo_heading: (string) Promo heading text
+  - promo_subheading: (string) Promo subheading text
+  - promo_button_text: (string) Button label
+  - promo_button_link: (url) Button URL
+  ============================================================
+{% endcomment %}
+
+<div class="cmm__promo">
+  {%- if featured_image != blank -%}
+    <div class="cmm__promo-image-wrapper">
+      <img 
+        src="{{ featured_image | image_url: width: 600 }}" 
+        srcset="{{ featured_image | image_url: width: 300 }} 300w, {{ featured_image | image_url: width: 400 }} 400w, {{ featured_image | image_url: width: 600 }} 600w"
+        sizes="(max-width: 600px) 300px, 400px"
+        class="cmm__promo-image"
+        alt="{{ promo_heading | escape }}"
+        loading="lazy"
+        width="600"
+        height="{{ 600 | divided_by: featured_image.aspect_ratio | round }}"
+      >
+    </div>
+  {%- endif -%}
+  
+  <div class="cmm__promo-content">
+    {%- if promo_heading != blank -%}
+      <h4 class="cmm__promo-heading">{{ promo_heading }}</h4>
+    {%- endif -%}
+    
+    {%- if promo_subheading != blank -%}
+      <p class="cmm__promo-subheading">{{ promo_subheading }}</p>
+    {%- endif -%}
+    
+    {%- if promo_button_text != blank and promo_button_link != blank -%}
+      <a href="{{ promo_button_link }}" class="cmm__promo-btn">
+        {{ promo_button_text }}
+      </a>
+    {%- endif -%}
+  </div>
+</div>
