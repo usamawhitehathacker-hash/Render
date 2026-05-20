@@ -1,237 +1,41 @@
-{%- liquid
-  assign enable_bar = section.settings.enable_bar
-  assign position = section.settings.position
-  assign sticky = section.settings.sticky
-  assign bar_height = section.settings.bar_height
-  assign show_close_btn = section.settings.show_close_btn
-  assign close_behavior = section.settings.close_behavior
-  assign hide_on_mobile = section.settings.hide_on_mobile
-  assign bg_color = section.settings.bg_color
-  assign text_color = section.settings.text_color
-  assign font_size = section.settings.font_size
-  assign font_weight = section.settings.font_weight
-  assign letter_spacing = section.settings.letter_spacing
-  assign text_transform = section.settings.text_transform
-  assign auto_rotate = section.settings.auto_rotate
-  assign rotate_speed = section.settings.rotate_speed
-  assign animation_type = section.settings.animation_type
-  assign show_arrows = section.settings.show_arrows
-  assign pause_on_hover = section.settings.pause_on_hover
-  assign show_countdown = section.settings.show_countdown
-  assign countdown_date = section.settings.countdown_date
-  assign countdown_end_action = section.settings.countdown_end_action
-  assign countdown_end_message = section.settings.countdown_end_message
--%}
+{% comment %}
+  Custom Announcement Bar - Wilson's Leather Style
+  Simple rotating text bar with arrow navigation
+{% endcomment %}
 
-{%- if enable_bar and section.blocks.size > 0 -%}
-  <script>
-    (function(){
-      try {
-        var sid = '{{ section.id }}';
-        var cb = '{{ close_behavior }}';
-        var key = 'announcement-bar-dismissed-' + sid;
-        var storage = (cb === 'permanent') ? localStorage : sessionStorage;
-        if (storage.getItem(key) === 'true') {
-          document.head.insertAdjacentHTML('beforeend',
-            '<style>custom-announcement-bar[data-section-id="' + sid + '"]{display:none!important}</style>'
-          );
-        }
-      } catch(e) {}
-    })();
-  </script>
-  {{ 'custom-announcement-bar.css' | asset_url | stylesheet_tag }}
-  <script src="{{ 'custom-announcement-bar.js' | asset_url }}" defer="defer"></script>
+{%- style -%}
+  .custom-announcement-bar {
+    --cab-bg: {{ section.settings.bg_color }};
+    --cab-text: {{ section.settings.text_color }};
+    --cab-height: {{ section.settings.bar_height }}px;
+    --cab-font-size: {{ section.settings.font_size }}px;
+  }
+{%- endstyle -%}
 
-  <custom-announcement-bar
-    class="announcement-bar announcement-bar--{{ position }}{% if sticky %} announcement-bar--sticky{% endif %}{% if hide_on_mobile %} announcement-bar--hide-mobile{% endif %}"
-    data-section-id="{{ section.id }}"
-    data-auto-rotate="{{ auto_rotate }}"
-    data-rotate-speed="{{ rotate_speed }}"
-    data-animation="{{ animation_type }}"
-    data-pause-on-hover="{{ pause_on_hover }}"
-    data-close-behavior="{{ close_behavior }}"
-    data-show-countdown="{{ show_countdown }}"
-    data-countdown-date="{{ countdown_date }}"
-    data-countdown-end-action="{{ countdown_end_action }}"
-    data-countdown-end-message="{{ countdown_end_message }}"
-    data-message-count="{{ section.blocks.size }}"
-    style="
-      --announcement-bg: {{ bg_color }};
-      --announcement-text: {{ text_color }};
-      --announcement-height: {{ bar_height }}px;
-      --announcement-font-size: {{ font_size }}px;
-      --announcement-font-weight: {{ font_weight }};
-      --announcement-letter-spacing: {{ letter_spacing }}px;
-      --announcement-text-transform: {{ text_transform }};
-      --announcement-speed: {{ rotate_speed }}s;
-    "
-    role="region"
-    aria-label="Announcement"
-  >
-    <div class="announcement-bar__inner">
-      {%- if show_arrows and section.blocks.size > 1 -%}
-        <button class="announcement-bar__arrow announcement-bar__arrow--prev" aria-label="Previous announcement" aria-controls="announcement-messages" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-        </button>
-      {%- endif -%}
+{{ 'custom-announcement-bar.css' | asset_url | stylesheet_tag }}
 
-      <div class="announcement-bar__messages" id="announcement-messages" role="list">
-        {%- for block in section.blocks -%}
-          {%- liquid
-            assign msg_bg = block.settings.override_bg
-            assign msg_text = block.settings.override_text
-            assign msg_icon = block.settings.icon
-            assign msg_link = block.settings.message_link
-            assign msg_content = block.settings.message_text
-            assign has_bg_override = false
-            assign has_text_override = false
-            if block.settings.override_bg != blank
-              if msg_bg != bg_color
-                assign has_bg_override = true
-              endif
-            endif
-            if block.settings.override_text != blank
-              if msg_text != text_color
-                assign has_text_override = true
-              endif
-            endif
-          -%}
-          <div
-            class="announcement-bar__message{% if forloop.first %} is-active{% endif %}"
-            data-index="{{ forloop.index0 }}"
-            role="listitem"
-            {% if forloop.first %}aria-current="true"{% endif %}
-            {{ block.shopify_attributes }}
-            {% if has_bg_override or has_text_override %}
-              style="{% if has_bg_override %}--message-bg: {{ msg_bg }};{% endif %}{% if has_text_override %}--message-text: {{ msg_text }};{% endif %}"
-            {% endif %}
-          >
-            {%- if msg_link != blank -%}
-              <a href="{{ msg_link }}" class="announcement-bar__link">
-            {%- endif -%}
+<script>
+  try {
+    if (sessionStorage.getItem('cab-dismissed-{{ section.id }}') === 'true') {
+      var cabPlaceholder = document.currentScript;
+      cabPlaceholder.insertAdjacentHTML('afterend', '');
+    } else {
+      document.currentScript.insertAdjacentHTML('afterend', '<custom-announcement-bar id="cab-{{ section.id }}" class="custom-announcement-bar" data-section-id="{{ section.id }}" data-auto-rotate="{{ section.settings.auto_rotate }}" data-speed="{{ section.settings.rotate_speed }}" role="region" aria-label="Announcements"><div class="cab__inner">{% if section.settings.show_arrows and section.blocks.size > 1 %}<button class="cab__arrow cab__arrow--prev" aria-label="Previous announcement"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>{% endif %}<div class="cab__messages">{% for block in section.blocks %}{% if block.type == "message" %}<div class="cab__message {% if forloop.first %}is-active{% endif %}" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>{% endif %}{% endfor %}</div>{% if section.settings.show_arrows and section.blocks.size > 1 %}<button class="cab__arrow cab__arrow--next" aria-label="Next announcement"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>{% endif %}{% if section.settings.show_close %}<button class="cab__close" aria-label="Dismiss announcement bar"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>{% endif %}</div></custom-announcement-bar>');
+    }
+  } catch(e) {}
+</script>
 
-            <span class="announcement-bar__content">
-              {%- if msg_icon != 'none' and msg_icon != blank -%}
-                <span class="announcement-bar__icon">
-                  {%- case msg_icon -%}
-                    {%- when 'truck' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                    {%- when 'tag' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-                    {%- when 'clock' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    {%- when 'fire' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 23c-3.866 0-7-3.134-7-7 0-3.037 2.346-5.894 4.34-7.834A16.5 16.5 0 0 0 12 5a16.5 16.5 0 0 0 2.66 3.166C16.654 10.106 19 12.963 19 16c0 3.866-3.134 7-7 7zm0-14.5c-.792.926-1.558 1.95-2.198 3.022C8.945 13.008 8 14.493 8 16c0 2.21 1.79 4 4 4s4-1.79 4-4c0-1.507-.945-2.992-1.802-4.478A15.7 15.7 0 0 1 12 8.5z"></path></svg>
-                    {%- when 'star' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                    {%- when 'percent' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"></line><circle cx="6.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>
-                    {%- when 'gift' -%}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
-                  {%- endcase -%}
-                </span>
-              {%- endif -%}
-
-              <span class="announcement-bar__text">{{ msg_content }}</span>
-            </span>
-
-            {%- if msg_link != blank -%}
-              </a>
-            {%- endif -%}
-          </div>
-        {%- endfor -%}
-      </div>
-
-      {%- if show_countdown and countdown_date != blank -%}
-        <span class="announcement-bar__countdown" aria-live="polite" aria-atomic="true">
-          <span class="countdown__item"><span class="countdown__value" data-countdown-days>00</span><span class="countdown__label">d</span></span>
-          <span class="countdown__separator">:</span>
-          <span class="countdown__item"><span class="countdown__value" data-countdown-hours>00</span><span class="countdown__label">h</span></span>
-          <span class="countdown__separator">:</span>
-          <span class="countdown__item"><span class="countdown__value" data-countdown-mins>00</span><span class="countdown__label">m</span></span>
-          <span class="countdown__separator">:</span>
-          <span class="countdown__item"><span class="countdown__value" data-countdown-secs>00</span><span class="countdown__label">s</span></span>
-        </span>
-      {%- endif -%}
-
-      {%- if show_arrows and section.blocks.size > 1 -%}
-        <button class="announcement-bar__arrow announcement-bar__arrow--next" aria-label="Next announcement" aria-controls="announcement-messages" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </button>
-      {%- endif -%}
-
-      {%- if show_close_btn -%}
-        <button class="announcement-bar__close" aria-label="Close announcement" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      {%- endif -%}
-    </div>
-  </custom-announcement-bar>
-{%- endif -%}
+<script src="{{ 'custom-announcement-bar.js' | asset_url }}" defer="defer"></script>
 
 {% schema %}
 {
-  "name": "Custom Announcement Bar",
+  "name": "Announcement Bar",
   "settings": [
-    {
-      "type": "checkbox",
-      "id": "enable_bar",
-      "label": "Enable announcement bar",
-      "default": true
-    },
-    {
-      "type": "select",
-      "id": "position",
-      "label": "Position",
-      "options": [
-        { "value": "top", "label": "Top" },
-        { "value": "bottom", "label": "Bottom" }
-      ],
-      "default": "top"
-    },
-    {
-      "type": "checkbox",
-      "id": "sticky",
-      "label": "Sticky on scroll",
-      "default": false
-    },
-    {
-      "type": "range",
-      "id": "bar_height",
-      "label": "Bar height",
-      "min": 30,
-      "max": 60,
-      "step": 5,
-      "default": 45,
-      "unit": "px"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_close_btn",
-      "label": "Show close button",
-      "default": true
-    },
-    {
-      "type": "select",
-      "id": "close_behavior",
-      "label": "Close behavior",
-      "options": [
-        { "value": "session", "label": "Session only" },
-        { "value": "permanent", "label": "Permanent (cookie)" }
-      ],
-      "default": "session"
-    },
-    {
-      "type": "checkbox",
-      "id": "hide_on_mobile",
-      "label": "Hide on mobile",
-      "default": false
-    },
     {
       "type": "color",
       "id": "bg_color",
       "label": "Background color",
-      "default": "#000000"
+      "default": "#C14B5A"
     },
     {
       "type": "color",
@@ -241,47 +45,23 @@
     },
     {
       "type": "range",
-      "id": "font_size",
-      "label": "Font size",
-      "min": 11,
-      "max": 18,
-      "step": 1,
-      "default": 13,
+      "id": "bar_height",
+      "label": "Bar height",
+      "min": 30,
+      "max": 50,
+      "step": 10,
+      "default": 40,
       "unit": "px"
-    },
-    {
-      "type": "select",
-      "id": "font_weight",
-      "label": "Font weight",
-      "options": [
-        { "value": "400", "label": "Normal (400)" },
-        { "value": "500", "label": "Medium (500)" },
-        { "value": "600", "label": "Semi-bold (600)" },
-        { "value": "700", "label": "Bold (700)" }
-      ],
-      "default": "500"
     },
     {
       "type": "range",
-      "id": "letter_spacing",
-      "label": "Letter spacing",
-      "min": 0,
-      "max": 3,
+      "id": "font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 16,
       "step": 1,
-      "default": 1,
+      "default": 13,
       "unit": "px"
-    },
-    {
-      "type": "select",
-      "id": "text_transform",
-      "label": "Text transform",
-      "options": [
-        { "value": "none", "label": "None" },
-        { "value": "uppercase", "label": "Uppercase" },
-        { "value": "lowercase", "label": "Lowercase" },
-        { "value": "capitalize", "label": "Capitalize" }
-      ],
-      "default": "uppercase"
     },
     {
       "type": "checkbox",
@@ -293,22 +73,11 @@
       "type": "range",
       "id": "rotate_speed",
       "label": "Rotation speed",
-      "min": 2,
-      "max": 10,
+      "min": 3,
+      "max": 8,
       "step": 1,
-      "default": 4,
+      "default": 5,
       "unit": "s"
-    },
-    {
-      "type": "select",
-      "id": "animation_type",
-      "label": "Animation type",
-      "options": [
-        { "value": "slide-up", "label": "Slide up" },
-        { "value": "fade", "label": "Fade" },
-        { "value": "slide-left", "label": "Slide left" }
-      ],
-      "default": "slide-up"
     },
     {
       "type": "checkbox",
@@ -318,110 +87,40 @@
     },
     {
       "type": "checkbox",
-      "id": "pause_on_hover",
-      "label": "Pause on hover",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_countdown",
-      "label": "Show countdown timer",
+      "id": "show_close",
+      "label": "Show close button",
       "default": false
-    },
-    {
-      "type": "text",
-      "id": "countdown_date",
-      "label": "Countdown end date",
-      "info": "Format YYYY-MM-DD HH:MM"
-    },
-    {
-      "type": "select",
-      "id": "countdown_end_action",
-      "label": "Countdown end action",
-      "options": [
-        { "value": "hide-bar", "label": "Hide bar" },
-        { "value": "show-message", "label": "Show message" }
-      ],
-      "default": "hide-bar"
-    },
-    {
-      "type": "text",
-      "id": "countdown_end_message",
-      "label": "Countdown end message",
-      "default": "Sale has ended"
     }
   ],
   "blocks": [
     {
       "type": "message",
       "name": "Message",
-      "limit": 6,
+      "limit": 5,
       "settings": [
         {
           "type": "text",
-          "id": "message_text",
+          "id": "text",
           "label": "Message text",
           "default": "Free shipping on orders over $200"
-        },
-        {
-          "type": "url",
-          "id": "message_link",
-          "label": "Message link"
-        },
-        {
-          "type": "select",
-          "id": "icon",
-          "label": "Icon",
-          "options": [
-            { "value": "none", "label": "None" },
-            { "value": "truck", "label": "Truck (shipping)" },
-            { "value": "tag", "label": "Tag (sale)" },
-            { "value": "clock", "label": "Clock (limited time)" },
-            { "value": "fire", "label": "Fire (hot deal)" },
-            { "value": "star", "label": "Star (featured)" },
-            { "value": "percent", "label": "Percent (discount)" },
-            { "value": "gift", "label": "Gift (free gift)" }
-          ],
-          "default": "none"
-        },
-        {
-          "type": "color",
-          "id": "override_bg",
-          "label": "Override background color",
-          "info": "Leave blank to use global"
-        },
-        {
-          "type": "color",
-          "id": "override_text",
-          "label": "Override text color",
-          "info": "Leave blank to use global"
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Custom Announcement Bar",
+      "name": "Announcement Bar",
       "blocks": [
         {
           "type": "message",
           "settings": {
-            "message_text": "Free shipping on orders over $200",
-            "icon": "truck"
+            "text": "Free shipping on orders over $200"
           }
         },
         {
           "type": "message",
           "settings": {
-            "message_text": "Summer sale - Up to 50% off",
-            "icon": "tag"
-          }
-        },
-        {
-          "type": "message",
-          "settings": {
-            "message_text": "New arrivals dropping every week",
-            "icon": "star"
+            "text": "New arrivals just dropped - Shop now"
           }
         }
       ]
