@@ -140,19 +140,19 @@
             {%- endif -%}
           </div>
         {%- endfor -%}
-
-        {%- if show_countdown and countdown_date != blank -%}
-          <span class="announcement-bar__countdown" aria-live="polite" aria-atomic="true">
-            <span class="countdown__item"><span class="countdown__value" data-countdown-days>00</span><span class="countdown__label">d</span></span>
-            <span class="countdown__separator">:</span>
-            <span class="countdown__item"><span class="countdown__value" data-countdown-hours>00</span><span class="countdown__label">h</span></span>
-            <span class="countdown__separator">:</span>
-            <span class="countdown__item"><span class="countdown__value" data-countdown-mins>00</span><span class="countdown__label">m</span></span>
-            <span class="countdown__separator">:</span>
-            <span class="countdown__item"><span class="countdown__value" data-countdown-secs>00</span><span class="countdown__label">s</span></span>
-          </span>
-        {%- endif -%}
       </div>
+
+      {%- if show_countdown and countdown_date != blank -%}
+        <span class="announcement-bar__countdown" aria-live="polite" aria-atomic="true">
+          <span class="countdown__item"><span class="countdown__value" data-countdown-days>00</span><span class="countdown__label">d</span></span>
+          <span class="countdown__separator">:</span>
+          <span class="countdown__item"><span class="countdown__value" data-countdown-hours>00</span><span class="countdown__label">h</span></span>
+          <span class="countdown__separator">:</span>
+          <span class="countdown__item"><span class="countdown__value" data-countdown-mins>00</span><span class="countdown__label">m</span></span>
+          <span class="countdown__separator">:</span>
+          <span class="countdown__item"><span class="countdown__value" data-countdown-secs>00</span><span class="countdown__label">s</span></span>
+        </span>
+      {%- endif -%}
 
       {%- if show_arrows and section.blocks.size > 1 -%}
         <button class="announcement-bar__arrow announcement-bar__arrow--next" aria-label="Next announcement" aria-controls="announcement-messages" type="button">
