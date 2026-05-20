@@ -24,6 +24,17 @@
 -%}
 
 {%- if enable_bar and section.blocks.size > 0 -%}
+  <script>
+    (function(){
+      var sid = '{{ section.id }}';
+      var cb = '{{ close_behavior }}';
+      var key = 'announcement-bar-dismissed-' + sid;
+      var dismissed = (cb === 'permanent') ? localStorage.getItem(key) : sessionStorage.getItem(key);
+      if (dismissed === 'true') {
+        document.write('<style>custom-announcement-bar[data-section-id="' + sid + '"]{display:none}</style>');
+      }
+    })();
+  </script>
   {{ 'custom-announcement-bar.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'custom-announcement-bar.js' | asset_url }}" defer="defer"></script>
 
@@ -70,11 +81,15 @@
             assign msg_content = block.settings.message_text
             assign has_bg_override = false
             assign has_text_override = false
-            if msg_bg != blank and msg_bg != bg_color
-              assign has_bg_override = true
+            if block.settings.override_bg != blank
+              if msg_bg != bg_color
+                assign has_bg_override = true
+              endif
             endif
-            if msg_text != blank and msg_text != text_color
-              assign has_text_override = true
+            if block.settings.override_text != blank
+              if msg_text != text_color
+                assign has_text_override = true
+              endif
             endif
           -%}
           <div
@@ -91,7 +106,7 @@
             {%- endif -%}
 
             <span class="announcement-bar__content">
-              {%- if msg_icon != 'none' -%}
+              {%- if msg_icon != 'none' and msg_icon != blank and msg_icon != '' -%}
                 <span class="announcement-bar__icon">
                   {%- case msg_icon -%}
                     {%- when 'truck' -%}
@@ -122,6 +137,12 @@
         {%- endfor -%}
       </div>
 
+      {%- if show_arrows and section.blocks.size > 1 -%}
+        <button class="announcement-bar__arrow announcement-bar__arrow--next" aria-label="Next announcement" aria-controls="announcement-messages" type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      {%- endif -%}
+
       {%- if show_countdown and countdown_date != blank -%}
         <span class="announcement-bar__countdown" aria-live="polite" aria-atomic="true">
           <span class="countdown__item"><span class="countdown__value" data-countdown-days>00</span><span class="countdown__label">d</span></span>
@@ -132,12 +153,6 @@
           <span class="countdown__separator">:</span>
           <span class="countdown__item"><span class="countdown__value" data-countdown-secs>00</span><span class="countdown__label">s</span></span>
         </span>
-      {%- endif -%}
-
-      {%- if show_arrows and section.blocks.size > 1 -%}
-        <button class="announcement-bar__arrow announcement-bar__arrow--next" aria-label="Next announcement" aria-controls="announcement-messages" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </button>
       {%- endif -%}
 
       {%- if show_close_btn -%}
