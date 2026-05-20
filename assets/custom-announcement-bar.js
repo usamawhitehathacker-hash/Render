@@ -130,8 +130,10 @@ if (!customElements.get('custom-announcement-bar')) {
 
       currentMsg.classList.add('is-exiting');
       currentMsg.classList.remove('is-active');
+      currentMsg.removeAttribute('aria-current');
 
       nextMsg.classList.add('is-active');
+      nextMsg.setAttribute('aria-current', 'true');
 
       this.currentIndex = index;
 

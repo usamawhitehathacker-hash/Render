@@ -26,13 +26,17 @@
 {%- if enable_bar and section.blocks.size > 0 -%}
   <script>
     (function(){
-      var sid = '{{ section.id }}';
-      var cb = '{{ close_behavior }}';
-      var key = 'announcement-bar-dismissed-' + sid;
-      var dismissed = (cb === 'permanent') ? localStorage.getItem(key) : sessionStorage.getItem(key);
-      if (dismissed === 'true') {
-        document.write('<style>custom-announcement-bar[data-section-id="' + sid + '"]{display:none}</style>');
-      }
+      try {
+        var sid = '{{ section.id }}';
+        var cb = '{{ close_behavior }}';
+        var key = 'announcement-bar-dismissed-' + sid;
+        var storage = (cb === 'permanent') ? localStorage : sessionStorage;
+        if (storage.getItem(key) === 'true') {
+          document.head.insertAdjacentHTML('beforeend',
+            '<style>custom-announcement-bar[data-section-id="' + sid + '"]{display:none!important}</style>'
+          );
+        }
+      } catch(e) {}
     })();
   </script>
   {{ 'custom-announcement-bar.css' | asset_url | stylesheet_tag }}
@@ -96,6 +100,7 @@
             class="announcement-bar__message{% if forloop.first %} is-active{% endif %}"
             data-index="{{ forloop.index0 }}"
             role="listitem"
+            {% if forloop.first %}aria-current="true"{% endif %}
             {{ block.shopify_attributes }}
             {% if has_bg_override or has_text_override %}
               style="{% if has_bg_override %}--message-bg: {{ msg_bg }};{% endif %}{% if has_text_override %}--message-text: {{ msg_text }};{% endif %}"
@@ -106,7 +111,7 @@
             {%- endif -%}
 
             <span class="announcement-bar__content">
-              {%- if msg_icon != 'none' and msg_icon != blank and msg_icon != '' -%}
+              {%- if msg_icon != 'none' and msg_icon != blank -%}
                 <span class="announcement-bar__icon">
                   {%- case msg_icon -%}
                     {%- when 'truck' -%}
@@ -135,24 +140,24 @@
             {%- endif -%}
           </div>
         {%- endfor -%}
+
+        {%- if show_countdown and countdown_date != blank -%}
+          <span class="announcement-bar__countdown" aria-live="polite" aria-atomic="true">
+            <span class="countdown__item"><span class="countdown__value" data-countdown-days>00</span><span class="countdown__label">d</span></span>
+            <span class="countdown__separator">:</span>
+            <span class="countdown__item"><span class="countdown__value" data-countdown-hours>00</span><span class="countdown__label">h</span></span>
+            <span class="countdown__separator">:</span>
+            <span class="countdown__item"><span class="countdown__value" data-countdown-mins>00</span><span class="countdown__label">m</span></span>
+            <span class="countdown__separator">:</span>
+            <span class="countdown__item"><span class="countdown__value" data-countdown-secs>00</span><span class="countdown__label">s</span></span>
+          </span>
+        {%- endif -%}
       </div>
 
       {%- if show_arrows and section.blocks.size > 1 -%}
         <button class="announcement-bar__arrow announcement-bar__arrow--next" aria-label="Next announcement" aria-controls="announcement-messages" type="button">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
-      {%- endif -%}
-
-      {%- if show_countdown and countdown_date != blank -%}
-        <span class="announcement-bar__countdown" aria-live="polite" aria-atomic="true">
-          <span class="countdown__item"><span class="countdown__value" data-countdown-days>00</span><span class="countdown__label">d</span></span>
-          <span class="countdown__separator">:</span>
-          <span class="countdown__item"><span class="countdown__value" data-countdown-hours>00</span><span class="countdown__label">h</span></span>
-          <span class="countdown__separator">:</span>
-          <span class="countdown__item"><span class="countdown__value" data-countdown-mins>00</span><span class="countdown__label">m</span></span>
-          <span class="countdown__separator">:</span>
-          <span class="countdown__item"><span class="countdown__value" data-countdown-secs>00</span><span class="countdown__label">s</span></span>
-        </span>
       {%- endif -%}
 
       {%- if show_close_btn -%}
