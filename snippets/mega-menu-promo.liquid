@@ -1,0 +1,51 @@
+{% comment %}
+  Renders the featured image / promotional banner inside mega menu.
+  Parameters:
+    - promo_image: (Image object) The featured image
+    - promo_heading: (String) Heading text
+    - promo_subheading: (String) Subheading text
+    - promo_button_text: (String) Button label
+    - promo_button_link: (String) Button URL
+{% endcomment %}
+
+<div class="cmm__promo">
+
+  <a href="{{ promo_button_link | default: '#' }}" class="cmm__promo-link">
+
+    <div class="cmm__promo-image-wrapper">
+      {%- if promo_image != blank -%}
+        <img
+          src="{{ promo_image | image_url: width: 600 }}"
+          alt="{{ promo_heading | escape }}"
+          class="cmm__promo-image"
+          width="600"
+          height="400"
+          loading="lazy"
+        >
+      {%- endif -%}
+      <div class="cmm__promo-overlay"></div>
+    </div>
+
+    <div class="cmm__promo-content">
+      {%- if promo_heading != blank -%}
+        <h4 class="cmm__promo-heading">{{ promo_heading }}</h4>
+      {%- endif -%}
+
+      {%- if promo_subheading != blank -%}
+        <p class="cmm__promo-subheading">{{ promo_subheading }}</p>
+      {%- endif -%}
+
+      {%- if promo_button_text != blank -%}
+        <span class="cmm__promo-button">
+          {{ promo_button_text }}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </span>
+      {%- endif -%}
+    </div>
+
+  </a>
+
+</div>

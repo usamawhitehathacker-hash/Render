@@ -1,0 +1,49 @@
+{% comment %}
+  Renders a single column inside the mega menu dropdown.
+  Parameters:
+    - title: (String) Column heading text
+    - linklist_handle: (String) Handle of a Shopify linklist
+    - column_index: (Number) Column position (1-6)
+{% endcomment %}
+
+{%- assign column_linklist = linklists[linklist_handle] -%}
+
+<div class="cmm__column" data-column="{{ column_index }}">
+
+  {%- if title != blank -%}
+    <h3 class="cmm__column-title">{{ title }}</h3>
+  {%- endif -%}
+
+  {%- if column_linklist != blank and column_linklist.links.size > 0 -%}
+    <ul class="cmm__column-list">
+      {%- for link in column_linklist.links -%}
+        <li class="cmm__column-item">
+          <a href="{{ link.url }}" class="cmm__column-link">
+            <span class="cmm__column-link-text">
+              {%- if link.title contains '[NEW]' -%}
+                {{ link.title | remove: '[NEW]' | strip }}
+              {%- elsif link.title contains '[SALE]' -%}
+                {{ link.title | remove: '[SALE]' | strip }}
+              {%- elsif link.title contains '[HOT]' -%}
+                {{ link.title | remove: '[HOT]' | strip }}
+              {%- else -%}
+                {{ link.title }}
+              {%- endif -%}
+            </span>
+
+            {%- if link.title contains '[NEW]' -%}
+              <span class="cmm__badge cmm__badge--new">NEW</span>
+            {%- endif -%}
+            {%- if link.title contains '[SALE]' -%}
+              <span class="cmm__badge cmm__badge--sale">SALE</span>
+            {%- endif -%}
+            {%- if link.title contains '[HOT]' -%}
+              <span class="cmm__badge cmm__badge--hot">HOT</span>
+            {%- endif -%}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+
+</div>
