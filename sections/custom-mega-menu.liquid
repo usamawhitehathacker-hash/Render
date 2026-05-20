@@ -28,7 +28,6 @@
 {%- liquid
   assign section_id = section.id
   assign menu = section.settings.main_menu
-  
   assign bg_color = section.settings.bg_color
   assign text_color = section.settings.text_color
   assign hover_color = section.settings.hover_color
@@ -37,17 +36,14 @@
   assign dropdown_heading = section.settings.dropdown_heading
   assign border_color = section.settings.border_color
   assign accent_color = section.settings.accent_color
-  
   assign menu_height = section.settings.menu_height
   assign dropdown_padding = section.settings.dropdown_padding
   assign font_size_main = section.settings.font_size_main
   assign font_size_sub = section.settings.font_size_sub
   assign font_weight = section.settings.font_weight
   assign letter_spacing = section.settings.letter_spacing
-  
   assign anim_duration = section.settings.anim_duration
   assign anim_type = section.settings.anim_type
-  
   assign sticky_enabled = section.settings.sticky_enabled
 -%}
 
@@ -143,7 +139,7 @@
                 srcset="{{ section.settings.logo | image_url: width: 100 }} 100w, {{ section.settings.logo | image_url: width: 200 }} 200w, {{ section.settings.logo | image_url: width: 300 }} 300w, {{ section.settings.logo | image_url: width: 400 }} 400w"
                 class="cmm__logo-image"
                 height="{{ logo_height }}"
-                width="auto"
+                width="{{ section.settings.logo_width | default: 200 }}"
                 alt="{{ shop.name | escape }}"
                 loading="eager"
               >
@@ -160,7 +156,7 @@
             {%- for link in menu.links -%}
               {%- assign link_index = forloop.index0 -%}
               {%- assign has_matching_block = false -%}
-              {%- assign current_block = null -%}
+              {%- assign current_block = nil -%}
               {%- assign link_handle = link.title | handleize -%}
               
               {%- comment -%} Find matching block for this menu link {%- endcomment -%}
