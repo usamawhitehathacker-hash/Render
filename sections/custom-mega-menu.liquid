@@ -84,33 +84,6 @@
   data-mobile-style="{{ section.settings.mobile_style }}"
 >
   
-  {%- comment -%} ============ TOP BAR (Optional) ============ {%- endcomment -%}
-  {%- if section.settings.show_top_bar -%}
-    <div class="cmm__top-bar">
-      <div class="cmm__container">
-        <div class="cmm__top-bar-inner">
-          {%- if section.settings.top_bar_text != blank -%}
-            <p class="cmm__top-bar-text">{{ section.settings.top_bar_text }}</p>
-          {%- endif -%}
-          
-          {%- if section.settings.show_currency_selector -%}
-            <div class="cmm__top-bar-actions">
-              {%- form 'localization' -%}
-                <select name="currency_code" class="cmm__currency-select" onchange="this.form.submit()">
-                  {%- for currency in shop.enabled_currencies -%}
-                    <option value="{{ currency.iso_code }}"{% if currency.iso_code == cart.currency.iso_code %} selected{% endif %}>
-                      {{ currency.iso_code }} {{ currency.symbol }}
-                    </option>
-                  {%- endfor -%}
-                </select>
-              {%- endform -%}
-            </div>
-          {%- endif -%}
-        </div>
-      </div>
-    </div>
-  {%- endif -%}
-  
   {%- comment -%} ============ MAIN HEADER ============ {%- endcomment -%}
   <header class="cmm__header">
     <div class="cmm__container">
@@ -382,28 +355,6 @@
       "step": 10,
       "unit": "px",
       "default": 200
-    },
-    {
-      "type": "header",
-      "content": "Top Announcement Bar"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_top_bar",
-      "label": "Show top bar",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "top_bar_text",
-      "label": "Top bar text",
-      "default": "FREE WORLDWIDE SHIPPING ON ORDERS OVER $200"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_currency_selector",
-      "label": "Show currency selector",
-      "default": false
     },
     {
       "type": "header",
