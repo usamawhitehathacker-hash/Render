@@ -238,3 +238,187 @@
 .header-wrapper--premium {
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
+
+
+/* ============================================================
+   PHASE 3: Premium Navigation - Typography
+   ============================================================ */
+
+/* Apply premium typography only on desktop where inline menu is visible */
+@media screen and (min-width: 990px) {
+  .header-wrapper--premium .header__menu-item,
+  .header-wrapper--premium .list-menu__item--link,
+  .header-wrapper--premium summary.list-menu__item,
+  .header-wrapper--premium .header__active-menu-item {
+    font-size: var(--hp-menu-font-size, 14px);
+    font-weight: var(--hp-menu-font-weight, 500);
+    letter-spacing: var(--hp-menu-letter-spacing, 1px);
+  }
+}
+
+/* Text transform via attribute selector */
+.header-wrapper--premium[data-hp-text-transform="uppercase"] .header__menu-item,
+.header-wrapper--premium[data-hp-text-transform="uppercase"] .list-menu__item--link,
+.header-wrapper--premium[data-hp-text-transform="uppercase"] summary.list-menu__item span,
+.header-wrapper--premium[data-hp-text-transform="uppercase"] .header__active-menu-item {
+  text-transform: uppercase;
+}
+
+.header-wrapper--premium[data-hp-text-transform="capitalize"] .header__menu-item,
+.header-wrapper--premium[data-hp-text-transform="capitalize"] .list-menu__item--link,
+.header-wrapper--premium[data-hp-text-transform="capitalize"] summary.list-menu__item span,
+.header-wrapper--premium[data-hp-text-transform="capitalize"] .header__active-menu-item {
+  text-transform: capitalize;
+}
+
+.header-wrapper--premium[data-hp-text-transform="lowercase"] .header__menu-item,
+.header-wrapper--premium[data-hp-text-transform="lowercase"] .list-menu__item--link,
+.header-wrapper--premium[data-hp-text-transform="lowercase"] summary.list-menu__item span,
+.header-wrapper--premium[data-hp-text-transform="lowercase"] .header__active-menu-item {
+  text-transform: lowercase;
+}
+
+.header-wrapper--premium[data-hp-text-transform="none"] .header__menu-item,
+.header-wrapper--premium[data-hp-text-transform="none"] .list-menu__item--link,
+.header-wrapper--premium[data-hp-text-transform="none"] summary.list-menu__item span,
+.header-wrapper--premium[data-hp-text-transform="none"] .header__active-menu-item {
+  text-transform: none;
+}
+
+/* ============================================================
+   PHASE 3: Hover Effects (4 variants)
+   ============================================================ */
+
+/* Position relative needed for ::after underline */
+@media screen and (min-width: 990px) {
+  .header-wrapper--premium .header__menu-item,
+  .header-wrapper--premium .list-menu__item--link,
+  .header-wrapper--premium summary.list-menu__item {
+    position: relative;
+  }
+}
+
+/* Hover style: underline (Jacket Maker style) */
+.header-wrapper--premium[data-hp-hover-style="underline"] .header__menu-item::after,
+.header-wrapper--premium[data-hp-hover-style="underline"] .list-menu__item--link::after,
+.header-wrapper--premium[data-hp-hover-style="underline"] summary.list-menu__item::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .header__menu-item::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .list-menu__item--link::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] summary.list-menu__item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: var(--hp-hover-underline-thickness, 2px);
+  background-color: var(--hp-hover-underline-color, #000);
+  transition: width var(--hp-anim-duration, 300ms) ease;
+  pointer-events: none;
+}
+
+.header-wrapper--premium[data-hp-hover-style="underline"] .header__menu-item:hover::after,
+.header-wrapper--premium[data-hp-hover-style="underline"] .list-menu__item--link:hover::after,
+.header-wrapper--premium[data-hp-hover-style="underline"] summary.list-menu__item:hover::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .header__menu-item:hover::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .list-menu__item--link:hover::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] summary.list-menu__item:hover::after,
+.header-wrapper--premium[data-hp-hover-style="underline"] .header__menu-item--active::after,
+.header-wrapper--premium[data-hp-hover-style="underline"] li.header__active-menu-item::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .header__menu-item--active::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] li.header__active-menu-item::after {
+  width: 30px;
+}
+
+/* Hover style: color (color change only) */
+.header-wrapper--premium[data-hp-hover-style="color"] .header__menu-item:hover,
+.header-wrapper--premium[data-hp-hover-style="color"] .list-menu__item--link:hover,
+.header-wrapper--premium[data-hp-hover-style="color"] summary.list-menu__item:hover,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .header__menu-item:hover,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .list-menu__item--link:hover,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] summary.list-menu__item:hover {
+  color: var(--hp-hover-underline-color, #000);
+}
+
+/* All hover styles get a smooth color transition */
+.header-wrapper--premium .header__menu-item,
+.header-wrapper--premium .list-menu__item--link,
+.header-wrapper--premium summary.list-menu__item {
+  transition: color var(--hp-anim-duration, 300ms) ease;
+}
+
+/* ============================================================
+   PHASE 3: Dropdown Animation Styles
+   ============================================================ */
+
+/* Dawn dropdowns are <details>/<summary> with .header__submenu (ul) */
+.header-wrapper--premium .header__submenu,
+.header-wrapper--premium .mega-menu__content {
+  transition:
+    opacity var(--hp-anim-duration, 300ms) ease,
+    transform var(--hp-anim-duration, 300ms) ease,
+    visibility var(--hp-anim-duration, 300ms) ease;
+}
+
+/* Animation: fade (default) */
+.header-wrapper--premium[data-hp-anim="fade"] details[open] .header__submenu,
+.header-wrapper--premium[data-hp-anim="fade"] details[open] .mega-menu__content {
+  animation: hp-fade-in var(--hp-anim-duration, 300ms) ease;
+}
+
+@keyframes hp-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Animation: slide-down */
+.header-wrapper--premium[data-hp-anim="slide-down"] details[open] .header__submenu,
+.header-wrapper--premium[data-hp-anim="slide-down"] details[open] .mega-menu__content {
+  animation: hp-slide-down var(--hp-anim-duration, 300ms) ease;
+}
+
+@keyframes hp-slide-down {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Animation: slide-up */
+.header-wrapper--premium[data-hp-anim="slide-up"] details[open] .header__submenu,
+.header-wrapper--premium[data-hp-anim="slide-up"] details[open] .mega-menu__content {
+  animation: hp-slide-up var(--hp-anim-duration, 300ms) ease;
+}
+
+@keyframes hp-slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Animation: zoom */
+.header-wrapper--premium[data-hp-anim="zoom"] details[open] .header__submenu,
+.header-wrapper--premium[data-hp-anim="zoom"] details[open] .mega-menu__content {
+  animation: hp-zoom-in var(--hp-anim-duration, 300ms) ease;
+  transform-origin: top center;
+}
+
+@keyframes hp-zoom-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ============================================================
+   PHASE 3: Hover-trigger dropdown (auto open on mouseenter)
+   ============================================================ */
+
+@media screen and (min-width: 990px) and (hover: hover) {
+  .header-wrapper--premium[data-hp-trigger="hover"] header-menu:hover details,
+  .header-wrapper--premium[data-hp-trigger="hover"] .mega-menu:hover details {
+    /* JS will toggle the [open] attribute via mouseenter/leave events.
+       This selector is here as a hint for higher specificity if needed. */
+  }
+}
+
+/* When trigger is click, prevent flicker by disabling hover open */
+.header-wrapper--premium[data-hp-trigger="click"] header-menu details,
+.header-wrapper--premium[data-hp-trigger="click"] .mega-menu details {
+  /* JS handles click toggle. No CSS-only hover. */
+}
