@@ -116,14 +116,32 @@
           <a href="{{ routes.root_url }}" class="cmm__logo-link">
             {%- if section.settings.logo != blank -%}
               {%- assign logo_height = section.settings.logo_height | default: 40 -%}
+              {%- assign logo_mobile_height = section.settings.logo_mobile_height | default: 32 -%}
+              {%- assign logo_mobile_max_width = section.settings.logo_mobile_max_width | default: 140 -%}
+              {%- assign logo_width = section.settings.logo_width | default: 200 -%}
               <img
                 src="{{ section.settings.logo | image_url: width: 400 }}"
-                alt="{{ shop.name | escape }}"
-                class="cmm__logo-image"
-                width="auto"
+                srcset="{{ section.settings.logo | image_url: width: 100 }} 100w, {{ section.settings.logo | image_url: width: 200 }} 200w, {{ section.settings.logo | image_url: width: 300 }} 300w, {{ section.settings.logo | image_url: width: 400 }} 400w, {{ section.settings.logo | image_url: width: 600 }} 600w, {{ section.settings.logo | image_url: width: 800 }} 800w"
+                sizes="(max-width: 989px) {{ logo_mobile_max_width }}px, {{ logo_width }}px"
+                class="cmm__logo-image cmm__logo-image--desktop"
+                width="{{ logo_width }}"
                 height="{{ logo_height }}"
+                alt="{{ shop.name | escape }}"
                 loading="eager"
               >
+
+              {%- if section.settings.logo_mobile != blank -%}
+                <img
+                  src="{{ section.settings.logo_mobile | image_url: width: 300 }}"
+                  srcset="{{ section.settings.logo_mobile | image_url: width: 100 }} 100w, {{ section.settings.logo_mobile | image_url: width: 200 }} 200w, {{ section.settings.logo_mobile | image_url: width: 300 }} 300w, {{ section.settings.logo_mobile | image_url: width: 400 }} 400w"
+                  sizes="(max-width: 989px) 40vw, 0px"
+                  class="cmm__logo-image cmm__logo-image--mobile"
+                  width="{{ logo_mobile_max_width }}"
+                  height="{{ logo_mobile_height }}"
+                  alt="{{ shop.name | escape }}"
+                  loading="eager"
+                >
+              {%- endif -%}
             {%- else -%}
               <span class="cmm__logo-text">{{ shop.name }}</span>
             {%- endif -%}
@@ -347,14 +365,50 @@
       "label": "Logo image"
     },
     {
+      "type": "image_picker",
+      "id": "logo_mobile",
+      "label": "Mobile logo image (optional)",
+      "info": "If blank, the main logo will be used on mobile."
+    },
+    {
       "type": "range",
       "id": "logo_height",
-      "label": "Logo height",
+      "label": "Logo height (desktop)",
       "min": 20,
-      "max": 100,
-      "step": 5,
+      "max": 140,
+      "step": 2,
       "unit": "px",
       "default": 40
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width (desktop)",
+      "min": 50,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "logo_mobile_height",
+      "label": "Logo height (mobile)",
+      "min": 18,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "logo_mobile_max_width",
+      "label": "Logo max width (mobile)",
+      "min": 60,
+      "max": 300,
+      "step": 5,
+      "unit": "px",
+      "default": 140
     },
     {
       "type": "header",
