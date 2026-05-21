@@ -582,3 +582,228 @@
     gap: max(4px, calc(var(--hp-icon-spacing, 8px) * 0.5));
   }
 }
+
+
+
+/* ============================================================
+   PHASE 5: Mobile Bottom Navigation Bar
+   ============================================================ */
+.hp-bottom-nav {
+  display: none;
+}
+
+@media screen and (max-width: 749px) {
+  .hp-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    align-items: stretch;
+    background: var(--hp-mobile-bottom-nav-bg, #fff);
+    border-top: 1px solid var(--hp-mobile-bottom-nav-border, #e5e5e5);
+    padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Push body content above bottom nav so last section isn't hidden */
+  body:has(.hp-bottom-nav) {
+    padding-bottom: 64px;
+  }
+
+  .hp-bottom-nav__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 4px 8px;
+    background: transparent;
+    border: none;
+    color: rgb(var(--color-foreground));
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 10px;
+    line-height: 1.2;
+    text-align: center;
+    transition: color 0.15s ease, transform 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .hp-bottom-nav__item:active {
+    transform: scale(0.94);
+  }
+
+  .hp-bottom-nav__item .svg-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .hp-bottom-nav__item .svg-wrapper svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .hp-bottom-nav__label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  /* Cart count bubble inside bottom nav */
+  .hp-bottom-nav__cart-count {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--hp-cart-badge-bg, #000);
+    color: var(--hp-cart-badge-text, #fff);
+    font-size: 9px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+}
+
+/* ============================================================
+   PHASE 5: Mobile Drawer Position Variants
+   Dawn's drawer is .menu-drawer inside <menu-drawer> custom element
+   ============================================================ */
+
+/* Slide from right */
+@media screen and (max-width: 989px) {
+  .header-wrapper--premium[data-hp-mobile-drawer="right"] .menu-drawer {
+    left: auto;
+    right: 0;
+    transform: translateX(100%);
+  }
+  .header-wrapper--premium[data-hp-mobile-drawer="right"] menu-drawer[open] .menu-drawer,
+  .header-wrapper--premium[data-hp-mobile-drawer="right"] details[open] > .menu-drawer {
+    transform: translateX(0);
+  }
+
+  /* Fullscreen variant */
+  .header-wrapper--premium[data-hp-mobile-drawer="fullscreen"] .menu-drawer {
+    width: 100% !important;
+    max-width: 100% !important;
+    left: 0;
+    right: 0;
+    transform: translateY(-100%);
+  }
+  .header-wrapper--premium[data-hp-mobile-drawer="fullscreen"] menu-drawer[open] .menu-drawer,
+  .header-wrapper--premium[data-hp-mobile-drawer="fullscreen"] details[open] > .menu-drawer {
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   PHASE 5: Mobile Menu Animation Styles
+   ============================================================ */
+@media screen and (max-width: 989px) {
+  /* Fade animation */
+  .header-wrapper--premium[data-hp-mobile-anim="fade"] .menu-drawer {
+    transition: opacity var(--hp-anim-duration, 300ms) ease, visibility var(--hp-anim-duration, 300ms) ease;
+    opacity: 0;
+  }
+  .header-wrapper--premium[data-hp-mobile-anim="fade"] menu-drawer[open] .menu-drawer,
+  .header-wrapper--premium[data-hp-mobile-anim="fade"] details[open] > .menu-drawer {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Push animation: drawer pushes page content */
+  .header-wrapper--premium[data-hp-mobile-anim="push"] .menu-drawer {
+    transition: transform var(--hp-anim-duration, 300ms) cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  body:has(.header-wrapper--premium[data-hp-mobile-anim="push"] menu-drawer[open]),
+  body:has(.header-wrapper--premium[data-hp-mobile-anim="push"] details[open] > .menu-drawer) {
+    overflow: hidden;
+  }
+}
+
+/* ============================================================
+   PHASE 5: Mobile Menu Typography
+   ============================================================ */
+@media screen and (max-width: 989px) {
+  .header-wrapper--premium .menu-drawer__menu-item,
+  .header-wrapper--premium .menu-drawer summary,
+  .header-wrapper--premium .menu-drawer a {
+    font-size: var(--hp-mobile-menu-font-size, 16px);
+    padding-top: var(--hp-mobile-menu-padding, 16px);
+    padding-bottom: var(--hp-mobile-menu-padding, 16px);
+  }
+}
+
+/* Mobile text transform */
+.header-wrapper--premium[data-hp-mobile-text-transform="uppercase"] .menu-drawer__menu-item,
+.header-wrapper--premium[data-hp-mobile-text-transform="uppercase"] .menu-drawer summary,
+.header-wrapper--premium[data-hp-mobile-text-transform="uppercase"] .menu-drawer a {
+  text-transform: uppercase;
+}
+
+.header-wrapper--premium[data-hp-mobile-text-transform="capitalize"] .menu-drawer__menu-item,
+.header-wrapper--premium[data-hp-mobile-text-transform="capitalize"] .menu-drawer summary,
+.header-wrapper--premium[data-hp-mobile-text-transform="capitalize"] .menu-drawer a {
+  text-transform: capitalize;
+}
+
+.header-wrapper--premium[data-hp-mobile-text-transform="none"] .menu-drawer__menu-item,
+.header-wrapper--premium[data-hp-mobile-text-transform="none"] .menu-drawer summary,
+.header-wrapper--premium[data-hp-mobile-text-transform="none"] .menu-drawer a {
+  text-transform: none;
+}
+
+/* ============================================================
+   PHASE 5: Smooth scroll on anchor links
+   ============================================================ */
+html:has(.header-wrapper--premium[data-hp-smooth-scroll="true"]) {
+  scroll-behavior: smooth;
+}
+
+/* ============================================================
+   PHASE 5: Reduced Motion (accessibility)
+   When user prefers reduced motion, disable all premium animations
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .header-wrapper--premium[data-hp-reduced-motion="true"],
+  .header-wrapper--premium[data-hp-reduced-motion="true"] *,
+  .header-wrapper--premium[data-hp-reduced-motion="true"] *::before,
+  .header-wrapper--premium[data-hp-reduced-motion="true"] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html:has(.header-wrapper--premium[data-hp-reduced-motion="true"][data-hp-smooth-scroll="true"]) {
+    scroll-behavior: auto;
+  }
+}
+
+/* ============================================================
+   PHASE 5: Final polish - focus rings & accessibility
+   ============================================================ */
+.header-wrapper--premium .header__icon:focus-visible,
+.header-wrapper--premium .header__menu-item:focus-visible,
+.header-wrapper--premium .hp-bottom-nav__item:focus-visible,
+.header-wrapper--premium .hp-inline-search__input:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Ensure transparent header doesn't break tap targets on mobile */
+@media screen and (max-width: 989px) {
+  .header-wrapper--transparent {
+    -webkit-tap-highlight-color: transparent;
+  }
+}

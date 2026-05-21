@@ -137,6 +137,12 @@
       --hp-cart-badge-bg: {{ section.settings.hp_cart_badge_bg }};
       --hp-cart-badge-text: {{ section.settings.hp_cart_badge_text }};
       --hp-icon-hover-color: {{ section.settings.hp_icon_hover_color }};
+
+      /* Phase 5: Mobile & Polish */
+      --hp-mobile-bottom-nav-bg: {{ section.settings.hp_mobile_bottom_nav_bg }};
+      --hp-mobile-bottom-nav-border: {{ section.settings.hp_mobile_bottom_nav_border }};
+      --hp-mobile-menu-font-size: {{ section.settings.hp_mobile_menu_font_size }}px;
+      --hp-mobile-menu-padding: {{ section.settings.hp_mobile_menu_padding }}px;
     }
   {%- endif -%}
 {%- endstyle -%}
@@ -194,6 +200,11 @@
     data-hp-hover-style="{{ section.settings.hp_hover_style }}"
     data-hp-cart-badge="{{ section.settings.hp_cart_badge_style }}"
     data-hp-cart-badge-pos="{{ section.settings.hp_cart_badge_position }}"
+    data-hp-mobile-drawer="{{ section.settings.hp_mobile_drawer_position }}"
+    data-hp-mobile-anim="{{ section.settings.hp_mobile_menu_anim }}"
+    data-hp-mobile-text-transform="{{ section.settings.hp_mobile_menu_text_transform }}"
+    data-hp-smooth-scroll="{{ section.settings.hp_smooth_scroll }}"
+    data-hp-reduced-motion="{{ section.settings.hp_respect_reduced_motion }}"
   {%- endif -%}
   class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}{% if section.settings.hp_enable_premium %} header-wrapper--premium header-wrapper--layout-{{ section.settings.hp_header_layout }}{% endif %}{% if hp_transparent_active %} header-wrapper--transparent{% endif %}{% if section.settings.hp_enable_premium and section.settings.hp_header_width == 'boxed' %} header-wrapper--boxed{% endif %}"
 >
@@ -501,6 +512,76 @@
     color_scheme: section.settings.color_scheme,
     desktop_menu_type: section.settings.menu_type_desktop
   -%}
+{%- endif -%}
+
+{%- comment -%} ===== PHASE 5: Mobile Bottom Navigation Bar ===== {%- endcomment -%}
+{%- if section.settings.hp_enable_premium and section.settings.hp_show_mobile_bottom_nav -%}
+  <nav class="hp-bottom-nav" aria-label="Mobile bottom navigation" role="navigation">
+    <button
+      type="button"
+      class="hp-bottom-nav__item hp-bottom-nav__search"
+      aria-label="{{ 'general.search.search' | t }}"
+      data-hp-bottom-action="search"
+    >
+      <span class="svg-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </span>
+      <span class="hp-bottom-nav__label">{{ 'general.search.search' | t }}</span>
+    </button>
+
+    {%- if section.settings.hp_show_wishlist and section.settings.hp_wishlist_url != blank -%}
+      <a
+        href="{{ section.settings.hp_wishlist_url }}"
+        class="hp-bottom-nav__item hp-bottom-nav__wishlist"
+        aria-label="Wishlist"
+      >
+        <span class="svg-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </span>
+        <span class="hp-bottom-nav__label">Wishlist</span>
+      </a>
+    {%- endif -%}
+
+    {%- if shop.customer_accounts_enabled -%}
+      <a
+        href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+        class="hp-bottom-nav__item hp-bottom-nav__account"
+        aria-label="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
+        rel="nofollow"
+      >
+        <span class="svg-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </span>
+        <span class="hp-bottom-nav__label">Account</span>
+      </a>
+    {%- endif -%}
+
+    <a
+      href="{{ routes.cart_url }}"
+      class="hp-bottom-nav__item hp-bottom-nav__cart"
+      aria-label="{{ 'templates.cart.cart' | t }}"
+    >
+      <span class="svg-wrapper hp-bottom-nav__cart-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        {%- if cart != empty -%}
+          <span class="hp-bottom-nav__cart-count" aria-hidden="true">{{ cart.item_count }}</span>
+        {%- endif -%}
+      </span>
+      <span class="hp-bottom-nav__label">{{ 'templates.cart.cart' | t }}</span>
+    </a>
+  </nav>
 {%- endif -%}
 
 {% javascript %}
@@ -1131,6 +1212,97 @@
       "id": "hp_icon_hover_color",
       "label": "Icon hover color",
       "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Premium Mobile & Polish (Phase 5)"
+    },
+    {
+      "type": "checkbox",
+      "id": "hp_show_mobile_bottom_nav",
+      "label": "Show mobile bottom navigation",
+      "default": false,
+      "info": "Fixed bottom bar on mobile with quick links to search, wishlist, account and cart."
+    },
+    {
+      "type": "color",
+      "id": "hp_mobile_bottom_nav_bg",
+      "label": "Bottom nav background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "hp_mobile_bottom_nav_border",
+      "label": "Bottom nav border",
+      "default": "#E5E5E5"
+    },
+    {
+      "type": "select",
+      "id": "hp_mobile_drawer_position",
+      "label": "Mobile drawer position",
+      "options": [
+        { "value": "default", "label": "Default (Dawn)" },
+        { "value": "left", "label": "Slide from left" },
+        { "value": "right", "label": "Slide from right" },
+        { "value": "fullscreen", "label": "Full screen" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "select",
+      "id": "hp_mobile_menu_anim",
+      "label": "Mobile menu animation",
+      "options": [
+        { "value": "slide", "label": "Slide" },
+        { "value": "fade", "label": "Fade" },
+        { "value": "push", "label": "Push (squeeze content)" }
+      ],
+      "default": "slide"
+    },
+    {
+      "type": "range",
+      "id": "hp_mobile_menu_font_size",
+      "label": "Mobile menu font size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "hp_mobile_menu_text_transform",
+      "label": "Mobile menu text transform",
+      "options": [
+        { "value": "none", "label": "Default" },
+        { "value": "uppercase", "label": "UPPERCASE" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "hp_mobile_menu_padding",
+      "label": "Mobile menu link padding",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "hp_smooth_scroll",
+      "label": "Smooth scroll on anchor links",
+      "default": true,
+      "info": "Smooth scrolling when clicking anchor links (e.g., back to top)."
+    },
+    {
+      "type": "checkbox",
+      "id": "hp_respect_reduced_motion",
+      "label": "Respect reduced motion preference",
+      "default": true,
+      "info": "Disable premium animations for users who prefer reduced motion (accessibility)."
     },
     {
       "type": "header",
