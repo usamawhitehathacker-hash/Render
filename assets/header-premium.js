@@ -1,5 +1,5 @@
 /* ============================================================
-   PREMIUM HEADER - Phase 1 + Phase 2 + Phase 3 JavaScript
+   PREMIUM HEADER - Phase 1 + Phase 2 + Phase 3 + Phase 4 JavaScript
    ============================================================
    This file extends Dawn's default header with premium behavior.
    It only loads when "Enable Premium Header" is turned ON.
@@ -7,6 +7,7 @@
    Phase 1: Foundation IIFE + Shopify editor events
    Phase 2: Transparent header content offset
    Phase 3: Hover-trigger dropdowns (Dawn's dropdown is click-only by default)
+   Phase 4: Icons & Actions (CSS-driven, no JS needed)
    ============================================================ */
 
 (function () {

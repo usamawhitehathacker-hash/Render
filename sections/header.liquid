@@ -130,6 +130,13 @@
       /* Phase 3: Hover effect */
       --hp-hover-underline-color: {{ section.settings.hp_hover_underline_color }};
       --hp-hover-underline-thickness: {{ section.settings.hp_hover_underline_thickness }}px;
+
+      /* Phase 4: Icons & Actions */
+      --hp-icon-size: {{ section.settings.hp_icon_size }}px;
+      --hp-icon-spacing: {{ section.settings.hp_icon_spacing }}px;
+      --hp-cart-badge-bg: {{ section.settings.hp_cart_badge_bg }};
+      --hp-cart-badge-text: {{ section.settings.hp_cart_badge_text }};
+      --hp-icon-hover-color: {{ section.settings.hp_icon_hover_color }};
     }
   {%- endif -%}
 {%- endstyle -%}
@@ -185,6 +192,8 @@
     data-hp-anim="{{ section.settings.hp_anim_type }}"
     data-hp-text-transform="{{ section.settings.hp_menu_text_transform }}"
     data-hp-hover-style="{{ section.settings.hp_hover_style }}"
+    data-hp-cart-badge="{{ section.settings.hp_cart_badge_style }}"
+    data-hp-cart-badge-pos="{{ section.settings.hp_cart_badge_position }}"
   {%- endif -%}
   class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}{% if section.settings.hp_enable_premium %} header-wrapper--premium header-wrapper--layout-{{ section.settings.hp_header_layout }}{% endif %}{% if hp_transparent_active %} header-wrapper--transparent{% endif %}{% if section.settings.hp_enable_premium and section.settings.hp_header_width == 'boxed' %} header-wrapper--boxed{% endif %}"
 >
@@ -384,7 +393,36 @@
           </localization-form>
         {%- endif -%}
       </div>
-      {% render 'header-search', input_id: 'Search-In-Modal' %}
+      {%- comment -%} ===== PHASE 4: Inline search bar OR default Dawn search modal ===== {%- endcomment -%}
+      {%- if section.settings.hp_enable_premium and section.settings.hp_show_inline_search -%}
+        <form
+          action="{{ routes.search_url }}"
+          method="get"
+          role="search"
+          class="hp-inline-search small-hide"
+        >
+          <label for="HP-InlineSearch-{{ section.id }}" class="visually-hidden">
+            {{ 'general.search.search' | t }}
+          </label>
+          <input
+            type="search"
+            id="HP-InlineSearch-{{ section.id }}"
+            name="q"
+            value="{{ search.terms | escape }}"
+            placeholder="{{ section.settings.hp_search_placeholder | default: 'Search products...' | escape }}"
+            class="hp-inline-search__input"
+            autocomplete="off"
+          >
+          <input type="hidden" name="options[prefix]" value="last">
+          <button type="submit" class="hp-inline-search__submit" aria-label="{{ 'general.search.search' | t }}">
+            <span class="svg-wrapper">{{ 'icon-search.svg' | inline_asset_content }}</span>
+          </button>
+        </form>
+        {%- comment -%} Mobile still uses Dawn's modal {%- endcomment -%}
+        <div class="medium-hide large-up-hide">{% render 'header-search', input_id: 'Search-In-Modal' %}</div>
+      {%- else -%}
+        {% render 'header-search', input_id: 'Search-In-Modal' %}
+      {%- endif -%}
 
       {%- if shop.customer_accounts_enabled -%}
         <a
@@ -412,6 +450,22 @@
               endif
             -%}
           </span>
+        </a>
+      {%- endif -%}
+
+      {%- comment -%} ===== PHASE 4: Wishlist icon (optional) ===== {%- endcomment -%}
+      {%- if section.settings.hp_enable_premium and section.settings.hp_show_wishlist -%}
+        <a
+          href="{{ section.settings.hp_wishlist_url | default: '#' }}"
+          class="header__icon header__icon--wishlist hp-icon-wishlist link focus-inset"
+          aria-label="Wishlist"
+        >
+          <span class="svg-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </span>
+          <span class="visually-hidden">Wishlist</span>
         </a>
       {%- endif -%}
 
@@ -988,6 +1042,95 @@
       "step": 1,
       "unit": "px",
       "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Premium Icons & Actions (Phase 4)"
+    },
+    {
+      "type": "checkbox",
+      "id": "hp_show_wishlist",
+      "label": "Show wishlist icon",
+      "default": false,
+      "info": "Adds a heart icon next to the account icon. Set the URL below."
+    },
+    {
+      "type": "url",
+      "id": "hp_wishlist_url",
+      "label": "Wishlist page URL",
+      "info": "Link to your wishlist page (e.g., /pages/wishlist or your wishlist app URL)."
+    },
+    {
+      "type": "checkbox",
+      "id": "hp_show_inline_search",
+      "label": "Show inline search bar",
+      "default": false,
+      "info": "Replaces the search icon with an inline search input field on desktop."
+    },
+    {
+      "type": "text",
+      "id": "hp_search_placeholder",
+      "label": "Search bar placeholder",
+      "default": "Search products..."
+    },
+    {
+      "type": "range",
+      "id": "hp_icon_size",
+      "label": "Icon size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "hp_icon_spacing",
+      "label": "Icon spacing",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "hp_cart_badge_style",
+      "label": "Cart badge style",
+      "options": [
+        { "value": "circle", "label": "Circle (default)" },
+        { "value": "square", "label": "Square" },
+        { "value": "dot", "label": "Dot only (no number)" }
+      ],
+      "default": "circle"
+    },
+    {
+      "type": "select",
+      "id": "hp_cart_badge_position",
+      "label": "Cart badge position",
+      "options": [
+        { "value": "top-right", "label": "Top right (default)" },
+        { "value": "top-left", "label": "Top left" }
+      ],
+      "default": "top-right"
+    },
+    {
+      "type": "color",
+      "id": "hp_cart_badge_bg",
+      "label": "Cart badge background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "hp_cart_badge_text",
+      "label": "Cart badge text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "hp_icon_hover_color",
+      "label": "Icon hover color",
+      "default": "#666666"
     },
     {
       "type": "header",

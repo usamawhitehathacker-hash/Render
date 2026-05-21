@@ -422,3 +422,163 @@
 .header-wrapper--premium[data-hp-trigger="click"] .mega-menu details {
   /* JS handles click toggle. No CSS-only hover. */
 }
+
+
+/* ============================================================
+   PHASE 4: Header Icons & Actions
+   ============================================================ */
+
+/* Icon size and spacing */
+.header-wrapper--premium .header__icons {
+  gap: var(--hp-icon-spacing, 8px);
+}
+
+.header-wrapper--premium .header__icon svg,
+.header-wrapper--premium .header__icon .svg-wrapper svg {
+  width: var(--hp-icon-size, 20px);
+  height: var(--hp-icon-size, 20px);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* Icon hover color */
+.header-wrapper--premium .header__icon:hover,
+.header-wrapper--premium .header__icon:hover svg {
+  color: var(--hp-icon-hover-color, #666);
+}
+
+/* Wishlist icon styling */
+.header-wrapper--premium .hp-icon-wishlist {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.header-wrapper--premium .hp-icon-wishlist svg {
+  width: var(--hp-icon-size, 20px);
+  height: var(--hp-icon-size, 20px);
+}
+
+/* ============================================================
+   PHASE 4: Inline Search Bar
+   ============================================================ */
+.header-wrapper--premium .hp-inline-search {
+  display: none;
+  align-items: center;
+  position: relative;
+  width: clamp(180px, 22vw, 280px);
+  margin-right: 0.5rem;
+}
+
+@media screen and (min-width: 990px) {
+  .header-wrapper--premium .hp-inline-search {
+    display: flex;
+  }
+}
+
+.header-wrapper--premium .hp-inline-search__input {
+  width: 100%;
+  padding: 0.6rem 2.2rem 0.6rem 0.9rem;
+  font-size: 1.3rem;
+  border: 1px solid rgba(var(--color-foreground), 0.2);
+  border-radius: 999px;
+  background: rgba(var(--color-foreground), 0.03);
+  color: rgb(var(--color-foreground));
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.header-wrapper--premium .hp-inline-search__input::placeholder {
+  color: rgba(var(--color-foreground), 0.55);
+}
+
+.header-wrapper--premium .hp-inline-search__input:focus {
+  border-color: rgb(var(--color-foreground));
+  background: rgba(var(--color-foreground), 0.05);
+}
+
+.header-wrapper--premium .hp-inline-search__submit {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgb(var(--color-foreground));
+}
+
+.header-wrapper--premium .hp-inline-search__submit svg,
+.header-wrapper--premium .hp-inline-search__submit .svg-wrapper svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Inline search inside a transparent header */
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .hp-inline-search__input {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--hp-transparent-text, #fff);
+}
+
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .hp-inline-search__input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .hp-inline-search__submit {
+  color: var(--hp-transparent-icon, #fff);
+}
+
+/* ============================================================
+   PHASE 4: Cart Badge Variants
+   ============================================================ */
+
+/* Default circle is Dawn's default; only override when premium attr set */
+.header-wrapper--premium .cart-count-bubble {
+  background-color: var(--hp-cart-badge-bg, #000);
+  color: var(--hp-cart-badge-text, #fff);
+  transition: background-color 0.2s ease;
+}
+
+/* Square badge */
+.header-wrapper--premium[data-hp-cart-badge="square"] .cart-count-bubble {
+  border-radius: 2px;
+}
+
+/* Dot badge (no number) */
+.header-wrapper--premium[data-hp-cart-badge="dot"] .cart-count-bubble {
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.header-wrapper--premium[data-hp-cart-badge="dot"] .cart-count-bubble span[aria-hidden="true"] {
+  display: none;
+}
+
+/* Cart badge position: top-left */
+.header-wrapper--premium[data-hp-cart-badge-pos="top-left"] .header__icon--cart {
+  position: relative;
+}
+
+.header-wrapper--premium[data-hp-cart-badge-pos="top-left"] .cart-count-bubble {
+  right: auto;
+  left: 0;
+}
+
+/* ============================================================
+   PHASE 4: Mobile-friendly tweaks
+   ============================================================ */
+@media screen and (max-width: 749px) {
+  .header-wrapper--premium .header__icons {
+    gap: max(4px, calc(var(--hp-icon-spacing, 8px) * 0.5));
+  }
+}
