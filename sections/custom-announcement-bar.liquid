@@ -1,0 +1,130 @@
+{% comment %}
+  Custom Announcement Bar - Wilson's Leather Style
+  Simple rotating text bar with arrow navigation
+{% endcomment %}
+
+{%- style -%}
+  .custom-announcement-bar {
+    --cab-bg: {{ section.settings.bg_color }};
+    --cab-text: {{ section.settings.text_color }};
+    --cab-height: {{ section.settings.bar_height }}px;
+    --cab-font-size: {{ section.settings.font_size }}px;
+  }
+{%- endstyle -%}
+
+{{ 'custom-announcement-bar.css' | asset_url | stylesheet_tag }}
+
+<script>
+  try {
+    if (sessionStorage.getItem('cab-dismissed-{{ section.id }}') === 'true') {
+      var cabPlaceholder = document.currentScript;
+      cabPlaceholder.insertAdjacentHTML('afterend', '');
+    } else {
+      document.currentScript.insertAdjacentHTML('afterend', '<custom-announcement-bar id="cab-{{ section.id }}" class="custom-announcement-bar" data-section-id="{{ section.id }}" data-auto-rotate="{{ section.settings.auto_rotate }}" data-speed="{{ section.settings.rotate_speed }}" role="region" aria-label="Announcements"><div class="cab__inner">{% if section.settings.show_arrows and section.blocks.size > 1 %}<button class="cab__arrow cab__arrow--prev" aria-label="Previous announcement"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>{% endif %}<div class="cab__messages">{% for block in section.blocks %}{% if block.type == "message" %}<div class="cab__message {% if forloop.first %}is-active{% endif %}" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>{% endif %}{% endfor %}</div>{% if section.settings.show_arrows and section.blocks.size > 1 %}<button class="cab__arrow cab__arrow--next" aria-label="Next announcement"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>{% endif %}{% if section.settings.show_close %}<button class="cab__close" aria-label="Dismiss announcement bar"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>{% endif %}</div></custom-announcement-bar>');
+    }
+  } catch(e) {}
+</script>
+
+<script src="{{ 'custom-announcement-bar.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Announcement Bar",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#C14B5A"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "bar_height",
+      "label": "Bar height",
+      "min": 30,
+      "max": 50,
+      "step": 10,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 16,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_rotate",
+      "label": "Auto-rotate messages",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "rotate_speed",
+      "label": "Rotation speed",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "default": 5,
+      "unit": "s"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close",
+      "label": "Show close button",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Message text",
+          "default": "Free shipping on orders over $200"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement Bar",
+      "blocks": [
+        {
+          "type": "message",
+          "settings": {
+            "text": "Free shipping on orders over $200"
+          }
+        },
+        {
+          "type": "message",
+          "settings": {
+            "text": "New arrivals just dropped - Shop now"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

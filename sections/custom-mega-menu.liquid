@@ -1,0 +1,1025 @@
+    {% comment %}
+  ============================================================
+  SECTION: Custom Mega Menu (Premium Full-Width)
+  ============================================================
+  Style: Jacket Maker / Prada / Symmetry inspired
+  Author: Custom Build
+  Version: 1.2.0 (Logo Freedom Update)
+
+  Features:
+  - Full-width dropdown
+  - Multi-column layout (3-6 columns)
+  - Featured images
+  - Promotional banner support
+  - Mobile-responsive drawer
+  - 60+ customization settings
+  - Logo: position (left / center / center-split / right),
+          alignment, padding, hover effect, sticky scale,
+          separate mobile logo, text fallback styling.
+
+  Dependencies:
+  - assets/custom-mega-menu.css
+  - assets/custom-mega-menu.js
+  - snippets/mega-menu-column.liquid
+  - snippets/mega-menu-promo.liquid
+  ============================================================
+{% endcomment %}
+
+{{ 'custom-mega-menu.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'custom-mega-menu.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign section_id = section.id
+  assign menu = section.settings.main_menu
+  assign bg_color = section.settings.bg_color
+  assign text_color = section.settings.text_color
+  assign hover_color = section.settings.hover_color
+  assign dropdown_bg = section.settings.dropdown_bg
+  assign dropdown_text = section.settings.dropdown_text
+  assign dropdown_heading = section.settings.dropdown_heading
+  assign border_color = section.settings.border_color
+  assign accent_color = section.settings.accent_color
+  assign menu_height = section.settings.menu_height
+  assign dropdown_padding = section.settings.dropdown_padding
+  assign font_size_main = section.settings.font_size_main
+  assign font_size_sub = section.settings.font_size_sub
+  assign font_weight = section.settings.font_weight
+  assign letter_spacing = section.settings.letter_spacing
+  assign anim_duration = section.settings.anim_duration
+  assign anim_type = section.settings.anim_type
+  assign sticky_enabled = section.settings.sticky_enabled
+
+  comment
+    --------- LOGO SETTINGS (with safe defaults) ---------
+  endcomment
+  assign logo_position = section.settings.logo_position | default: 'left'
+  assign logo_alignment = section.settings.logo_alignment | default: 'center'
+  assign logo_height = section.settings.logo_height | default: 40
+  assign logo_width = section.settings.logo_width | default: 200
+  assign logo_mobile_height = section.settings.logo_mobile_height | default: 32
+  assign logo_mobile_max_width = section.settings.logo_mobile_max_width | default: 140
+  assign logo_pad_t = section.settings.logo_padding_top | default: 0
+  assign logo_pad_b = section.settings.logo_padding_bottom | default: 0
+  assign logo_pad_l = section.settings.logo_padding_left | default: 0
+  assign logo_pad_r = section.settings.logo_padding_right | default: 0
+  assign logo_opacity = section.settings.logo_opacity | default: 100
+  assign logo_hover_opacity = section.settings.logo_hover_opacity | default: 80
+  assign logo_hover_effect = section.settings.logo_hover_effect | default: 'none'
+  assign logo_sticky_scale = section.settings.logo_sticky_scale | default: 100
+  assign logo_bg = section.settings.logo_bg
+  assign logo_border_radius = section.settings.logo_border_radius | default: 0
+  assign logo_text_size = section.settings.logo_text_size | default: 24
+  assign logo_text_weight = section.settings.logo_text_weight | default: '700'
+  assign logo_text_spacing = section.settings.logo_text_spacing | default: 2
+  assign logo_text_transform = section.settings.logo_text_transform | default: 'uppercase'
+  assign logo_text_color = section.settings.logo_text_color
+  assign logo_custom_link = section.settings.logo_custom_link
+  assign logo_link = routes.root_url
+  if logo_custom_link != blank
+    assign logo_link = logo_custom_link
+  endif
+-%}
+
+{%- style -%}
+  #MegaMenu-{{ section_id }} {
+    --mm-bg: {{ bg_color }};
+    --mm-text: {{ text_color }};
+    --mm-hover: {{ hover_color }};
+    --mm-dropdown-bg: {{ dropdown_bg }};
+    --mm-dropdown-text: {{ dropdown_text }};
+    --mm-dropdown-heading: {{ dropdown_heading }};
+    --mm-border: {{ border_color }};
+    --mm-accent: {{ accent_color }};
+
+    --mm-height: {{ menu_height }}px;
+    --mm-dropdown-padding: {{ dropdown_padding }}px;
+    --mm-font-main: {{ font_size_main }}px;
+    --mm-font-sub: {{ font_size_sub }}px;
+    --mm-font-weight: {{ font_weight }};
+    --mm-letter-spacing: {{ letter_spacing }}px;
+
+    --mm-duration: {{ anim_duration }}ms;
+
+    /* Logo CSS vars (read by custom-mega-menu.css) */
+    --mm-logo-height: {{ logo_height }}px;
+    --mm-logo-width: {{ logo_width }}px;
+    --mm-logo-mobile-height: {{ logo_mobile_height }}px;
+    --mm-logo-mobile-max: {{ logo_mobile_max_width }}px;
+    --mm-logo-pt: {{ logo_pad_t }}px;
+    --mm-logo-pb: {{ logo_pad_b }}px;
+    --mm-logo-pl: {{ logo_pad_l }}px;
+    --mm-logo-pr: {{ logo_pad_r }}px;
+    --mm-logo-opacity: {{ logo_opacity | divided_by: 100.0 }};
+    --mm-logo-hover-opacity: {{ logo_hover_opacity | divided_by: 100.0 }};
+    --mm-logo-sticky-scale: {{ logo_sticky_scale | divided_by: 100.0 }};
+    --mm-logo-bg: {% if logo_bg != blank %}{{ logo_bg }}{% else %}transparent{% endif %};
+    --mm-logo-radius: {{ logo_border_radius }}px;
+    --mm-logo-text-size: {{ logo_text_size }}px;
+    --mm-logo-text-weight: {{ logo_text_weight }};
+    --mm-logo-text-spacing: {{ logo_text_spacing }}px;
+    --mm-logo-text-transform: {{ logo_text_transform }};
+    --mm-logo-text-color: {% if logo_text_color != blank %}{{ logo_text_color }}{% else %}{{ text_color }}{% endif %};
+  }
+
+  @media screen and (max-width: 989px) {
+    #MegaMenu-{{ section_id }} {
+      --mm-height: {{ section.settings.mobile_menu_height }}px;
+      --mm-font-main: {{ section.settings.mobile_font_size }}px;
+    }
+  }
+{%- endstyle -%}
+
+<custom-mega-menu
+  id="MegaMenu-{{ section_id }}"
+  class="cmm cmm--{{ anim_type }} cmm--logo-pos-{{ logo_position }} cmm--logo-align-{{ logo_alignment }} cmm--logo-hover-{{ logo_hover_effect }}{% if sticky_enabled %} cmm--sticky{% endif %}"
+  data-section-id="{{ section_id }}"
+  data-trigger="{{ section.settings.trigger_type }}"
+  data-mobile-style="{{ section.settings.mobile_style }}"
+  data-logo-position="{{ logo_position }}"
+>
+
+  {%- comment -%} ============ MAIN HEADER ============ {%- endcomment -%}
+  <header class="cmm__header">
+    <div class="cmm__container">
+      <div class="cmm__header-inner" data-logo-position="{{ logo_position }}">
+
+        {%- comment -%} Mobile menu toggle {%- endcomment -%}
+        <button
+          type="button"
+          class="cmm__mobile-toggle"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="MegaMenuMobile-{{ section_id }}"
+        >
+          <span class="cmm__mobile-toggle-line"></span>
+          <span class="cmm__mobile-toggle-line"></span>
+          <span class="cmm__mobile-toggle-line"></span>
+        </button>
+
+        {%- comment -%} ============ LOGO ============ {%- endcomment -%}
+        <div class="cmm__logo cmm__logo--align-{{ logo_alignment }}{% if section.settings.logo_mobile != blank %} cmm__logo--has-mobile{% endif %}">
+          <a href="{{ logo_link }}" class="cmm__logo-link" aria-label="{{ shop.name | escape }}">
+            {%- if section.settings.logo != blank -%}
+              {%- assign desktop_logo = section.settings.logo -%}
+              {%- capture desktop_sizes -%}(max-width: 989px) {{ logo_mobile_max_width }}px, {{ logo_width }}px{%- endcapture -%}
+              {{
+                desktop_logo
+                | image_url: width: 800
+                | image_tag:
+                    loading: 'eager',
+                    width: logo_width,
+                    height: logo_height,
+                    class: 'cmm__logo-image cmm__logo-image--desktop',
+                    alt: shop.name,
+                    widths: '100, 200, 300, 400, 600, 800',
+                    sizes: desktop_sizes
+              }}
+
+              {%- if section.settings.logo_mobile != blank -%}
+                {%- assign mobile_logo = section.settings.logo_mobile -%}
+                {{
+                  mobile_logo
+                  | image_url: width: 600
+                  | image_tag:
+                      loading: 'eager',
+                      width: logo_mobile_max_width,
+                      height: logo_mobile_height,
+                      class: 'cmm__logo-image cmm__logo-image--mobile',
+                      alt: shop.name,
+                      widths: '100, 200, 300, 400, 600',
+                      sizes: '(max-width: 989px) 40vw, 0px'
+                }}
+              {%- endif -%}
+            {%- else -%}
+              <span class="cmm__logo-text">{{ shop.name }}</span>
+            {%- endif -%}
+          </a>
+        </div>
+
+        {%- comment -%} ============ MAIN NAVIGATION ============ {%- endcomment -%}
+        <nav class="cmm__nav" aria-label="Main navigation">
+          <ul class="cmm__menu" role="menubar">
+
+            {%- for link in menu.links -%}
+              {%- assign link_index = forloop.index0 -%}
+              {%- assign has_matching_block = false -%}
+              {%- assign current_block = nil -%}
+              {%- assign link_handle = link.title | handleize -%}
+
+              {%- comment -%} Find matching block for this menu link {%- endcomment -%}
+              {%- for block in section.blocks -%}
+                {%- if block.settings.menu_link_handle == link_handle -%}
+                  {%- assign has_matching_block = true -%}
+                  {%- assign current_block = block -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              <li class="cmm__menu-item{% if link.links.size > 0 or has_matching_block %} cmm__menu-item--has-dropdown{% endif %}"
+                  role="none">
+
+                <a
+                  href="{{ link.url }}"
+                  class="cmm__menu-link"
+                  role="menuitem"
+                  {% if link.links.size > 0 or has_matching_block %}aria-haspopup="true" aria-expanded="false"{% endif %}
+                >
+                  {{ link.title }}
+                  {%- if link.links.size > 0 or has_matching_block -%}
+                    <svg class="cmm__menu-arrow" xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="none">
+                      <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                  {%- endif -%}
+                </a>
+
+                {%- comment -%} ============ DROPDOWN PANEL ============ {%- endcomment -%}
+                {%- if has_matching_block -%}
+                  <div class="cmm__dropdown"
+                       data-link-index="{{ link_index }}"
+                       {{ current_block.shopify_attributes }}>
+                    <div class="cmm__container">
+                      <div class="cmm__dropdown-grid"
+                           style="--columns: {{ current_block.settings.columns }}">
+
+                        {%- comment -%} Render columns {%- endcomment -%}
+                        {%- for i in (1..6) -%}
+                          {%- assign col_links_key = 'col_' | append: i | append: '_links' -%}
+                          {%- assign col_title_key = 'col_' | append: i | append: '_title' -%}
+                          {%- assign col_links = current_block.settings[col_links_key] -%}
+                          {%- assign col_title = current_block.settings[col_title_key] -%}
+
+                          {%- if col_links != blank or col_title != blank -%}
+                            {%- render 'mega-menu-column',
+                               col_title: col_title,
+                               linklist_handle: col_links,
+                               column_index: i -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+
+                        {%- comment -%} Featured image / promo {%- endcomment -%}
+                        {%- if current_block.settings.featured_image != blank -%}
+                          {%- render 'mega-menu-promo',
+                             featured_image: current_block.settings.featured_image,
+                             promo_heading: current_block.settings.promo_heading,
+                             promo_subheading: current_block.settings.promo_subheading,
+                             promo_button_text: current_block.settings.promo_button_text,
+                             promo_button_link: current_block.settings.promo_button_link -%}
+                        {%- endif -%}
+
+                      </div>
+                    </div>
+                  </div>
+
+                {%- elsif link.links.size > 0 -%}
+                  {%- comment -%} Fallback: simple dropdown if no block configured {%- endcomment -%}
+                  <div class="cmm__dropdown cmm__dropdown--simple" data-link-index="{{ link_index }}">
+                    <div class="cmm__container">
+                      <ul class="cmm__simple-list">
+                        {%- for sublink in link.links -%}
+                          <li class="cmm__simple-item">
+                            <a href="{{ sublink.url }}" class="cmm__simple-link">
+                              {{ sublink.title }}
+                            </a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    </div>
+                  </div>
+                {%- endif -%}
+
+              </li>
+            {%- endfor -%}
+
+          </ul>
+        </nav>
+
+        {%- comment -%} ============ HEADER ACTIONS ============ {%- endcomment -%}
+        <div class="cmm__actions">
+
+          {%- if section.settings.show_search -%}
+            <button type="button" class="cmm__action-btn cmm__search-btn" aria-label="Search">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </button>
+          {%- endif -%}
+
+          {%- if shop.customer_accounts_enabled -%}
+            <a href="{{ routes.account_url }}" class="cmm__action-btn" aria-label="Account">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </a>
+          {%- endif -%}
+
+          <a href="{{ routes.cart_url }}" class="cmm__action-btn cmm__cart-btn" aria-label="Cart">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"/>
+              <circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            <span class="cmm__cart-count" data-cart-count>{{ cart.item_count }}</span>
+          </a>
+
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  {%- comment -%} ============ DROPDOWN BACKDROP ============ {%- endcomment -%}
+  <div class="cmm__backdrop" aria-hidden="true"></div>
+
+  {%- comment -%} ============ MOBILE DRAWER ============ {%- endcomment -%}
+  <div class="cmm__mobile-drawer"
+       id="MegaMenuMobile-{{ section_id }}"
+       aria-hidden="true">
+    <div class="cmm__mobile-drawer-inner">
+
+      <div class="cmm__mobile-header">
+        <span class="cmm__mobile-title">Menu</span>
+        <button type="button" class="cmm__mobile-close" aria-label="Close menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="cmm__mobile-nav">
+        <ul class="cmm__mobile-list">
+          {%- for link in menu.links -%}
+            <li class="cmm__mobile-item{% if link.links.size > 0 %} cmm__mobile-item--has-children{% endif %}">
+              {%- if link.links.size > 0 -%}
+                <button type="button" class="cmm__mobile-link cmm__mobile-toggle-sub" aria-expanded="false">
+                  <span>{{ link.title }}</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M3 5L6 8L9 5" stroke="currentColor" stroke-width="1.5"/>
+                  </svg>
+                </button>
+                <ul class="cmm__mobile-sublist">
+                  <li class="cmm__mobile-subitem">
+                    <a href="{{ link.url }}" class="cmm__mobile-sublink cmm__mobile-sublink--all">
+                      View All {{ link.title }}
+                    </a>
+                  </li>
+                  {%- for sublink in link.links -%}
+                    <li class="cmm__mobile-subitem">
+                      <a href="{{ sublink.url }}" class="cmm__mobile-sublink">
+                        {{ sublink.title }}
+                      </a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- else -%}
+                <a href="{{ link.url }}" class="cmm__mobile-link">{{ link.title }}</a>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+
+    </div>
+  </div>
+
+</custom-mega-menu>
+
+{% schema %}
+{
+  "name": "Custom Mega Menu",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Menu Source"
+    },
+    {
+      "type": "link_list",
+      "id": "main_menu",
+      "label": "Main menu",
+      "default": "main-menu",
+      "info": "Set up your menu in Navigation, then link blocks below to specific menu items."
+    },
+    {
+      "type": "header",
+      "content": "Logo - Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Desktop logo image"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_mobile",
+      "label": "Mobile logo image (optional)",
+      "info": "Leave empty to use desktop logo on mobile too."
+    },
+    {
+      "type": "url",
+      "id": "logo_custom_link",
+      "label": "Logo link (optional)",
+      "info": "Default goes to homepage. Set to override."
+    },
+    {
+      "type": "header",
+      "content": "Logo - Layout & Position"
+    },
+    {
+      "type": "select",
+      "id": "logo_position",
+      "label": "Logo position",
+      "options": [
+        { "value": "left", "label": "Left (logo - nav - actions)" },
+        { "value": "center-split", "label": "Center inline (nav left - LOGO - actions right)" },
+        { "value": "center-stacked", "label": "Center stacked (logo on top, nav below)" },
+        { "value": "right", "label": "Right (nav - logo - actions)" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "logo_alignment",
+      "label": "Logo image alignment inside its container",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Logo - Desktop Size"
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "label": "Desktop logo height",
+      "min": 20,
+      "max": 140,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Desktop logo max width",
+      "min": 50,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "default": 200,
+      "info": "Image keeps natural aspect ratio. Width acts as upper limit."
+    },
+    {
+      "type": "header",
+      "content": "Logo - Mobile Size"
+    },
+    {
+      "type": "range",
+      "id": "logo_mobile_height",
+      "label": "Mobile logo height",
+      "min": 18,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "logo_mobile_max_width",
+      "label": "Mobile logo max width",
+      "min": 60,
+      "max": 300,
+      "step": 5,
+      "unit": "px",
+      "default": 140
+    },
+    {
+      "type": "header",
+      "content": "Logo - Padding (gives breathing room)"
+    },
+    {
+      "type": "range",
+      "id": "logo_padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "logo_padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "logo_padding_left",
+      "label": "Padding left",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "logo_padding_right",
+      "label": "Padding right",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Logo - Visual Effects"
+    },
+    {
+      "type": "range",
+      "id": "logo_opacity",
+      "label": "Logo opacity",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "select",
+      "id": "logo_hover_effect",
+      "label": "Logo hover effect",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "fade", "label": "Fade" },
+        { "value": "scale", "label": "Slight zoom" },
+        { "value": "lift", "label": "Lift up" }
+      ],
+      "default": "fade"
+    },
+    {
+      "type": "range",
+      "id": "logo_hover_opacity",
+      "label": "Hover opacity (for fade)",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "logo_sticky_scale",
+      "label": "Logo scale when header sticks",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "info": "Set < 100% to shrink logo on scroll for a polished sticky look."
+    },
+    {
+      "type": "color",
+      "id": "logo_bg",
+      "label": "Logo background color (optional)"
+    },
+    {
+      "type": "range",
+      "id": "logo_border_radius",
+      "label": "Logo background corner radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Logo - Text Fallback (used when no image)"
+    },
+    {
+      "type": "color",
+      "id": "logo_text_color",
+      "label": "Logo text color"
+    },
+    {
+      "type": "range",
+      "id": "logo_text_size",
+      "label": "Logo text size",
+      "min": 14,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "logo_text_weight",
+      "label": "Logo text weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-Bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra-Bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "logo_text_spacing",
+      "label": "Logo text letter-spacing",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "logo_text_transform",
+      "label": "Logo text case",
+      "options": [
+        { "value": "none", "label": "Normal" },
+        { "value": "uppercase", "label": "UPPERCASE" },
+        { "value": "lowercase", "label": "lowercase" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "header",
+      "content": "Colors - Header"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Header background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Menu text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "hover_color",
+      "label": "Hover color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#E5E5E5"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color (badges and buttons)",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Colors - Dropdown"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_bg",
+      "label": "Dropdown background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_text",
+      "label": "Dropdown link color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_heading",
+      "label": "Dropdown heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Layout and Sizing"
+    },
+    {
+      "type": "range",
+      "id": "menu_height",
+      "label": "Header height",
+      "min": 50,
+      "max": 140,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "dropdown_padding",
+      "label": "Dropdown padding",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "font_size_main",
+      "label": "Main menu font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "font_size_sub",
+      "label": "Submenu font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Menu font weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "select",
+      "id": "anim_type",
+      "label": "Animation style",
+      "options": [
+        { "value": "fade", "label": "Fade" },
+        { "value": "slide-down", "label": "Slide Down" },
+        { "value": "slide-up", "label": "Slide Up" },
+        { "value": "zoom", "label": "Zoom" }
+      ],
+      "default": "slide-down"
+    },
+    {
+      "type": "range",
+      "id": "anim_duration",
+      "label": "Animation duration",
+      "min": 100,
+      "max": 800,
+      "step": 50,
+      "unit": "ms",
+      "default": 300
+    },
+    {
+      "type": "select",
+      "id": "trigger_type",
+      "label": "Open dropdown on",
+      "options": [
+        { "value": "hover", "label": "Hover" },
+        { "value": "click", "label": "Click" }
+      ],
+      "default": "hover"
+    },
+    {
+      "type": "header",
+      "content": "Sticky Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_enabled",
+      "label": "Sticky on scroll",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Header Actions"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search icon",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Mobile Settings"
+    },
+    {
+      "type": "select",
+      "id": "mobile_style",
+      "label": "Mobile menu style",
+      "options": [
+        { "value": "drawer-left", "label": "Drawer (left)" },
+        { "value": "drawer-right", "label": "Drawer (right)" },
+        { "value": "fullscreen", "label": "Full screen" }
+      ],
+      "default": "drawer-left"
+    },
+    {
+      "type": "range",
+      "id": "mobile_menu_height",
+      "label": "Mobile header height",
+      "min": 50,
+      "max": 90,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "mobile_font_size",
+      "label": "Mobile font size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mega_dropdown",
+      "name": "Mega Dropdown",
+      "limit": 8,
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_link_handle",
+          "label": "Menu link handle",
+          "info": "Enter the handle of the menu link this dropdown belongs to (e.g., shop, men, women). Find handles in Navigation."
+        },
+        {
+          "type": "range",
+          "id": "columns",
+          "label": "Number of columns",
+          "min": 2,
+          "max": 6,
+          "step": 1,
+          "default": 4
+        },
+        {
+          "type": "header",
+          "content": "Column 1"
+        },
+        {
+          "type": "text",
+          "id": "col_1_title",
+          "label": "Column 1 heading"
+        },
+        {
+          "type": "link_list",
+          "id": "col_1_links",
+          "label": "Column 1 menu"
+        },
+        {
+          "type": "header",
+          "content": "Column 2"
+        },
+        {
+          "type": "text",
+          "id": "col_2_title",
+          "label": "Column 2 heading"
+        },
+        {
+          "type": "link_list",
+          "id": "col_2_links",
+          "label": "Column 2 menu"
+        },
+        {
+          "type": "header",
+          "content": "Column 3"
+        },
+        {
+          "type": "text",
+          "id": "col_3_title",
+          "label": "Column 3 heading"
+        },
+        {
+          "type": "link_list",
+          "id": "col_3_links",
+          "label": "Column 3 menu"
+        },
+        {
+          "type": "header",
+          "content": "Column 4"
+        },
+        {
+          "type": "text",
+          "id": "col_4_title",
+          "label": "Column 4 heading"
+        },
+        {
+          "type": "link_list",
+          "id": "col_4_links",
+          "label": "Column 4 menu"
+        },
+        {
+          "type": "header",
+          "content": "Column 5 (optional)"
+        },
+        {
+          "type": "text",
+          "id": "col_5_title",
+          "label": "Column 5 heading"
+        },
+        {
+          "type": "link_list",
+          "id": "col_5_links",
+          "label": "Column 5 menu"
+        },
+        {
+          "type": "header",
+          "content": "Column 6 (optional)"
+        },
+        {
+          "type": "text",
+          "id": "col_6_title",
+          "label": "Column 6 heading"
+        },
+        {
+          "type": "link_list",
+          "id": "col_6_links",
+          "label": "Column 6 menu"
+        },
+        {
+          "type": "header",
+          "content": "Featured Image and Promo"
+        },
+        {
+          "type": "image_picker",
+          "id": "featured_image",
+          "label": "Featured image"
+        },
+        {
+          "type": "text",
+          "id": "promo_heading",
+          "label": "Promo heading",
+          "default": "New Collection"
+        },
+        {
+          "type": "text",
+          "id": "promo_subheading",
+          "label": "Promo subheading",
+          "default": "Discover the latest arrivals"
+        },
+        {
+          "type": "text",
+          "id": "promo_button_text",
+          "label": "Button text",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "promo_button_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Mega Menu",
+      "blocks": [
+        { "type": "mega_dropdown" },
+        { "type": "mega_dropdown" }
+      ]
+    }
+  ]
+}
+{% endschema %}
