@@ -105,11 +105,19 @@
     }
   }
 
-  {%- comment -%} ===== PREMIUM HEADER CSS VARIABLES (Phase 1) ===== {%- endcomment -%}
+  {%- comment -%} ===== PREMIUM HEADER CSS VARIABLES (Phases 1-2) ===== {%- endcomment -%}
   {%- if section.settings.hp_enable_premium -%}
     .section-header {
       --hp-top-line-height: {{ section.settings.hp_top_line_height }}px;
       --hp-top-line-color: {{ section.settings.hp_top_line_color }};
+
+      /* Phase 2: Header layout & sizing */
+      --hp-header-max-width: {{ section.settings.hp_header_max_width }}px;
+      --hp-logo-padding: {{ section.settings.hp_logo_padding }}px;
+
+      /* Phase 2: Transparent header colors */
+      --hp-transparent-text: {{ section.settings.hp_transparent_text_color }};
+      --hp-transparent-icon: {{ section.settings.hp_transparent_icon_color }};
     }
   {%- endif -%}
 {%- endstyle -%}
@@ -130,13 +138,37 @@
   if section.settings.sticky_header_type != 'none'
     assign header_tag = 'sticky-header'
   endif
+
+  comment
+    ===== PHASE 2: Transparent header detection =====
+    Determine whether transparent header should be active on this page.
+  endcomment
+  assign hp_transparent_active = false
+  if section.settings.hp_enable_premium and section.settings.hp_enable_transparent
+    case section.settings.hp_transparent_apply_on
+      when 'index'
+        if request.page_type == 'index'
+          assign hp_transparent_active = true
+        endif
+      when 'index_collection'
+        if request.page_type == 'index' or request.page_type == 'collection'
+          assign hp_transparent_active = true
+        endif
+      when 'all'
+        assign hp_transparent_active = true
+    endcase
+  endif
 %}
 
 <{{ header_tag }}
   {% if header_tag == 'sticky-header' %}
     data-sticky-type="{{ section.settings.sticky_header_type }}"
   {% endif %}
-  class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}{% if section.settings.hp_enable_premium %} header-wrapper--premium{% endif %}"
+  {% if hp_transparent_active %}
+    data-hp-transparent="true"
+    data-hp-transparent-border="{{ section.settings.hp_transparent_show_border }}"
+  {% endif %}
+  class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}{% if section.settings.hp_enable_premium %} header-wrapper--premium header-wrapper--layout-{{ section.settings.hp_header_layout }}{% endif %}{% if hp_transparent_active %} header-wrapper--transparent{% endif %}{% if section.settings.hp_enable_premium and section.settings.hp_header_width == 'boxed' %} header-wrapper--boxed{% endif %}"
 >
   {%- comment -%} ===== PREMIUM TOP LINE (Phase 1: Jacket Maker style thin line) ===== {%- endcomment -%}
   {%- if section.settings.hp_enable_premium and section.settings.hp_show_top_line -%}
@@ -189,6 +221,40 @@
                 sizes: sizes,
                 preload: true
             }}
+
+            {%- comment -%} ===== PHASE 2: Transparent logo (alternate logo for transparent header) ===== {%- endcomment -%}
+            {%- if hp_transparent_active and section.settings.hp_transparent_logo != blank -%}
+              {%- assign hp_t_logo = section.settings.hp_transparent_logo -%}
+              {%- assign hp_t_logo_alt = hp_t_logo.alt | default: shop.name | escape -%}
+              {%- assign hp_t_logo_height = settings.logo_width | divided_by: hp_t_logo.aspect_ratio -%}
+              <img
+                src="{{ hp_t_logo | image_url: width: 600 }}"
+                srcset="{{ hp_t_logo | image_url: width: settings.logo_width }} {{ settings.logo_width }}w, {{ hp_t_logo | image_url: width: settings.logo_width | times: 2 }} {{ settings.logo_width | times: 2 }}w"
+                sizes="{{ settings.logo_width }}px"
+                width="{{ settings.logo_width }}"
+                height="{{ hp_t_logo_height }}"
+                alt="{{ hp_t_logo_alt }}"
+                class="header__heading-logo header__heading-logo--transparent motion-reduce"
+                loading="eager"
+              >
+            {%- endif -%}
+
+            {%- comment -%} ===== PHASE 2: Sticky logo (alternate logo when scrolled/sticky) ===== {%- endcomment -%}
+            {%- if section.settings.hp_enable_premium and section.settings.hp_sticky_logo != blank -%}
+              {%- assign hp_s_logo = section.settings.hp_sticky_logo -%}
+              {%- assign hp_s_logo_alt = hp_s_logo.alt | default: shop.name | escape -%}
+              {%- assign hp_s_logo_height = settings.logo_width | divided_by: hp_s_logo.aspect_ratio -%}
+              <img
+                src="{{ hp_s_logo | image_url: width: 600 }}"
+                srcset="{{ hp_s_logo | image_url: width: settings.logo_width }} {{ settings.logo_width }}w, {{ hp_s_logo | image_url: width: settings.logo_width | times: 2 }} {{ settings.logo_width | times: 2 }}w"
+                sizes="{{ settings.logo_width }}px"
+                width="{{ settings.logo_width }}"
+                height="{{ hp_s_logo_height }}"
+                alt="{{ hp_s_logo_alt }}"
+                class="header__heading-logo header__heading-logo--sticky motion-reduce"
+                loading="lazy"
+              >
+            {%- endif -%}
           </div>
         {%- else -%}
           <span class="h2">{{ shop.name }}</span>
@@ -232,6 +298,40 @@
                 sizes: sizes,
                 preload: true
             }}
+
+            {%- comment -%} ===== PHASE 2: Transparent logo (middle-center variant) ===== {%- endcomment -%}
+            {%- if hp_transparent_active and section.settings.hp_transparent_logo != blank -%}
+              {%- assign hp_t_logo = section.settings.hp_transparent_logo -%}
+              {%- assign hp_t_logo_alt = hp_t_logo.alt | default: shop.name | escape -%}
+              {%- assign hp_t_logo_height = settings.logo_width | divided_by: hp_t_logo.aspect_ratio -%}
+              <img
+                src="{{ hp_t_logo | image_url: width: 600 }}"
+                srcset="{{ hp_t_logo | image_url: width: settings.logo_width }} {{ settings.logo_width }}w, {{ hp_t_logo | image_url: width: settings.logo_width | times: 2 }} {{ settings.logo_width | times: 2 }}w"
+                sizes="(min-width: 750px) {{ settings.logo_width }}px, 50vw"
+                width="{{ settings.logo_width }}"
+                height="{{ hp_t_logo_height }}"
+                alt="{{ hp_t_logo_alt }}"
+                class="header__heading-logo header__heading-logo--transparent"
+                loading="eager"
+              >
+            {%- endif -%}
+
+            {%- comment -%} ===== PHASE 2: Sticky logo (middle-center variant) ===== {%- endcomment -%}
+            {%- if section.settings.hp_enable_premium and section.settings.hp_sticky_logo != blank -%}
+              {%- assign hp_s_logo = section.settings.hp_sticky_logo -%}
+              {%- assign hp_s_logo_alt = hp_s_logo.alt | default: shop.name | escape -%}
+              {%- assign hp_s_logo_height = settings.logo_width | divided_by: hp_s_logo.aspect_ratio -%}
+              <img
+                src="{{ hp_s_logo | image_url: width: 600 }}"
+                srcset="{{ hp_s_logo | image_url: width: settings.logo_width }} {{ settings.logo_width }}w, {{ hp_s_logo | image_url: width: settings.logo_width | times: 2 }} {{ settings.logo_width | times: 2 }}w"
+                sizes="(min-width: 750px) {{ settings.logo_width }}px, 50vw"
+                width="{{ settings.logo_width }}"
+                height="{{ hp_s_logo_height }}"
+                alt="{{ hp_s_logo_alt }}"
+                class="header__heading-logo header__heading-logo--sticky"
+                loading="lazy"
+              >
+            {%- endif -%}
           </div>
         {%- else -%}
           <span class="h2">{{ shop.name }}</span>
@@ -662,6 +762,106 @@
       "step": 1,
       "unit": "px",
       "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Premium Layout (Phase 2)"
+    },
+    {
+      "type": "select",
+      "id": "hp_header_layout",
+      "label": "Header layout",
+      "info": "Premium layout variations. 'Default' uses Dawn's standard layout.",
+      "options": [
+        { "value": "default", "label": "Default (Dawn)" },
+        { "value": "logo-left-nav-right", "label": "Logo Left + Nav Right" },
+        { "value": "logo-center-nav-below", "label": "Logo Center + Nav Below" },
+        { "value": "logo-center-nav-sides", "label": "Logo Center + Nav Sides (Split)" },
+        { "value": "logo-left-nav-center", "label": "Logo Left + Nav Center" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "select",
+      "id": "hp_header_width",
+      "label": "Header width",
+      "options": [
+        { "value": "full", "label": "Full width" },
+        { "value": "boxed", "label": "Boxed (max-width)" }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "range",
+      "id": "hp_header_max_width",
+      "label": "Header max width (when boxed)",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1440
+    },
+    {
+      "type": "range",
+      "id": "hp_logo_padding",
+      "label": "Logo padding (vertical)",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "image_picker",
+      "id": "hp_sticky_logo",
+      "label": "Sticky header logo (optional)",
+      "info": "Different logo to show when header is scrolled/sticky. If empty, the main logo is used."
+    },
+    {
+      "type": "header",
+      "content": "Transparent Header (Phase 2)"
+    },
+    {
+      "type": "checkbox",
+      "id": "hp_enable_transparent",
+      "label": "Enable transparent header",
+      "info": "Header floats over content (good for hero images). Requires Premium Header to be enabled.",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "hp_transparent_apply_on",
+      "label": "Apply transparent on",
+      "options": [
+        { "value": "index", "label": "Homepage only" },
+        { "value": "index_collection", "label": "Homepage + Collection pages" },
+        { "value": "all", "label": "All pages" }
+      ],
+      "default": "index"
+    },
+    {
+      "type": "image_picker",
+      "id": "hp_transparent_logo",
+      "label": "Transparent header logo",
+      "info": "Alternate logo (usually white) shown when header is transparent. If empty, the main logo is used."
+    },
+    {
+      "type": "color",
+      "id": "hp_transparent_text_color",
+      "label": "Transparent text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "hp_transparent_icon_color",
+      "label": "Transparent icon color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "checkbox",
+      "id": "hp_transparent_show_border",
+      "label": "Show border under transparent header",
+      "default": false
     },
     {
       "type": "header",
