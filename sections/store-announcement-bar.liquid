@@ -1,0 +1,528 @@
+{%- if section.blocks.size > 0 -%}
+  {%- assign dismissed_key = 'sab-dismissed-' | append: section.id -%}
+  <div
+    id="sab-{{ section.id }}"
+    class="sab-wrapper"
+    role="region"
+    aria-label="Announcement bar"
+    data-section-id="{{ section.id }}"
+    data-auto-rotate="{{ section.settings.sab_auto_rotate }}"
+    data-rotate-speed="{{ section.settings.sab_rotate_speed }}"
+    data-dismissed-key="{{ dismissed_key }}"
+  >
+    <div class="sab-inner">
+      {%- if section.settings.sab_show_arrows and section.blocks.size > 1 -%}
+        <button class="sab-arrow sab-arrow--prev" aria-label="Previous announcement">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      {%- endif -%}
+
+      <div class="sab-content">
+        <div class="sab-slider">
+          {%- for block in section.blocks -%}
+            <div class="sab-slide" {{ block.shopify_attributes }} data-slide-index="{{ forloop.index0 }}">
+              {%- if block.settings.link != blank -%}
+                <a href="{{ block.settings.link }}" class="sab-link">{{ block.settings.text }}</a>
+              {%- else -%}
+                <span class="sab-text">{{ block.settings.text }}</span>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {%- if section.settings.sab_show_arrows and section.blocks.size > 1 -%}
+        <button class="sab-arrow sab-arrow--next" aria-label="Next announcement">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M5 2L10 7L5 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      {%- endif -%}
+
+      {%- if section.settings.sab_show_close -%}
+        <button class="sab-close" aria-label="Dismiss announcement bar">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.sab_show_dots and section.blocks.size > 1 -%}
+      <div class="sab-dots" aria-hidden="true">
+        {%- for block in section.blocks -%}
+          <button class="sab-dot{% if forloop.first %} sab-dot--active{% endif %}" data-dot-index="{{ forloop.index0 }}" aria-label="Go to announcement {{ forloop.index }}"></button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <style>
+    #sab-{{ section.id }} {
+      --sab-bg: {{ section.settings.sab_bg_color }};
+      --sab-text: {{ section.settings.sab_text_color }};
+      --sab-arrow: {{ section.settings.sab_arrow_color }};
+      --sab-height: {{ section.settings.sab_bar_height }}px;
+      --sab-font-size: {{ section.settings.sab_font_size }}px;
+      --sab-letter-spacing: {{ section.settings.sab_letter_spacing | divided_by: 100.0 }}em;
+      --sab-font-weight: {{ section.settings.sab_font_weight }};
+      --sab-text-transform: {{ section.settings.sab_text_transform }};
+    }
+
+    #sab-{{ section.id }}.sab-wrapper {
+      background-color: var(--sab-bg);
+      color: var(--sab-text);
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      font-family: inherit;
+      z-index: 10;
+    }
+
+    #sab-{{ section.id }} .sab-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: var(--sab-height);
+      padding: 0 40px;
+      position: relative;
+    }
+
+    #sab-{{ section.id }} .sab-content {
+      overflow: hidden;
+      height: var(--sab-height);
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #sab-{{ section.id }} .sab-slider {
+      transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+      will-change: transform;
+    }
+
+    #sab-{{ section.id }} .sab-slide {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--sab-height);
+      text-align: center;
+    }
+
+    #sab-{{ section.id }} .sab-text,
+    #sab-{{ section.id }} .sab-link {
+      font-size: var(--sab-font-size);
+      font-weight: var(--sab-font-weight);
+      text-transform: var(--sab-text-transform);
+      letter-spacing: var(--sab-letter-spacing);
+      color: var(--sab-text);
+      text-decoration: none;
+      line-height: 1.4;
+      padding: 4px 10px;
+    }
+
+    #sab-{{ section.id }} .sab-link:hover {
+      text-decoration: underline;
+    }
+
+    #sab-{{ section.id }} .sab-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--sab-arrow);
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+    }
+
+    #sab-{{ section.id }} .sab-arrow:hover {
+      opacity: 1;
+    }
+
+    #sab-{{ section.id }} .sab-arrow--prev {
+      left: 12px;
+    }
+
+    #sab-{{ section.id }} .sab-arrow--next {
+      right: 12px;
+    }
+
+    #sab-{{ section.id }} .sab-close {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--sab-arrow);
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+    }
+
+    #sab-{{ section.id }} .sab-close:hover {
+      opacity: 1;
+    }
+
+    #sab-{{ section.id }} .sab-dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding-bottom: 6px;
+    }
+
+    #sab-{{ section.id }} .sab-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--sab-text);
+      opacity: 0.35;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    #sab-{{ section.id }} .sab-dot--active {
+      opacity: 1;
+    }
+
+    #sab-{{ section.id }}.sab-hidden {
+      display: none;
+    }
+  </style>
+
+  <script>
+    (function() {
+      var sectionId = '{{ section.id }}';
+      var container = document.getElementById('sab-' + sectionId);
+      if (!container) return;
+
+      var dismissedKey = container.getAttribute('data-dismissed-key');
+      var autoRotate = container.getAttribute('data-auto-rotate') === 'true';
+      var rotateSpeed = parseInt(container.getAttribute('data-rotate-speed'), 10) * 1000;
+
+      // Session dismiss check
+      if (sessionStorage.getItem(dismissedKey) === '1') {
+        container.classList.add('sab-hidden');
+        return;
+      }
+
+      var slider = container.querySelector('.sab-slider');
+      var slides = container.querySelectorAll('.sab-slide');
+      var dots = container.querySelectorAll('.sab-dot');
+      var prevBtn = container.querySelector('.sab-arrow--prev');
+      var nextBtn = container.querySelector('.sab-arrow--next');
+      var closeBtn = container.querySelector('.sab-close');
+
+      var currentIndex = 0;
+      var totalSlides = slides.length;
+      var timer = null;
+      var barHeight = container.querySelector('.sab-content').offsetHeight;
+
+      function goTo(index) {
+        if (index < 0) index = totalSlides - 1;
+        if (index >= totalSlides) index = 0;
+        currentIndex = index;
+        slider.style.transform = 'translateY(-' + (currentIndex * barHeight) + 'px)';
+        updateDots();
+      }
+
+      function updateDots() {
+        if (dots.length === 0) return;
+        for (var i = 0; i < dots.length; i++) {
+          dots[i].classList.remove('sab-dot--active');
+        }
+        if (dots[currentIndex]) {
+          dots[currentIndex].classList.add('sab-dot--active');
+        }
+      }
+
+      function startTimer() {
+        if (!autoRotate || totalSlides <= 1) return;
+        stopTimer();
+        timer = setInterval(function() {
+          goTo(currentIndex + 1);
+        }, rotateSpeed);
+      }
+
+      function stopTimer() {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+
+      function resetTimer() {
+        stopTimer();
+        startTimer();
+      }
+
+      function recalcHeight() {
+        barHeight = container.querySelector('.sab-content').offsetHeight;
+        slider.style.transform = 'translateY(-' + (currentIndex * barHeight) + 'px)';
+      }
+
+      // Navigation
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+          goTo(currentIndex - 1);
+          resetTimer();
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+          goTo(currentIndex + 1);
+          resetTimer();
+        });
+      }
+
+      // Dots
+      for (var i = 0; i < dots.length; i++) {
+        dots[i].addEventListener('click', (function(idx) {
+          return function() {
+            goTo(idx);
+            resetTimer();
+          };
+        })(i));
+      }
+
+      // Close button
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+          container.classList.add('sab-hidden');
+          sessionStorage.setItem(dismissedKey, '1');
+          stopTimer();
+        });
+      }
+
+      // Pause on hover
+      container.addEventListener('mouseenter', function() {
+        stopTimer();
+      });
+
+      container.addEventListener('mouseleave', function() {
+        startTimer();
+      });
+
+      // Window resize
+      window.addEventListener('resize', function() {
+        recalcHeight();
+      });
+
+      // Start auto-rotation
+      startTimer();
+
+      // Shopify Theme Editor events
+      if (Shopify && Shopify.designMode) {
+        document.addEventListener('shopify:section:load', function(event) {
+          if (event.detail.sectionId === sectionId) {
+            recalcHeight();
+            startTimer();
+          }
+        });
+
+        document.addEventListener('shopify:block:select', function(event) {
+          if (event.detail.sectionId === sectionId) {
+            stopTimer();
+            var slideEl = event.target.closest('.sab-slide');
+            if (slideEl) {
+              var idx = parseInt(slideEl.getAttribute('data-slide-index'), 10);
+              goTo(idx);
+            }
+          }
+        });
+
+        document.addEventListener('shopify:block:deselect', function(event) {
+          if (event.detail.sectionId === sectionId) {
+            startTimer();
+          }
+        });
+      }
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Store Announcement Bar",
+  "tag": "section",
+  "class": "sab-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "sab_bg_color",
+      "label": "Background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "sab_text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "sab_arrow_color",
+      "label": "Arrow and icon color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Bar Size"
+    },
+    {
+      "type": "range",
+      "id": "sab_bar_height",
+      "label": "Bar height",
+      "min": 32,
+      "max": 60,
+      "step": 2,
+      "default": 44,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "sab_font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "sab_font_weight",
+      "label": "Font weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "select",
+      "id": "sab_text_transform",
+      "label": "Text transform",
+      "options": [
+        { "value": "none", "label": "Normal" },
+        { "value": "uppercase", "label": "UPPERCASE" },
+        { "value": "lowercase", "label": "lowercase" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "sab_letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Rotation"
+    },
+    {
+      "type": "checkbox",
+      "id": "sab_auto_rotate",
+      "label": "Auto-rotate messages",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "sab_rotate_speed",
+      "label": "Rotation speed",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 5,
+      "unit": "s"
+    },
+    {
+      "type": "header",
+      "content": "Controls"
+    },
+    {
+      "type": "checkbox",
+      "id": "sab_show_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "sab_show_dots",
+      "label": "Show dot indicators",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "sab_show_close",
+      "label": "Show close button",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "limit": 10,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Message text",
+          "default": "Free shipping on orders over $200"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Store Announcement Bar",
+      "blocks": [
+        { "type": "message", "settings": { "text": "Free shipping on orders over $200" } },
+        { "type": "message", "settings": { "text": "40% OFF SITEWIDE \u2014 USE CODE: TAKE40" } },
+        { "type": "message", "settings": { "text": "New arrivals just dropped \u2014 Shop now" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
