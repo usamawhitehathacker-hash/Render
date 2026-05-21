@@ -1,0 +1,42 @@
+/* ============================================================
+   PREMIUM HEADER - Phase 1: Foundation
+   ============================================================
+   This file extends Dawn's default header with premium features.
+   It only loads when "Enable Premium Header" is turned ON.
+   
+   Phase 1 includes ONLY:
+   - Top accent line (Jacket Maker style)
+   - CSS variables foundation for future phases
+   
+   Future phases (2-5) will add styles for:
+   - Header layouts
+   - Transparent header
+   - Navigation enhancements
+   - Icons
+   - Mobile improvements
+   ============================================================ */
+
+/* ===== Phase 1: Top Accent Line ===== */
+.header-wrapper--premium .hp-top-line {
+  display: block;
+  width: 100%;
+  height: var(--hp-top-line-height, 2px);
+  background-color: var(--hp-top-line-color, #000);
+  position: relative;
+  z-index: 5;
+}
+
+/* Hide top line when sticky header is hidden on scroll-down */
+.shopify-section-header-hidden .hp-top-line {
+  visibility: hidden;
+}
+
+/* ===== Phase 1: Foundation classes (used in later phases) ===== */
+.header-wrapper--premium {
+  /* Master wrapper - styles applied in future phases */
+}
+
+/* Reduce logo on scroll smoother (already in Dawn, just polished) */
+.header-wrapper--premium .scrolled-past-header .header__heading-logo-wrapper {
+  transition: width 0.3s ease;
+}
