@@ -1,574 +1,651 @@
 /* ============================================================
-   MEGA NAVIGATION - Independent Section Styles
-   ============================================================
-   Scoped to .mega-navigation-section to prevent leakage.
-   Uses --mn-* CSS custom properties for all configurable values.
+   MEGA NAVIGATION
+   Desktop: Symmetry + thejacketmaker.com style
+            (full-width flyout, hover trigger, multi-column, promo)
+   Mobile : Prada style (full-screen drawer, large serif type,
+            slide-in, accordion sub-menus)
+
+   File is loaded only when section.settings.mn_enable is on.
+   All styles are scoped under `.mega-navigation-section` to
+   avoid clashes with Dawn / header-premium.css.
    ============================================================ */
 
-/* ============================================================
-   NAV BAR
-   ============================================================ */
+/* ---------- Reset & base ---------- */
+.mega-navigation-section,
+.mega-navigation-section *,
+.mega-navigation-section *::before,
+.mega-navigation-section *::after {
+  box-sizing: border-box;
+}
+
 .mega-navigation-section {
   position: relative;
-  z-index: 100;
+  z-index: 30;
+  background-color: var(--mn-bg-color, #ffffff);
+  color: var(--mn-text-color, #1a1a1a);
+  border-bottom: var(--mn-border-bottom-width, 0px) solid var(--mn-border-color, #e5e5e5);
   padding-top: var(--mn-section-padding-top, 0px);
   padding-bottom: var(--mn-section-padding-bottom, 0px);
 }
 
+.mega-navigation-section ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mega-navigation-section a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ============================================================
+   DESKTOP NAV BAR  (Symmetry style)
+   ============================================================ */
 .mega-navigation-section .mega-nav-bar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  background-color: var(--mn-bg-color, #FFFFFF);
-  border-bottom: var(--mn-border-bottom-width, 0px) solid var(--mn-border-color, #E5E5E5);
-  position: relative;
-  transition: background-color 0.3s ease;
-}
-
-.mega-navigation-section.is-sticky .mega-nav-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background-color: var(--mn-sticky-bg, #FFFFFF);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-/* ============================================================
-   MENU ITEMS
-   ============================================================ */
-.mega-navigation-section .mega-nav-menu {
-  display: flex;
-  align-items: center;
-  list-style: none;
-  margin: 0;
-  padding: 0;
   gap: 0;
+  width: 100%;
+  max-width: var(--page-width, 1440px);
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+}
+
+.mega-navigation-section .mega-nav-menu {
+  display: none; /* hidden on mobile, shown on >=990px */
+  align-items: stretch;
+  gap: clamp(1.2rem, 2.4vw, 2.8rem);
+}
+
+@media screen and (min-width: 990px) {
+  .mega-navigation-section .mega-nav-menu {
+    display: flex;
+  }
+  .mega-navigation-section .mega-nav-hamburger {
+    display: none;
+  }
 }
 
 .mega-navigation-section .mega-nav-item {
-  position: relative;
+  position: static; /* dropdown is full-width, anchored to nav bar */
+  display: flex;
+  align-items: stretch;
 }
 
 .mega-navigation-section .mega-nav-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 16px 20px;
-  color: var(--mn-text-color, #1a1a1a);
-  text-decoration: none;
+  gap: 0.5rem;
+  padding: 1.4rem 0.2rem;
   font-size: var(--mn-font-size, 14px);
   font-weight: var(--mn-font-weight, 600);
   letter-spacing: var(--mn-letter-spacing, 1px);
   text-transform: var(--mn-text-transform, uppercase);
+  color: inherit;
   position: relative;
-  transition: color 0.2s ease;
-  white-space: nowrap;
+  cursor: pointer;
+  transition: color 220ms ease;
 }
 
-.mega-navigation-section .mega-nav-link:hover {
+.mega-navigation-section .mega-nav-item:hover .mega-nav-link,
+.mega-navigation-section .mega-nav-item:focus-within .mega-nav-link {
   color: var(--mn-hover-color, #000000);
 }
 
-/* ============================================================
-   HOVER UNDERLINE ANIMATION
-   ============================================================ */
+/* Per-item override (when block has custom color enabled) */
+.mega-navigation-section .mega-nav-item .mega-nav-link[data-custom-color="true"] {
+  color: var(--mn-item-color, inherit);
+}
+.mega-navigation-section .mega-nav-item .mega-nav-link[data-custom-color="true"]:hover {
+  color: var(--mn-item-hover-color, var(--mn-hover-color, #000));
+}
+
+/* ---------- Hover underline animations ---------- */
 .mega-navigation-section .mega-nav-link::after {
   content: '';
   position: absolute;
-  bottom: 10px;
   left: 50%;
-  right: 50%;
+  bottom: 0.6rem;
+  width: 0;
   height: var(--mn-hover-underline-thickness, 2px);
-  background-color: var(--mn-hover-color, #000000);
-  transition: left 0.3s ease, right 0.3s ease, opacity 0.3s ease;
-  opacity: 0;
-}
-
-/* Center-expand animation */
-.mega-navigation-section[data-mn-hover-animation="center-expand"] .mega-nav-link::after {
-  left: 50%;
-  right: 50%;
-}
-
-.mega-navigation-section[data-mn-hover-animation="center-expand"] .mega-nav-link:hover::after,
-.mega-navigation-section[data-mn-hover-animation="center-expand"] .mega-nav-item.is-active .mega-nav-link::after {
-  left: 20px;
-  right: 20px;
+  background-color: var(--mn-hover-color, #000);
+  transform: translateX(-50%);
+  transition: width 320ms cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 220ms ease;
+  pointer-events: none;
   opacity: 1;
 }
 
-/* Left-to-right animation */
 .mega-navigation-section[data-mn-hover-animation="left-to-right"] .mega-nav-link::after {
-  left: 20px;
-  right: 100%;
+  left: 0;
+  transform: none;
 }
 
-.mega-navigation-section[data-mn-hover-animation="left-to-right"] .mega-nav-link:hover::after,
-.mega-navigation-section[data-mn-hover-animation="left-to-right"] .mega-nav-item.is-active .mega-nav-link::after {
-  right: 20px;
-  opacity: 1;
-}
-
-/* Fade animation */
 .mega-navigation-section[data-mn-hover-animation="fade"] .mega-nav-link::after {
-  left: 20px;
-  right: 20px;
+  width: 60%;
+  left: 50%;
+  transform: translateX(-50%);
   opacity: 0;
 }
 
-.mega-navigation-section[data-mn-hover-animation="fade"] .mega-nav-link:hover::after,
-.mega-navigation-section[data-mn-hover-animation="fade"] .mega-nav-item.is-active .mega-nav-link::after {
+.mega-navigation-section .mega-nav-item:hover .mega-nav-link::after,
+.mega-navigation-section .mega-nav-item:focus-within .mega-nav-link::after,
+.mega-navigation-section .mega-nav-item.is-active .mega-nav-link::after {
+  width: 60%;
   opacity: 1;
 }
 
-/* ============================================================
-   ITEM BADGE (on nav bar)
-   ============================================================ */
+.mega-navigation-section[data-mn-hover-animation="left-to-right"] .mega-nav-item:hover .mega-nav-link::after,
+.mega-navigation-section[data-mn-hover-animation="left-to-right"] .mega-nav-item.is-active .mega-nav-link::after {
+  width: 100%;
+}
+
+/* ---------- Item badge ---------- */
 .mega-navigation-section .mega-nav-item-badge {
   display: inline-block;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.5px;
-  padding: 2px 5px;
-  border-radius: 3px;
+  line-height: 1;
+  padding: 3px 5px;
+  border-radius: 2px;
   color: #fff;
   text-transform: uppercase;
-  line-height: 1;
   vertical-align: middle;
 }
+.mega-navigation-section .mega-nav-item-badge--new  { background: var(--mn-badge-new-color, #16a34a); }
+.mega-navigation-section .mega-nav-item-badge--sale { background: var(--mn-badge-sale-color, #E63946); }
+.mega-navigation-section .mega-nav-item-badge--hot  { background: var(--mn-badge-hot-color, #ea580c); }
 
-.mega-navigation-section .mega-nav-item-badge--new {
-  background-color: var(--mn-badge-new-color, #16a34a);
+/* ============================================================
+   STICKY NAV
+   ============================================================ */
+.mega-navigation-section[data-mn-sticky="true"].is-stuck {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background-color: var(--mn-sticky-bg, #fff);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  animation: mn-slide-down 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.mega-navigation-section .mega-nav-item-badge--sale {
-  background-color: var(--mn-badge-sale-color, #E63946);
+.mega-navigation-section[data-mn-sticky="true"].is-stuck-spacer {
+  /* placeholder block reserves space when sticky activates */
+  display: block;
 }
 
-.mega-navigation-section .mega-nav-item-badge--hot {
-  background-color: var(--mn-badge-hot-color, #ea580c);
+@keyframes mn-slide-down {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0); }
 }
 
 /* ============================================================
-   MEGA DROPDOWN PANEL
+   DROPDOWN PANEL  (full-width, Symmetry / thejacketmaker style)
    ============================================================ */
 .mega-navigation-section .mega-nav-dropdown {
   position: absolute;
-  top: 100%;
   left: 0;
   right: 0;
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
-  background-color: var(--mn-dropdown-bg, #FFFFFF);
-  padding: 32px 48px;
+  top: 100%;
+  background: var(--mn-dropdown-bg, #fff);
+  color: var(--mn-dropdown-text-color, #333);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition-property: opacity, transform;
-  transition-duration: var(--mn-dropdown-duration, 250ms);
-  transition-timing-function: ease;
-  z-index: 999;
+  transform: translateY(-8px);
+  transition: opacity var(--mn-dropdown-duration, 250ms) ease,
+              transform var(--mn-dropdown-duration, 250ms) cubic-bezier(0.4, 0, 0.2, 1),
+              visibility var(--mn-dropdown-duration, 250ms) ease;
+  z-index: 25;
 }
 
 .mega-navigation-section .mega-nav-dropdown.has-shadow {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 14px 40px -12px rgba(0, 0, 0, 0.18);
 }
-
 .mega-navigation-section .mega-nav-dropdown.has-border {
-  border-top: 1px solid var(--mn-border-color, #E5E5E5);
+  border-top: 1px solid var(--mn-border-color, #e5e5e5);
+  border-bottom: 1px solid var(--mn-border-color, #e5e5e5);
 }
 
-/* Dropdown animations */
-.mega-navigation-section[data-mn-dropdown-animation="fade"] .mega-nav-dropdown {
-  transform: none;
+/* Animation variants */
+.mega-navigation-section[data-mn-dropdown-animation="slide-up"] .mega-nav-dropdown   { transform: translateY(8px); }
+.mega-navigation-section[data-mn-dropdown-animation="zoom"] .mega-nav-dropdown        { transform: scale(0.98); transform-origin: top center; }
+.mega-navigation-section[data-mn-dropdown-animation="fade"] .mega-nav-dropdown        { transform: none; }
+
+@media screen and (min-width: 990px) and (hover: hover) {
+  .mega-navigation-section .mega-nav-item:hover .mega-nav-dropdown,
+  .mega-navigation-section .mega-nav-item:focus-within .mega-nav-dropdown,
+  .mega-navigation-section .mega-nav-item.is-open .mega-nav-dropdown {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
 }
 
-.mega-navigation-section[data-mn-dropdown-animation="slide-down"] .mega-nav-dropdown {
-  transform: translateY(-8px);
-}
-
-.mega-navigation-section[data-mn-dropdown-animation="slide-up"] .mega-nav-dropdown {
-  transform: translateY(8px);
-}
-
-.mega-navigation-section[data-mn-dropdown-animation="zoom"] .mega-nav-dropdown {
-  transform: scale(0.97);
-}
-
-/* Active dropdown state */
-.mega-navigation-section .mega-nav-item.is-active .mega-nav-dropdown {
+/* On touch / no-hover devices keep dropdown closed by default;
+   JS will toggle .is-open if needed. */
+.mega-navigation-section .mega-nav-item.is-open .mega-nav-dropdown {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transform: none;
+  transform: translateY(0) scale(1);
 }
 
-/* ============================================================
-   DROPDOWN CONTENT GRID
-   ============================================================ */
 .mega-navigation-section .mega-nav-dropdown__inner {
-  display: flex;
-  gap: 32px;
-  max-width: 1400px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  width: 100%;
+  max-width: var(--page-width, 1440px);
   margin: 0 auto;
+  padding: 3rem 4rem;
 }
 
+@media screen and (min-width: 990px) {
+  .mega-navigation-section .mega-nav-dropdown__inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+  .mega-navigation-section .mega-nav-dropdown__inner:not(:has(.mega-nav-promo)) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Mobile: dropdown is hidden on small screens (mobile uses drawer) */
+@media screen and (max-width: 989px) {
+  .mega-navigation-section .mega-nav-dropdown {
+    display: none;
+  }
+}
+
+/* ---------- Columns grid ---------- */
 .mega-navigation-section .mega-nav-dropdown__columns {
   display: grid;
-  gap: 24px;
-  flex: 1;
+  gap: clamp(1.5rem, 3vw, 3rem);
 }
 
-.mega-navigation-section .mega-nav-dropdown__columns[data-columns="2"] {
-  grid-template-columns: repeat(2, 1fr);
-}
+.mega-navigation-section .mega-nav-dropdown__columns[data-columns="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mega-navigation-section .mega-nav-dropdown__columns[data-columns="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mega-navigation-section .mega-nav-dropdown__columns[data-columns="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.mega-navigation-section .mega-nav-dropdown__columns[data-columns="5"] { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.mega-navigation-section .mega-nav-dropdown__columns[data-columns="6"] { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 
-.mega-navigation-section .mega-nav-dropdown__columns[data-columns="3"] {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.mega-navigation-section .mega-nav-dropdown__columns[data-columns="4"] {
-  grid-template-columns: repeat(4, 1fr);
-}
-
-.mega-navigation-section .mega-nav-dropdown__columns[data-columns="5"] {
-  grid-template-columns: repeat(5, 1fr);
-}
-
-.mega-navigation-section .mega-nav-dropdown__columns[data-columns="6"] {
-  grid-template-columns: repeat(6, 1fr);
-}
-
-/* ============================================================
-   COLUMN STYLES
-   ============================================================ */
+/* ---------- Column ---------- */
 .mega-navigation-section .mega-nav-column__heading {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0 0 12px 0;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  color: var(--mn-dropdown-heading-color, #000000);
+  margin: 0 0 1.2rem 0;
+  color: var(--mn-dropdown-heading-color, #000);
 }
 
 .mega-navigation-section .mega-nav-column__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
 }
 
 .mega-navigation-section .mega-nav-column__item {
-  margin-bottom: 4px;
+  display: block;
 }
 
 .mega-navigation-section .mega-nav-column__link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.5rem;
   font-size: 14px;
-  line-height: 1.6;
-  color: var(--mn-dropdown-text-color, #333333);
-  text-decoration: none;
-  transition: color 0.2s ease;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--mn-dropdown-text-color, #333);
+  transition: color 200ms ease, transform 220ms ease;
 }
 
 .mega-navigation-section .mega-nav-column__link:hover {
-  color: var(--mn-hover-color, #000000);
+  color: var(--mn-hover-color, #000);
+  transform: translateX(2px);
 }
 
-/* ============================================================
-   BADGE STYLES (in dropdown links)
-   ============================================================ */
 .mega-navigation-section .mega-nav-badge {
   display: inline-block;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.5px;
-  padding: 2px 5px;
-  border-radius: 3px;
+  line-height: 1;
+  padding: 3px 5px;
+  border-radius: 2px;
   color: #fff;
   text-transform: uppercase;
-  line-height: 1;
-  vertical-align: middle;
-}
-
-.mega-navigation-section .mega-nav-badge--new {
-  background-color: var(--mn-badge-new-color, #16a34a);
-}
-
-.mega-navigation-section .mega-nav-badge--sale {
-  background-color: var(--mn-badge-sale-color, #E63946);
-}
-
-.mega-navigation-section .mega-nav-badge--hot {
-  background-color: var(--mn-badge-hot-color, #ea580c);
 }
 
 /* ============================================================
-   PROMO CARD
+   PROMO BLOCK  (thejacketmaker.com style featured card)
    ============================================================ */
 .mega-navigation-section .mega-nav-promo {
-  flex-shrink: 0;
-  max-width: 280px;
-  min-width: 220px;
+  width: clamp(260px, 28vw, 380px);
+  display: flex;
+  flex-direction: column;
 }
 
 .mega-navigation-section .mega-nav-promo__image-wrapper {
   position: relative;
   overflow: hidden;
-  border-radius: 6px;
-  margin-bottom: 12px;
+  aspect-ratio: 4 / 5;
+  background: #f4f4f4;
 }
 
 .mega-navigation-section .mega-nav-promo__image {
-  display: block;
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 6px;
+  display: block;
+  transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mega-navigation-section .mega-nav-promo:hover .mega-nav-promo__image {
+  transform: scale(1.04);
 }
 
 .mega-navigation-section .mega-nav-promo__content {
-  text-align: left;
+  padding: 1.2rem 0 0 0;
 }
 
 .mega-navigation-section .mega-nav-promo__heading {
-  font-size: 15px;
-  font-weight: 700;
-  margin: 0 0 4px 0;
-  color: var(--mn-dropdown-heading-color, #000000);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin: 0 0 0.4rem 0;
+  color: var(--mn-dropdown-heading-color, #000);
 }
 
 .mega-navigation-section .mega-nav-promo__subheading {
   font-size: 13px;
-  color: var(--mn-dropdown-text-color, #333333);
-  margin: 0 0 10px 0;
+  line-height: 1.45;
+  margin: 0 0 1rem 0;
+  color: var(--mn-dropdown-text-color, #555);
 }
 
 .mega-navigation-section .mega-nav-promo__button {
   display: inline-block;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--mn-dropdown-heading-color, #000000);
-  text-decoration: underline;
-  transition: opacity 0.2s ease;
+  padding: 0.8rem 1.4rem;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: var(--mn-dropdown-heading-color, #000);
+  transition: background 240ms ease, color 240ms ease, transform 220ms ease;
 }
 
 .mega-navigation-section .mega-nav-promo__button:hover {
-  opacity: 0.7;
+  background: var(--mn-dropdown-heading-color, #000);
+  color: var(--mn-dropdown-bg, #fff);
+  transform: translateY(-1px);
 }
 
 /* ============================================================
-   HAMBURGER BUTTON (mobile)
+   HAMBURGER (mobile only)
    ============================================================ */
 .mega-navigation-section .mega-nav-hamburger {
-  display: none;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
   border: none;
-  padding: 12px 16px;
+  color: inherit;
   cursor: pointer;
-  color: var(--mn-text-color, #1a1a1a);
+}
+
+@media screen and (min-width: 990px) {
+  .mega-navigation-section .mega-nav-hamburger { display: none; }
 }
 
 .mega-navigation-section .mega-nav-hamburger svg {
-  display: block;
+  width: 24px;
+  height: 24px;
 }
 
 /* ============================================================
-   MOBILE DRAWER
+   MOBILE DRAWER  (Prada style)
+   - full-screen, large serif typography, slide-in,
+     accordion sub-menus, smooth scroll lock
    ============================================================ */
 .mega-navigation-section .mega-nav-drawer-overlay {
-  display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9998;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 80;
+  transition: opacity 320ms ease, visibility 320ms ease;
 }
 
-.mega-navigation-section .mega-nav-drawer-overlay.is-visible {
-  display: block;
+.mega-navigation-section.is-drawer-open .mega-nav-drawer-overlay {
   opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .mega-navigation-section .mega-nav-drawer {
   position: fixed;
   top: 0;
   bottom: 0;
-  z-index: 9999;
-  background: var(--mn-bg-color, #FFFFFF);
-  overflow-y: auto;
+  width: min(420px, 92vw);
+  background: var(--mn-bg-color, #fff);
+  color: var(--mn-text-color, #1a1a1a);
+  z-index: 81;
+  display: flex;
+  flex-direction: column;
   transform: translateX(-100%);
-  transition: transform 0.3s ease;
-  padding: 0;
+  transition: transform 380ms cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  will-change: transform;
 }
 
 .mega-navigation-section .mega-nav-drawer[data-position="left"] {
   left: 0;
-  max-width: 320px;
-  width: 85%;
+  right: auto;
+  transform: translateX(-100%);
 }
-
 .mega-navigation-section .mega-nav-drawer[data-position="right"] {
-  right: 0;
   left: auto;
-  max-width: 320px;
-  width: 85%;
+  right: 0;
   transform: translateX(100%);
 }
-
 .mega-navigation-section .mega-nav-drawer[data-position="fullscreen"] {
   left: 0;
   right: 0;
-  max-width: none;
   width: 100%;
+  max-width: 100%;
   transform: translateY(-100%);
 }
 
-.mega-navigation-section .mega-nav-drawer.is-open {
+.mega-navigation-section.is-drawer-open .mega-nav-drawer[data-position="left"],
+.mega-navigation-section.is-drawer-open .mega-nav-drawer[data-position="right"] {
   transform: translateX(0);
 }
-
-.mega-navigation-section .mega-nav-drawer[data-position="fullscreen"].is-open {
+.mega-navigation-section.is-drawer-open .mega-nav-drawer[data-position="fullscreen"] {
   transform: translateY(0);
 }
 
+@media screen and (min-width: 990px) {
+  .mega-navigation-section .mega-nav-drawer,
+  .mega-navigation-section .mega-nav-drawer-overlay {
+    display: none;
+  }
+}
+
+/* Drawer header (close button) */
 .mega-navigation-section .mega-nav-drawer__header {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 1.2rem 1.4rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
 }
 
 .mega-navigation-section .mega-nav-drawer__close {
-  background: none;
-  border: none;
-  padding: 8px;
-  cursor: pointer;
-  color: var(--mn-text-color, #1a1a1a);
-}
-
-.mega-navigation-section .mega-nav-drawer__close svg {
-  display: block;
-}
-
-/* ============================================================
-   MOBILE ACCORDION
-   ============================================================ */
-.mega-navigation-section .mega-nav-mobile-menu {
-  list-style: none;
-  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
   padding: 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 220ms ease;
+}
+.mega-navigation-section .mega-nav-drawer__close:hover {
+  transform: rotate(90deg);
+}
+.mega-navigation-section .mega-nav-drawer__close svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Drawer body */
+.mega-navigation-section .mega-nav-mobile-menu {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 1rem 0 3rem 0;
 }
 
 .mega-navigation-section .mega-nav-mobile-item {
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
+/* Prada-style large bold link */
 .mega-navigation-section .mega-nav-mobile-link {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--mn-mobile-padding, 12px) 16px;
-  font-size: var(--mn-mobile-font-size, 16px);
-  font-weight: 500;
-  color: var(--mn-text-color, #1a1a1a);
-  text-decoration: none;
-  cursor: pointer;
-  background: none;
-  border: none;
   width: 100%;
+  padding: var(--mn-mobile-padding, 12px) 1.6rem;
+  font-size: var(--mn-mobile-font-size, 16px);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: var(--mn-text-transform, uppercase);
+  background: transparent;
+  border: none;
+  color: inherit;
   text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 200ms ease, padding-left 240ms ease;
 }
 
 .mega-navigation-section .mega-nav-mobile-link:hover {
-  background-color: rgba(0, 0, 0, 0.02);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.mega-navigation-section .mega-nav-mobile-link[aria-expanded="true"] {
+  background: rgba(0, 0, 0, 0.03);
 }
 
 .mega-navigation-section .mega-nav-accordion-icon {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s ease;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
+  transition: transform 320ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.mega-navigation-section .mega-nav-mobile-item.is-expanded .mega-nav-accordion-icon {
+.mega-navigation-section .mega-nav-mobile-link[aria-expanded="true"] .mega-nav-accordion-icon {
+  transform: rotate(45deg);
+}
+
+/* For chevron / arrow icons we just rotate 180 instead of 45 */
+.mega-navigation-section[data-mn-mobile-accordion-icon="chevron"] .mega-nav-mobile-link[aria-expanded="true"] .mega-nav-accordion-icon,
+.mega-navigation-section[data-mn-mobile-accordion-icon="arrow"] .mega-nav-mobile-link[aria-expanded="true"] .mega-nav-accordion-icon {
   transform: rotate(180deg);
 }
 
-.mega-navigation-section .mega-nav-mobile-submenu {
-  display: none;
-  padding: 0 16px 12px 24px;
+.mega-navigation-section .mega-nav-accordion-icon svg {
+  width: 16px;
+  height: 16px;
 }
 
-.mega-navigation-section .mega-nav-mobile-item.is-expanded .mega-nav-mobile-submenu {
-  display: block;
+/* Submenu accordion: smooth height animation via grid trick */
+.mega-navigation-section .mega-nav-mobile-submenu {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 360ms cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.mega-navigation-section .mega-nav-mobile-submenu > * {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.mega-navigation-section .mega-nav-mobile-submenu.is-open {
+  grid-template-rows: 1fr;
+}
+
+.mega-navigation-section .mega-nav-mobile-submenu__inner {
+  padding: 0.4rem 1.6rem 1.6rem 1.6rem;
 }
 
 .mega-navigation-section .mega-nav-mobile-submenu__heading {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--mn-dropdown-heading-color, #000000);
-  margin: 12px 0 6px 0;
-  padding: 0;
+  color: rgba(0, 0, 0, 0.55);
+  margin: 1.2rem 0 0.6rem 0;
 }
 
 .mega-navigation-section .mega-nav-mobile-submenu__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
 .mega-navigation-section .mega-nav-mobile-submenu__link {
   display: block;
-  padding: 6px 0;
-  font-size: calc(var(--mn-mobile-font-size, 16px) - 2px);
-  color: var(--mn-dropdown-text-color, #333333);
-  text-decoration: none;
+  padding: 0.6rem 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--mn-text-color, #1a1a1a);
+  transition: color 200ms ease, transform 220ms ease;
 }
 
 .mega-navigation-section .mega-nav-mobile-submenu__link:hover {
-  color: var(--mn-hover-color, #000000);
+  color: var(--mn-hover-color, #000);
+  transform: translateX(3px);
+}
+
+/* Body scroll lock (applied by JS) */
+.mn-no-scroll {
+  overflow: hidden !important;
+  touch-action: none;
 }
 
 /* ============================================================
-   RESPONSIVE
+   REDUCED MOTION
    ============================================================ */
-@media screen and (max-width: 989px) {
-  .mega-navigation-section .mega-nav-menu {
-    display: none;
-  }
-
-  .mega-navigation-section .mega-nav-hamburger {
-    display: flex;
-  }
-
-  .mega-navigation-section .mega-nav-bar {
-    justify-content: flex-start;
-  }
-}
-
-@media screen and (min-width: 990px) {
-  .mega-navigation-section .mega-nav-drawer,
-  .mega-navigation-section .mega-nav-drawer-overlay,
-  .mega-navigation-section .mega-nav-hamburger {
-    display: none !important;
+@media (prefers-reduced-motion: reduce) {
+  .mega-navigation-section *,
+  .mega-navigation-section *::before,
+  .mega-navigation-section *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }

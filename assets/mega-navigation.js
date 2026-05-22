@@ -1,317 +1,323 @@
 /* ============================================================
-   MEGA NAVIGATION - Independent Section JavaScript
-   ============================================================
-   IIFE pattern - no global pollution.
-   Handles: desktop hover dropdowns, mobile drawer, accordion,
-   sticky nav, keyboard accessibility, Shopify editor events.
+   MEGA NAVIGATION
+   - Desktop: hover-trigger dropdown with smart open/close delay
+   - Mobile : Prada-style full-screen drawer + accordion submenus
+   - Sticky : nav stuck to top after scrolling past it
+   - Theme editor: re-init on shopify:section:load / unload
    ============================================================ */
-
 (function () {
   'use strict';
 
-  var HOVER_OPEN_DELAY = 80;
-  var HOVER_CLOSE_DELAY = 200;
-  var hoverTimers = new WeakMap();
+  var OPEN_DELAY = 120;   // ms after mouseenter before opening
+  var CLOSE_DELAY = 220;  // ms after mouseleave before closing
+  var DESKTOP_BP = 990;   // matches Dawn breakpoint
 
-  function initMegaNavigation() {
-    var section = document.querySelector('.mega-navigation-section');
-    if (!section) return;
+  var instances = new WeakMap();
 
-    setupDesktopHover(section);
-    setupMobileDrawer(section);
-    setupMobileAccordion(section);
-    setupStickyNav(section);
-    setupKeyboard(section);
-    setupClickOutside(section);
+  function init(root) {
+    if (!root || instances.has(root)) return;
+
+    var inst = {
+      root: root,
+      items: root.querySelectorAll('.mega-nav-item'),
+      hamburger: root.querySelector('.mega-nav-hamburger'),
+      drawer: root.querySelector('.mega-nav-drawer'),
+      drawerOverlay: root.querySelector('.mega-nav-drawer-overlay'),
+      drawerClose: root.querySelector('.mega-nav-drawer__close'),
+      mobileTriggers: root.querySelectorAll('.mega-nav-mobile-link[data-has-submenu="true"]'),
+      timers: new WeakMap(),
+      stickyEnabled: root.getAttribute('data-mn-sticky') === 'true',
+      stickyPlaceholder: null,
+      stickyOriginalTop: 0,
+      onScroll: null,
+      onResize: null,
+      onKeyDown: null
+    };
+
+    setupDesktopHover(inst);
+    setupMobileDrawer(inst);
+    setupMobileAccordion(inst);
+    setupSticky(inst);
+    setupKeyboard(inst);
+
+    instances.set(root, inst);
   }
 
-  /* ============================================================
-     DESKTOP HOVER
-     ============================================================ */
-  function setupDesktopHover(section) {
-    var items = section.querySelectorAll('.mega-nav-item');
-    if (!items || items.length === 0) return;
+  function destroy(root) {
+    var inst = instances.get(root);
+    if (!inst) return;
 
-    items.forEach(function (item) {
-      var timers = { openTimer: undefined, closeTimer: undefined };
-      hoverTimers.set(item, timers);
+    if (inst.onScroll) window.removeEventListener('scroll', inst.onScroll);
+    if (inst.onResize) window.removeEventListener('resize', inst.onResize);
+    if (inst.onKeyDown) document.removeEventListener('keydown', inst.onKeyDown);
+
+    closeDrawer(inst);
+
+    if (inst.stickyPlaceholder && inst.stickyPlaceholder.parentNode) {
+      inst.stickyPlaceholder.parentNode.removeChild(inst.stickyPlaceholder);
+    }
+
+    instances.delete(root);
+  }
+
+  /* ---------- Desktop hover ---------- */
+  function setupDesktopHover(inst) {
+    if (!inst.items || inst.items.length === 0) return;
+
+    inst.items.forEach(function (item) {
+      var dropdown = item.querySelector('.mega-nav-dropdown');
+      if (!dropdown) return;
 
       item.addEventListener('mouseenter', function () {
-        if (window.innerWidth < 990) return;
-        var t = hoverTimers.get(item);
-        clearTimeout(t.closeTimer);
-        t.openTimer = setTimeout(function () {
-          closeAllDropdowns(section);
-          item.classList.add('is-active');
-        }, HOVER_OPEN_DELAY);
+        if (window.innerWidth < DESKTOP_BP) return;
+        scheduleOpen(inst, item);
       });
 
       item.addEventListener('mouseleave', function () {
-        if (window.innerWidth < 990) return;
-        var t = hoverTimers.get(item);
-        clearTimeout(t.openTimer);
-        t.closeTimer = setTimeout(function () {
-          item.classList.remove('is-active');
-        }, HOVER_CLOSE_DELAY);
+        if (window.innerWidth < DESKTOP_BP) return;
+        scheduleClose(inst, item);
       });
-    });
-  }
 
-  /* ============================================================
-     CLOSE ALL DROPDOWNS
-     ============================================================ */
-  function closeAllDropdowns(section) {
-    var activeItems = section.querySelectorAll('.mega-nav-item.is-active');
-    activeItems.forEach(function (item) {
-      item.classList.remove('is-active');
-    });
-  }
-
-  /* ============================================================
-     MOBILE DRAWER
-     ============================================================ */
-  function setupMobileDrawer(section) {
-    var hamburger = section.querySelector('.mega-nav-hamburger');
-    var drawer = section.querySelector('.mega-nav-drawer');
-    var overlay = section.querySelector('.mega-nav-drawer-overlay');
-    var closeBtn = section.querySelector('.mega-nav-drawer__close');
-
-    if (!hamburger || !drawer) return;
-
-    hamburger.addEventListener('click', function () {
-      drawer.classList.add('is-open');
-      if (overlay) overlay.classList.add('is-visible');
-      document.body.style.overflow = 'hidden';
-      hamburger.setAttribute('aria-expanded', 'true');
-      setupFocusTrap(drawer, hamburger);
-    });
-
-    if (closeBtn) {
-      closeBtn.addEventListener('click', function () {
-        closeMobileDrawer(drawer, overlay, hamburger);
+      // Keyboard / focus support: open on focus-within, close on blur away
+      item.addEventListener('focusin', function () {
+        if (window.innerWidth < DESKTOP_BP) return;
+        openItem(inst, item);
       });
-    }
 
-    if (overlay) {
-      overlay.addEventListener('click', function () {
-        closeMobileDrawer(drawer, overlay, hamburger);
-      });
-    }
-  }
-
-  function closeMobileDrawer(drawer, overlay, hamburger) {
-    if (drawer) {
-      drawer.classList.remove('is-open');
-      removeFocusTrap(drawer);
-    }
-    if (overlay) overlay.classList.remove('is-visible');
-    document.body.style.overflow = '';
-    if (hamburger) {
-      hamburger.setAttribute('aria-expanded', 'false');
-      hamburger.focus();
-    }
-  }
-
-  /* ============================================================
-     FOCUS TRAP
-     ============================================================ */
-  function getFocusableElements(container) {
-    var selector = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
-    return Array.prototype.slice.call(container.querySelectorAll(selector));
-  }
-
-  function setupFocusTrap(drawer) {
-    var focusHandler = function (e) {
-      if (e.key !== 'Tab') return;
-
-      var focusable = getFocusableElements(drawer);
-      if (focusable.length === 0) return;
-
-      var first = focusable[0];
-      var last = focusable[focusable.length - 1];
-
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
+      item.addEventListener('focusout', function (e) {
+        if (window.innerWidth < DESKTOP_BP) return;
+        // Close only when focus leaves the entire item (including dropdown)
+        if (!item.contains(e.relatedTarget)) {
+          scheduleClose(inst, item);
         }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
+      });
+    });
+  }
+
+  function scheduleOpen(inst, item) {
+    clearTimers(inst, item);
+    var t = setTimeout(function () {
+      openItem(inst, item);
+    }, OPEN_DELAY);
+    inst.timers.set(item, { open: t, close: null });
+  }
+
+  function scheduleClose(inst, item) {
+    clearTimers(inst, item);
+    var t = setTimeout(function () {
+      closeItem(inst, item);
+    }, CLOSE_DELAY);
+    var entry = inst.timers.get(item) || {};
+    entry.close = t;
+    inst.timers.set(item, entry);
+  }
+
+  function clearTimers(inst, item) {
+    var entry = inst.timers.get(item);
+    if (!entry) return;
+    if (entry.open) clearTimeout(entry.open);
+    if (entry.close) clearTimeout(entry.close);
+    inst.timers.set(item, { open: null, close: null });
+  }
+
+  function openItem(inst, item) {
+    // Close siblings first
+    inst.items.forEach(function (other) {
+      if (other !== item) other.classList.remove('is-open');
+    });
+    item.classList.add('is-open');
+  }
+
+  function closeItem(inst, item) {
+    item.classList.remove('is-open');
+  }
+
+  /* ---------- Mobile drawer ---------- */
+  function setupMobileDrawer(inst) {
+    if (!inst.hamburger || !inst.drawer) return;
+
+    inst.hamburger.addEventListener('click', function () {
+      openDrawer(inst);
+    });
+
+    if (inst.drawerClose) {
+      inst.drawerClose.addEventListener('click', function () {
+        closeDrawer(inst);
+      });
+    }
+
+    if (inst.drawerOverlay) {
+      inst.drawerOverlay.addEventListener('click', function () {
+        closeDrawer(inst);
+      });
+    }
+  }
+
+  function openDrawer(inst) {
+    inst.root.classList.add('is-drawer-open');
+    if (inst.hamburger) inst.hamburger.setAttribute('aria-expanded', 'true');
+    document.documentElement.classList.add('mn-no-scroll');
+    document.body.classList.add('mn-no-scroll');
+  }
+
+  function closeDrawer(inst) {
+    inst.root.classList.remove('is-drawer-open');
+    if (inst.hamburger) inst.hamburger.setAttribute('aria-expanded', 'false');
+    document.documentElement.classList.remove('mn-no-scroll');
+    document.body.classList.remove('mn-no-scroll');
+    // Collapse all open accordions when drawer closes
+    inst.mobileTriggers.forEach(function (trigger) {
+      trigger.setAttribute('aria-expanded', 'false');
+      var sub = trigger.nextElementSibling;
+      if (sub && sub.classList.contains('mega-nav-mobile-submenu')) {
+        sub.classList.remove('is-open');
+      }
+    });
+  }
+
+  /* ---------- Mobile accordion ---------- */
+  function setupMobileAccordion(inst) {
+    if (!inst.mobileTriggers || inst.mobileTriggers.length === 0) return;
+
+    inst.mobileTriggers.forEach(function (trigger) {
+      trigger.addEventListener('click', function () {
+        var sub = trigger.nextElementSibling;
+        if (!sub || !sub.classList.contains('mega-nav-mobile-submenu')) return;
+
+        var isOpen = trigger.getAttribute('aria-expanded') === 'true';
+
+        if (isOpen) {
+          trigger.setAttribute('aria-expanded', 'false');
+          sub.classList.remove('is-open');
+        } else {
+          trigger.setAttribute('aria-expanded', 'true');
+          sub.classList.add('is-open');
         }
+      });
+    });
+  }
+
+  /* ---------- Sticky nav ---------- */
+  function setupSticky(inst) {
+    if (!inst.stickyEnabled) return;
+
+    // Placeholder reserves space when nav becomes fixed
+    var placeholder = document.createElement('div');
+    placeholder.className = 'mega-nav-sticky-placeholder';
+    placeholder.style.display = 'none';
+    inst.root.parentNode.insertBefore(placeholder, inst.root);
+    inst.stickyPlaceholder = placeholder;
+
+    function updateOriginalTop() {
+      // Measure where the nav sits relative to the document
+      if (!inst.root.classList.contains('is-stuck')) {
+        var rect = inst.root.getBoundingClientRect();
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        inst.stickyOriginalTop = rect.top + scrollTop;
+      }
+    }
+
+    updateOriginalTop();
+
+    var ticking = false;
+    inst.onScroll = function () {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function () {
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var isStuck = inst.root.classList.contains('is-stuck');
+
+        if (!isStuck && scrollTop > inst.stickyOriginalTop + 10) {
+          // Reserve space, then stick
+          placeholder.style.display = 'block';
+          placeholder.style.height = inst.root.offsetHeight + 'px';
+          inst.root.classList.add('is-stuck');
+        } else if (isStuck && scrollTop <= inst.stickyOriginalTop) {
+          inst.root.classList.remove('is-stuck');
+          placeholder.style.display = 'none';
+        }
+        ticking = false;
+      });
+    };
+
+    inst.onResize = function () {
+      // On resize, if not currently stuck, recompute original top
+      if (!inst.root.classList.contains('is-stuck')) {
+        updateOriginalTop();
       }
     };
 
-    drawer._mnFocusTrapHandler = focusHandler;
-    drawer.addEventListener('keydown', focusHandler);
-
-    /* Move focus into the drawer */
-    var focusable = getFocusableElements(drawer);
-    if (focusable.length > 0) {
-      focusable[0].focus();
-    }
+    window.addEventListener('scroll', inst.onScroll, { passive: true });
+    window.addEventListener('resize', inst.onResize);
   }
 
-  function removeFocusTrap(drawer) {
-    if (drawer._mnFocusTrapHandler) {
-      drawer.removeEventListener('keydown', drawer._mnFocusTrapHandler);
-      delete drawer._mnFocusTrapHandler;
-    }
-  }
+  /* ---------- Keyboard support ---------- */
+  function setupKeyboard(inst) {
+    inst.onKeyDown = function (e) {
+      if (e.key !== 'Escape' && e.keyCode !== 27) return;
 
-  /* ============================================================
-     MOBILE ACCORDION
-     ============================================================ */
-  function setupMobileAccordion(section) {
-    var triggers = section.querySelectorAll('.mega-nav-mobile-link[data-has-submenu="true"]');
-    triggers.forEach(function (trigger) {
-      trigger.addEventListener('click', function (e) {
-        e.preventDefault();
-        var parentItem = trigger.closest('.mega-nav-mobile-item');
-        if (!parentItem) return;
+      // Close mobile drawer if open
+      if (inst.root.classList.contains('is-drawer-open')) {
+        closeDrawer(inst);
+        if (inst.hamburger) inst.hamburger.focus();
+        return;
+      }
 
-        var isExpanded = parentItem.classList.contains('is-expanded');
-        /* Close all other accordions at same level */
-        var siblings = parentItem.parentElement.querySelectorAll('.mega-nav-mobile-item.is-expanded');
-        siblings.forEach(function (sib) {
-          sib.classList.remove('is-expanded');
-          var sibTrigger = sib.querySelector('.mega-nav-mobile-link[data-has-submenu="true"]');
-          if (sibTrigger) sibTrigger.setAttribute('aria-expanded', 'false');
-        });
-
-        if (!isExpanded) {
-          parentItem.classList.add('is-expanded');
-          trigger.setAttribute('aria-expanded', 'true');
-        } else {
-          trigger.setAttribute('aria-expanded', 'false');
+      // Close any open desktop dropdown
+      inst.items.forEach(function (item) {
+        if (item.classList.contains('is-open')) {
+          closeItem(inst, item);
+          var link = item.querySelector('.mega-nav-link');
+          if (link) link.focus();
         }
       });
-    });
+    };
+    document.addEventListener('keydown', inst.onKeyDown);
   }
 
-  /* ============================================================
-     STICKY NAV
-     ============================================================ */
-  function setupStickyNav(section) {
-    var isSticky = section.getAttribute('data-mn-sticky') === 'true';
-    if (!isSticky) return;
-
-    var navBar = section.querySelector('.mega-nav-bar');
-    if (!navBar) return;
-
-    function getOffsetTop() {
-      return section.getBoundingClientRect().top + window.pageYOffset;
-    }
-
-    function onScroll() {
-      var offsetTop = getOffsetTop();
-      if (window.pageYOffset > offsetTop) {
-        section.classList.add('is-sticky');
-      } else {
-        section.classList.remove('is-sticky');
-      }
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+  /* ---------- Boot ---------- */
+  function bootAll() {
+    var roots = document.querySelectorAll('.mega-navigation-section');
+    roots.forEach(init);
   }
 
-  /* ============================================================
-     KEYBOARD ACCESSIBILITY
-     ============================================================ */
-  function setupKeyboard(section) {
-    section.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        closeAllDropdowns(section);
-        var drawer = section.querySelector('.mega-nav-drawer');
-        var overlay = section.querySelector('.mega-nav-drawer-overlay');
-        var hamburger = section.querySelector('.mega-nav-hamburger');
-        closeMobileDrawer(drawer, overlay, hamburger);
-      }
-
-      /* Arrow-key navigation for top-level nav items */
-      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-        var navLinks = Array.prototype.slice.call(section.querySelectorAll('.mega-nav-menu > .mega-nav-item > .mega-nav-link'));
-        var currentIndex = navLinks.indexOf(document.activeElement);
-        if (currentIndex === -1) return;
-
-        e.preventDefault();
-        var nextIndex;
-        if (e.key === 'ArrowRight') {
-          nextIndex = (currentIndex + 1) % navLinks.length;
-        } else {
-          nextIndex = (currentIndex - 1 + navLinks.length) % navLinks.length;
-        }
-        navLinks[nextIndex].focus();
-      }
-
-      /* ArrowDown moves focus into the first link of an open dropdown */
-      if (e.key === 'ArrowDown') {
-        var activeItem = section.querySelector('.mega-nav-item.is-active');
-        if (activeItem) {
-          var firstDropdownLink = activeItem.querySelector('.mega-nav-dropdown a');
-          if (firstDropdownLink) {
-            e.preventDefault();
-            firstDropdownLink.focus();
-          }
-        }
-      }
-    });
-  }
-
-  /* ============================================================
-     CLICK OUTSIDE
-     ============================================================ */
-  function setupClickOutside(section) {
-    document.addEventListener('click', function (e) {
-      if (!section.contains(e.target)) {
-        closeAllDropdowns(section);
-      }
-    });
-  }
-
-  /* ============================================================
-     INIT
-     ============================================================ */
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMegaNavigation);
+    document.addEventListener('DOMContentLoaded', bootAll);
   } else {
-    initMegaNavigation();
+    bootAll();
   }
 
-  /* ============================================================
-     SHOPIFY EDITOR EVENTS
-     ============================================================ */
+  // Theme editor: re-init when section is reloaded
   document.addEventListener('shopify:section:load', function (e) {
-    if (e.target && e.target.querySelector('.mega-navigation-section')) {
-      initMegaNavigation();
-    }
+    var root = e.target && e.target.querySelector
+      ? e.target.querySelector('.mega-navigation-section')
+      : null;
+    if (root) init(root);
   });
 
   document.addEventListener('shopify:section:unload', function (e) {
-    if (e.target && e.target.querySelector('.mega-navigation-section')) {
-      var section = e.target.querySelector('.mega-navigation-section');
-      section.classList.remove('is-sticky');
-      closeAllDropdowns(section);
-    }
+    var root = e.target && e.target.querySelector
+      ? e.target.querySelector('.mega-navigation-section')
+      : null;
+    if (root) destroy(root);
   });
 
   document.addEventListener('shopify:block:select', function (e) {
-    var section = document.querySelector('.mega-navigation-section');
-    if (!section) return;
-    var block = e.target;
-    if (!block) return;
-    var navItem = section.querySelector('[data-block-id="' + block.getAttribute('data-shopify-editor-block') + '"]');
-    if (navItem) {
-      closeAllDropdowns(section);
-      navItem.classList.add('is-active');
-    }
+    // When merchant selects a menu_item block in the editor, open its dropdown
+    var item = e.target && e.target.closest ? e.target.closest('.mega-nav-item') : null;
+    if (!item) return;
+    var root = item.closest('.mega-navigation-section');
+    if (!root) return;
+    var inst = instances.get(root);
+    if (inst) openItem(inst, item);
   });
 
   document.addEventListener('shopify:block:deselect', function (e) {
-    var section = document.querySelector('.mega-navigation-section');
-    if (!section) return;
-    closeAllDropdowns(section);
+    var item = e.target && e.target.closest ? e.target.closest('.mega-nav-item') : null;
+    if (!item) return;
+    var root = item.closest('.mega-navigation-section');
+    if (!root) return;
+    var inst = instances.get(root);
+    if (inst) closeItem(inst, item);
   });
 })();

@@ -1,3 +1,19 @@
+{% comment %}
+  ============================================================
+  MEGA NAVIGATION SECTION
+  Style:
+    - Desktop : Symmetry + thejacketmaker.com
+                (full-width flyout, hover trigger, multi-column,
+                 featured promo card)
+    - Mobile  : Prada-style full-screen drawer
+                (large bold typography, slide-in, accordion)
+  Architecture:
+    - Independent section (theme editor: add/remove/reorder).
+    - Self-contained: CSS + JS in /assets, schema below.
+    - Does not modify Dawn header.liquid; complements it.
+  ============================================================
+{% endcomment %}
+
 {% if section.settings.mn_enable %}
   {{ 'mega-navigation.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'mega-navigation.js' | asset_url }}" defer="defer"></script>
@@ -11,7 +27,7 @@
   -%}
 
   {%- style -%}
-    .mega-navigation-section {
+    #shopify-section-{{ section.id }} .mega-navigation-section {
       --mn-bg-color: {{ section.settings.mn_bg_color }};
       --mn-text-color: {{ section.settings.mn_text_color }};
       --mn-font-size: {{ section.settings.mn_font_size }}px;
@@ -37,34 +53,62 @@
     }
   {%- endstyle -%}
 
-  {% assign nav_heading_color = section.settings.mn_dropdown_heading_color %}
-  {% assign nav_text_color = section.settings.mn_dropdown_text_color %}
-  {% assign nav_badge_new = section.settings.mn_badge_new_color %}
-  {% assign nav_badge_sale = section.settings.mn_badge_sale_color %}
-  {% assign nav_badge_hot = section.settings.mn_badge_hot_color %}
+  {%- liquid
+    assign nav_heading_color = section.settings.mn_dropdown_heading_color
+    assign nav_text_color = section.settings.mn_dropdown_text_color
+    assign nav_badge_new = section.settings.mn_badge_new_color
+    assign nav_badge_sale = section.settings.mn_badge_sale_color
+    assign nav_badge_hot = section.settings.mn_badge_hot_color
+  -%}
 
   <div
+    id="section-{{ section.id }}"
     class="mega-navigation-section"
+    role="region"
+    aria-label="Mega navigation"
     data-mn-hover-animation="{{ section.settings.mn_hover_animation }}"
     data-mn-dropdown-animation="{{ section.settings.mn_dropdown_animation }}"
     data-mn-sticky="{{ section.settings.mn_sticky }}"
     data-mn-mobile-accordion-icon="{{ section.settings.mn_mobile_accordion_icon }}"
     data-mn-mobile-drawer-position="{{ section.settings.mn_mobile_drawer_position }}"
   >
-    <nav class="mega-nav-bar" aria-label="Mega navigation">
-      <button class="mega-nav-hamburger" aria-label="Open menu" aria-expanded="false">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    <nav class="mega-nav-bar" aria-label="Primary">
+      <button
+        type="button"
+        class="mega-nav-hamburger"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="MegaNavDrawer-{{ section.id }}"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
       </button>
 
       <ul class="mega-nav-menu">
         {% for block in section.blocks %}
           {% if block.type == 'menu_item' %}
+            {%- assign has_dropdown = false -%}
+            {% if block.settings.mn_col1_linklist != blank
+                or block.settings.mn_col2_linklist != blank
+                or block.settings.mn_col3_linklist != blank
+                or block.settings.mn_col4_linklist != blank
+                or block.settings.mn_col5_linklist != blank
+                or block.settings.mn_col6_linklist != blank
+                or block.settings.mn_show_promo
+            %}
+              {%- assign has_dropdown = true -%}
+            {% endif %}
+
             <li class="mega-nav-item" data-block-id="{{ block.id }}" {{ block.shopify_attributes }}>
               <a
-                href="{{ block.settings.menu_url }}"
+                href="{{ block.settings.menu_url | default: '#' }}"
                 class="mega-nav-link"
                 {% if block.settings.mn_use_custom_color %}
-                  style="color: {{ block.settings.mn_item_color }}; --mn-hover-color: {{ block.settings.mn_item_hover_color }}; --mn-item-hover-color: {{ block.settings.mn_item_hover_color }};"
+                  data-custom-color="true"
+                  style="--mn-item-color: {{ block.settings.mn_item_color }}; --mn-item-hover-color: {{ block.settings.mn_item_hover_color }}; color: {{ block.settings.mn_item_color }};"
                 {% endif %}
               >
                 {{- block.settings.menu_link -}}
@@ -77,159 +121,148 @@
                 {% endif %}
               </a>
 
-              <div class="mega-nav-dropdown {% if section.settings.mn_dropdown_shadow %}has-shadow{% endif %} {% if section.settings.mn_dropdown_border %}has-border{% endif %}">
-                <div class="mega-nav-dropdown__inner">
-                  <div class="mega-nav-dropdown__columns" data-columns="{{ block.settings.mn_columns }}">
-                    {% assign col1_title = block.settings.mn_col1_title %}
-                    {% assign col1_handle = block.settings.mn_col1_linklist %}
-                    {% assign col2_title = block.settings.mn_col2_title %}
-                    {% assign col2_handle = block.settings.mn_col2_linklist %}
-                    {% assign col3_title = block.settings.mn_col3_title %}
-                    {% assign col3_handle = block.settings.mn_col3_linklist %}
-                    {% assign col4_title = block.settings.mn_col4_title %}
-                    {% assign col4_handle = block.settings.mn_col4_linklist %}
-                    {% assign col5_title = block.settings.mn_col5_title %}
-                    {% assign col5_handle = block.settings.mn_col5_linklist %}
-                    {% assign col6_title = block.settings.mn_col6_title %}
-                    {% assign col6_handle = block.settings.mn_col6_linklist %}
+              {% if has_dropdown %}
+                <div
+                  class="mega-nav-dropdown{% if section.settings.mn_dropdown_shadow %} has-shadow{% endif %}{% if section.settings.mn_dropdown_border %} has-border{% endif %}"
+                >
+                  <div class="mega-nav-dropdown__inner">
+                    <div class="mega-nav-dropdown__columns" data-columns="{{ block.settings.mn_columns }}">
+                      {% for col in (1..6) %}
+                        {%- assign title_key = 'mn_col' | append: col | append: '_title' -%}
+                        {%- assign list_key  = 'mn_col' | append: col | append: '_linklist' -%}
+                        {%- assign col_title = block.settings[title_key] -%}
+                        {%- assign col_handle = block.settings[list_key] -%}
+                        {% if col_handle != blank %}
+                          {% render 'mega-nav-column',
+                            column_title: col_title,
+                            linklist_handle: col_handle,
+                            heading_color: nav_heading_color,
+                            text_color: nav_text_color,
+                            badge_new_color: nav_badge_new,
+                            badge_sale_color: nav_badge_sale,
+                            badge_hot_color: nav_badge_hot
+                          %}
+                        {% endif %}
+                      {% endfor %}
+                    </div>
 
-                    {% if col1_handle != blank %}
-                      {% render 'mega-nav-column', column_title: col1_title, linklist_handle: col1_handle, heading_color: nav_heading_color, text_color: nav_text_color, badge_new_color: nav_badge_new, badge_sale_color: nav_badge_sale, badge_hot_color: nav_badge_hot %}
-                    {% endif %}
-                    {% if col2_handle != blank %}
-                      {% render 'mega-nav-column', column_title: col2_title, linklist_handle: col2_handle, heading_color: nav_heading_color, text_color: nav_text_color, badge_new_color: nav_badge_new, badge_sale_color: nav_badge_sale, badge_hot_color: nav_badge_hot %}
-                    {% endif %}
-                    {% if col3_handle != blank %}
-                      {% render 'mega-nav-column', column_title: col3_title, linklist_handle: col3_handle, heading_color: nav_heading_color, text_color: nav_text_color, badge_new_color: nav_badge_new, badge_sale_color: nav_badge_sale, badge_hot_color: nav_badge_hot %}
-                    {% endif %}
-                    {% if col4_handle != blank %}
-                      {% render 'mega-nav-column', column_title: col4_title, linklist_handle: col4_handle, heading_color: nav_heading_color, text_color: nav_text_color, badge_new_color: nav_badge_new, badge_sale_color: nav_badge_sale, badge_hot_color: nav_badge_hot %}
-                    {% endif %}
-                    {% if col5_handle != blank %}
-                      {% render 'mega-nav-column', column_title: col5_title, linklist_handle: col5_handle, heading_color: nav_heading_color, text_color: nav_text_color, badge_new_color: nav_badge_new, badge_sale_color: nav_badge_sale, badge_hot_color: nav_badge_hot %}
-                    {% endif %}
-                    {% if col6_handle != blank %}
-                      {% render 'mega-nav-column', column_title: col6_title, linklist_handle: col6_handle, heading_color: nav_heading_color, text_color: nav_text_color, badge_new_color: nav_badge_new, badge_sale_color: nav_badge_sale, badge_hot_color: nav_badge_hot %}
+                    {% if block.settings.mn_show_promo and block.settings.mn_promo_image != blank %}
+                      {%- assign promo_img_url = block.settings.mn_promo_image | image_url: width: 560 -%}
+                      {%- assign promo_img_alt = block.settings.mn_promo_image.alt | default: block.settings.mn_promo_heading -%}
+                      {% render 'mega-nav-promo',
+                        image: promo_img_url,
+                        image_alt: promo_img_alt,
+                        heading: block.settings.mn_promo_heading,
+                        subheading: block.settings.promo_subheading,
+                        button_text: block.settings.promo_button_text,
+                        button_url: block.settings.promo_button_url
+                      %}
                     {% endif %}
                   </div>
-
-                  {% if block.settings.mn_show_promo and block.settings.mn_promo_image != blank %}
-                    {% assign promo_img_url = block.settings.mn_promo_image | image_url: width: 560 %}
-                    {% assign promo_img_alt = block.settings.mn_promo_image.alt | default: block.settings.mn_promo_heading %}
-                    {% assign promo_heading_val = block.settings.mn_promo_heading %}
-                    {% assign promo_sub_val = block.settings.promo_subheading %}
-                    {% assign promo_btn_text_val = block.settings.promo_button_text %}
-                    {% assign promo_btn_url_val = block.settings.promo_button_url %}
-                    {% render 'mega-nav-promo', image: promo_img_url, image_alt: promo_img_alt, heading: promo_heading_val, subheading: promo_sub_val, button_text: promo_btn_text_val, button_url: promo_btn_url_val %}
-                  {% endif %}
                 </div>
-              </div>
+              {% endif %}
             </li>
           {% endif %}
         {% endfor %}
       </ul>
     </nav>
 
-    <!-- Mobile Drawer -->
-    <div class="mega-nav-drawer-overlay"></div>
-    <div class="mega-nav-drawer" data-position="{{ section.settings.mn_mobile_drawer_position }}">
+    {% comment %} ===== Mobile drawer (Prada style) ===== {% endcomment %}
+    <div class="mega-nav-drawer-overlay" aria-hidden="true"></div>
+    <div
+      id="MegaNavDrawer-{{ section.id }}"
+      class="mega-nav-drawer"
+      data-position="{{ section.settings.mn_mobile_drawer_position }}"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Mobile menu"
+    >
       <div class="mega-nav-drawer__header">
-        <button class="mega-nav-drawer__close" aria-label="Close menu">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <button
+          type="button"
+          class="mega-nav-drawer__close"
+          aria-label="Close menu"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
       </div>
+
       <ul class="mega-nav-mobile-menu">
         {% for block in section.blocks %}
           {% if block.type == 'menu_item' %}
-            {% assign has_submenu = false %}
-            {% if block.settings.mn_col1_linklist != blank or block.settings.mn_col2_linklist != blank or block.settings.mn_col3_linklist != blank or block.settings.mn_col4_linklist != blank or block.settings.mn_col5_linklist != blank or block.settings.mn_col6_linklist != blank %}
-              {% assign has_submenu = true %}
+            {%- assign has_submenu = false -%}
+            {% if block.settings.mn_col1_linklist != blank
+                or block.settings.mn_col2_linklist != blank
+                or block.settings.mn_col3_linklist != blank
+                or block.settings.mn_col4_linklist != blank
+                or block.settings.mn_col5_linklist != blank
+                or block.settings.mn_col6_linklist != blank
+            %}
+              {%- assign has_submenu = true -%}
             {% endif %}
 
-            <li class="mega-nav-mobile-item">
+            <li class="mega-nav-mobile-item" {{ block.shopify_attributes }}>
               {% if has_submenu %}
-                <button class="mega-nav-mobile-link" data-has-submenu="true" aria-expanded="false">
+                <button
+                  type="button"
+                  class="mega-nav-mobile-link"
+                  data-has-submenu="true"
+                  aria-expanded="false"
+                >
                   <span>{{ block.settings.menu_link }}</span>
-                  <span class="mega-nav-accordion-icon">
+                  <span class="mega-nav-accordion-icon" aria-hidden="true">
                     {% if section.settings.mn_mobile_accordion_icon == 'plus' %}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     {% elsif section.settings.mn_mobile_accordion_icon == 'chevron' %}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                    {% elsif section.settings.mn_mobile_accordion_icon == 'arrow' %}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    {% else %}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     {% endif %}
                   </span>
                 </button>
+
                 <div class="mega-nav-mobile-submenu">
-                  {% if block.settings.mn_col1_linklist != blank %}
-                    {% if block.settings.mn_col1_title != blank %}
-                      <h4 class="mega-nav-mobile-submenu__heading">{{ block.settings.mn_col1_title }}</h4>
+                  <div class="mega-nav-mobile-submenu__inner">
+                    {% for col in (1..6) %}
+                      {%- assign title_key = 'mn_col' | append: col | append: '_title' -%}
+                      {%- assign list_key  = 'mn_col' | append: col | append: '_linklist' -%}
+                      {%- assign m_title = block.settings[title_key] -%}
+                      {%- assign m_handle = block.settings[list_key] -%}
+                      {% if m_handle != blank %}
+                        {% if m_title != blank %}
+                          <h4 class="mega-nav-mobile-submenu__heading">{{ m_title }}</h4>
+                        {% endif %}
+                        <ul class="mega-nav-mobile-submenu__list">
+                          {% for link in linklists[m_handle].links %}
+                            <li>
+                              <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
+                                {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
+                              </a>
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      {% endif %}
+                    {% endfor %}
+
+                    {% if block.settings.menu_url != blank %}
+                      <a
+                        href="{{ block.settings.menu_url }}"
+                        class="mega-nav-promo__button"
+                        style="margin-top: 1.6rem;"
+                      >
+                        Shop all {{ block.settings.menu_link | escape }}
+                      </a>
                     {% endif %}
-                    {% assign mobile_links_1 = linklists[block.settings.mn_col1_linklist].links %}
-                    <ul class="mega-nav-mobile-submenu__list">
-                      {% for link in mobile_links_1 %}
-                        <li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{ link.title }}</a></li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                  {% if block.settings.mn_col2_linklist != blank %}
-                    {% if block.settings.mn_col2_title != blank %}
-                      <h4 class="mega-nav-mobile-submenu__heading">{{ block.settings.mn_col2_title }}</h4>
-                    {% endif %}
-                    {% assign mobile_links_2 = linklists[block.settings.mn_col2_linklist].links %}
-                    <ul class="mega-nav-mobile-submenu__list">
-                      {% for link in mobile_links_2 %}
-                        <li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{ link.title }}</a></li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                  {% if block.settings.mn_col3_linklist != blank %}
-                    {% if block.settings.mn_col3_title != blank %}
-                      <h4 class="mega-nav-mobile-submenu__heading">{{ block.settings.mn_col3_title }}</h4>
-                    {% endif %}
-                    {% assign mobile_links_3 = linklists[block.settings.mn_col3_linklist].links %}
-                    <ul class="mega-nav-mobile-submenu__list">
-                      {% for link in mobile_links_3 %}
-                        <li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{ link.title }}</a></li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                  {% if block.settings.mn_col4_linklist != blank %}
-                    {% if block.settings.mn_col4_title != blank %}
-                      <h4 class="mega-nav-mobile-submenu__heading">{{ block.settings.mn_col4_title }}</h4>
-                    {% endif %}
-                    {% assign mobile_links_4 = linklists[block.settings.mn_col4_linklist].links %}
-                    <ul class="mega-nav-mobile-submenu__list">
-                      {% for link in mobile_links_4 %}
-                        <li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{ link.title }}</a></li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                  {% if block.settings.mn_col5_linklist != blank %}
-                    {% if block.settings.mn_col5_title != blank %}
-                      <h4 class="mega-nav-mobile-submenu__heading">{{ block.settings.mn_col5_title }}</h4>
-                    {% endif %}
-                    {% assign mobile_links_5 = linklists[block.settings.mn_col5_linklist].links %}
-                    <ul class="mega-nav-mobile-submenu__list">
-                      {% for link in mobile_links_5 %}
-                        <li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{ link.title }}</a></li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                  {% if block.settings.mn_col6_linklist != blank %}
-                    {% if block.settings.mn_col6_title != blank %}
-                      <h4 class="mega-nav-mobile-submenu__heading">{{ block.settings.mn_col6_title }}</h4>
-                    {% endif %}
-                    {% assign mobile_links_6 = linklists[block.settings.mn_col6_linklist].links %}
-                    <ul class="mega-nav-mobile-submenu__list">
-                      {% for link in mobile_links_6 %}
-                        <li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{ link.title }}</a></li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
+                  </div>
                 </div>
               {% else %}
-                <a href="{{ block.settings.menu_url }}" class="mega-nav-mobile-link">
+                <a
+                  href="{{ block.settings.menu_url | default: '#' }}"
+                  class="mega-nav-mobile-link"
+                >
                   <span>{{ block.settings.menu_link }}</span>
                 </a>
               {% endif %}
@@ -244,10 +277,11 @@
 {% schema %}
 {
   "name": "Mega Navigation",
+  "class": "shopify-section-mega-navigation",
   "settings": [
     {
       "type": "header",
-      "content": "General Settings"
+      "content": "General"
     },
     {
       "type": "checkbox",
@@ -316,7 +350,7 @@
     },
     {
       "type": "header",
-      "content": "Hover Effects"
+      "content": "Hover effects"
     },
     {
       "type": "color",
@@ -347,12 +381,12 @@
     },
     {
       "type": "header",
-      "content": "Sticky Navigation"
+      "content": "Sticky"
     },
     {
       "type": "checkbox",
       "id": "mn_sticky",
-      "label": "Enable sticky navigation",
+      "label": "Stick to top on scroll",
       "default": false
     },
     {
@@ -379,42 +413,42 @@
     },
     {
       "type": "header",
-      "content": "Dropdown Panel"
+      "content": "Dropdown panel"
     },
     {
       "type": "color",
       "id": "mn_dropdown_bg",
-      "label": "Dropdown background color",
+      "label": "Background color",
       "default": "#FFFFFF"
     },
     {
       "type": "color",
       "id": "mn_dropdown_text_color",
-      "label": "Dropdown text color",
+      "label": "Text color",
       "default": "#333333"
     },
     {
       "type": "color",
       "id": "mn_dropdown_heading_color",
-      "label": "Dropdown heading color",
+      "label": "Heading color",
       "default": "#000000"
     },
     {
       "type": "select",
       "id": "mn_dropdown_animation",
-      "label": "Dropdown animation",
+      "label": "Open animation",
       "options": [
         { "value": "fade", "label": "Fade" },
         { "value": "slide-down", "label": "Slide down" },
         { "value": "slide-up", "label": "Slide up" },
         { "value": "zoom", "label": "Zoom" }
       ],
-      "default": "fade"
+      "default": "slide-down"
     },
     {
       "type": "range",
       "id": "mn_dropdown_duration",
-      "label": "Dropdown animation duration",
+      "label": "Animation duration",
       "min": 100,
       "max": 600,
       "step": 50,
@@ -435,7 +469,11 @@
     },
     {
       "type": "header",
-      "content": "Badge Colors"
+      "content": "Badge colors"
+    },
+    {
+      "type": "paragraph",
+      "content": "Add [NEW], [SALE], or [HOT] in your menu link titles to display badges."
     },
     {
       "type": "color",
@@ -457,15 +495,15 @@
     },
     {
       "type": "header",
-      "content": "Mobile Settings"
+      "content": "Mobile drawer (Prada style)"
     },
     {
       "type": "select",
       "id": "mn_mobile_drawer_position",
-      "label": "Mobile drawer position",
+      "label": "Drawer position",
       "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "right", "label": "Right" },
+        { "value": "left", "label": "Slide from left" },
+        { "value": "right", "label": "Slide from right" },
         { "value": "fullscreen", "label": "Fullscreen" }
       ],
       "default": "left"
@@ -473,27 +511,28 @@
     {
       "type": "range",
       "id": "mn_mobile_font_size",
-      "label": "Mobile font size",
+      "label": "Mobile link font size",
       "min": 14,
-      "max": 24,
-      "step": 1,
-      "default": 16,
-      "unit": "px"
+      "max": 28,
+      "step": 2,
+      "default": 22,
+      "unit": "px",
+      "info": "Larger sizes give the Prada-style bold look."
     },
     {
       "type": "range",
       "id": "mn_mobile_padding",
-      "label": "Mobile item padding",
+      "label": "Mobile link vertical padding",
       "min": 8,
       "max": 24,
       "step": 2,
-      "default": 12,
+      "default": 14,
       "unit": "px"
     },
     {
       "type": "select",
       "id": "mn_mobile_accordion_icon",
-      "label": "Mobile accordion icon",
+      "label": "Accordion icon",
       "options": [
         { "value": "plus", "label": "Plus" },
         { "value": "chevron", "label": "Chevron" },
@@ -503,12 +542,12 @@
     },
     {
       "type": "header",
-      "content": "Section Spacing"
+      "content": "Section spacing"
     },
     {
       "type": "range",
       "id": "mn_section_padding_top",
-      "label": "Section padding top",
+      "label": "Padding top",
       "min": 0,
       "max": 40,
       "step": 4,
@@ -518,7 +557,7 @@
     {
       "type": "range",
       "id": "mn_section_padding_bottom",
-      "label": "Section padding bottom",
+      "label": "Padding bottom",
       "min": 0,
       "max": 40,
       "step": 4,
@@ -529,22 +568,22 @@
   "blocks": [
     {
       "type": "menu_item",
-      "name": "Menu Item",
+      "name": "Menu item",
       "settings": [
         {
           "type": "text",
           "id": "menu_link",
-          "label": "Menu item title",
+          "label": "Title",
           "default": "Menu Item"
         },
         {
           "type": "url",
           "id": "menu_url",
-          "label": "Menu item URL"
+          "label": "Link"
         },
         {
           "type": "header",
-          "content": "Custom Color"
+          "content": "Custom color (optional)"
         },
         {
           "type": "checkbox",
@@ -567,7 +606,7 @@
         {
           "type": "select",
           "id": "mn_item_badge",
-          "label": "Item badge",
+          "label": "Badge",
           "options": [
             { "value": "none", "label": "None" },
             { "value": "new", "label": "NEW" },
@@ -578,7 +617,7 @@
         },
         {
           "type": "header",
-          "content": "Dropdown Columns"
+          "content": "Dropdown columns"
         },
         {
           "type": "range",
@@ -597,7 +636,7 @@
         {
           "type": "link_list",
           "id": "mn_col1_linklist",
-          "label": "Column 1 link list"
+          "label": "Column 1 links"
         },
         {
           "type": "text",
@@ -607,7 +646,7 @@
         {
           "type": "link_list",
           "id": "mn_col2_linklist",
-          "label": "Column 2 link list"
+          "label": "Column 2 links"
         },
         {
           "type": "text",
@@ -617,7 +656,7 @@
         {
           "type": "link_list",
           "id": "mn_col3_linklist",
-          "label": "Column 3 link list"
+          "label": "Column 3 links"
         },
         {
           "type": "text",
@@ -627,7 +666,7 @@
         {
           "type": "link_list",
           "id": "mn_col4_linklist",
-          "label": "Column 4 link list"
+          "label": "Column 4 links"
         },
         {
           "type": "text",
@@ -637,7 +676,7 @@
         {
           "type": "link_list",
           "id": "mn_col5_linklist",
-          "label": "Column 5 link list"
+          "label": "Column 5 links"
         },
         {
           "type": "text",
@@ -647,16 +686,16 @@
         {
           "type": "link_list",
           "id": "mn_col6_linklist",
-          "label": "Column 6 link list"
+          "label": "Column 6 links"
         },
         {
           "type": "header",
-          "content": "Promo Image"
+          "content": "Featured promo (thejacketmaker style)"
         },
         {
           "type": "checkbox",
           "id": "mn_show_promo",
-          "label": "Show promo image",
+          "label": "Show featured promo",
           "default": false
         },
         {
@@ -677,12 +716,12 @@
         {
           "type": "text",
           "id": "promo_button_text",
-          "label": "Promo button text"
+          "label": "Button text"
         },
         {
           "type": "url",
           "id": "promo_button_url",
-          "label": "Promo button URL"
+          "label": "Button link"
         }
       ]
     }

@@ -1,26 +1,34 @@
 {% comment %}
-  Mega Navigation Promo Snippet
-  Receives primitive parameters only:
-    - image (string - image URL)
-    - image_alt (string)
-    - heading (string)
-    - subheading (string)
-    - button_text (string)
-    - button_url (string)
+  Mega Navigation Promo
+  Renders a featured promo card inside the mega dropdown.
+  Style: thejacketmaker.com — image card with heading,
+  subheading and outline CTA button below.
+
+  Parameters:
+    - image        (string)  Pre-built image_url string
+    - image_alt    (string)
+    - heading      (string)
+    - subheading   (string)
+    - button_text  (string)
+    - button_url   (string)
 {% endcomment %}
 
 <div class="mega-nav-promo">
   {% if image != blank %}
-    <div class="mega-nav-promo__image-wrapper">
+    <a
+      href="{% if button_url != blank %}{{ button_url }}{% else %}#{% endif %}"
+      class="mega-nav-promo__image-wrapper"
+      aria-label="{{ heading | default: image_alt | escape }}"
+    >
       <img
         src="{{ image }}"
-        alt="{{ image_alt }}"
+        alt="{{ image_alt | escape }}"
         loading="lazy"
         width="560"
-        height="560"
+        height="700"
         class="mega-nav-promo__image"
       >
-    </div>
+    </a>
   {% endif %}
 
   <div class="mega-nav-promo__content">

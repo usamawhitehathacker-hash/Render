@@ -1,13 +1,20 @@
 {% comment %}
-  Mega Navigation Column Snippet
-  Receives primitive parameters only:
-    - column_title (string)
-    - linklist_handle (string)
-    - heading_color (string - CSS color)
-    - text_color (string - CSS color)
-    - badge_new_color (string - CSS color)
-    - badge_sale_color (string - CSS color)
-    - badge_hot_color (string - CSS color)
+  Mega Navigation Column
+  Renders one column of links in the mega dropdown panel.
+
+  Parameters:
+    - column_title       (string)  Optional column heading
+    - linklist_handle    (string)  Handle of a Shopify linklist
+    - heading_color      (string)  CSS color for heading
+    - text_color         (string)  CSS color for links
+    - badge_new_color    (string)  CSS color for [NEW] badge
+    - badge_sale_color   (string)  CSS color for [SALE] badge
+    - badge_hot_color    (string)  CSS color for [HOT] badge
+
+  Badges are inferred from the link title:
+    "Hoodies [NEW]"  -> renders NEW badge, strips the tag from the title
+    "Sale Items [SALE]"  -> renders SALE badge
+    "Trending [HOT]"  -> renders HOT badge
 {% endcomment %}
 
 <div class="mega-nav-column">
@@ -16,10 +23,10 @@
   {% endif %}
 
   {% if linklist_handle != blank %}
-    {% assign links = linklists[linklist_handle].links %}
-    {% if links.size > 0 %}
+    {% assign mn_links = linklists[linklist_handle].links %}
+    {% if mn_links.size > 0 %}
       <ul class="mega-nav-column__list">
-        {% for link in links %}
+        {% for link in mn_links %}
           {% assign link_title = link.title %}
           {% assign badge_type = '' %}
 
@@ -35,14 +42,18 @@
           {% endif %}
 
           <li class="mega-nav-column__item">
-            <a href="{{ link.url }}" class="mega-nav-column__link" style="color: {{ text_color }};">
+            <a
+              href="{{ link.url }}"
+              class="mega-nav-column__link"
+              style="color: {{ text_color }};"
+            >
               {{- link_title -}}
               {% if badge_type == 'new' %}
-                <span class="mega-nav-badge mega-nav-badge--new" style="background-color: {{ badge_new_color }};">NEW</span>
+                <span class="mega-nav-badge" style="background-color: {{ badge_new_color }};">NEW</span>
               {% elsif badge_type == 'sale' %}
-                <span class="mega-nav-badge mega-nav-badge--sale" style="background-color: {{ badge_sale_color }};">SALE</span>
+                <span class="mega-nav-badge" style="background-color: {{ badge_sale_color }};">SALE</span>
               {% elsif badge_type == 'hot' %}
-                <span class="mega-nav-badge mega-nav-badge--hot" style="background-color: {{ badge_hot_color }};">HOT</span>
+                <span class="mega-nav-badge" style="background-color: {{ badge_hot_color }};">HOT</span>
               {% endif %}
             </a>
           </li>
