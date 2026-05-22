@@ -143,6 +143,16 @@
       --hp-mobile-bottom-nav-border: {{ section.settings.hp_mobile_bottom_nav_border }};
       --hp-mobile-menu-font-size: {{ section.settings.hp_mobile_menu_font_size }}px;
       --hp-mobile-menu-padding: {{ section.settings.hp_mobile_menu_padding }}px;
+
+      /* Header Layout & Structure */
+      --hp-header-height-desktop: {{ section.settings.hp_header_height_desktop }}px;
+      --hp-header-height-mobile: {{ section.settings.hp_header_height_mobile }}px;
+      --hp-header-bg-opacity: {{ section.settings.hp_header_bg_opacity | divided_by: 100.0 }};
+      --hp-border-top-color: {{ section.settings.hp_border_top_color }};
+      --hp-border-top-width: {{ section.settings.hp_border_top_width }}px;
+      --hp-scroll-shrink: {{ section.settings.hp_scroll_shrink | divided_by: 100.0 }};
+      --hp-scroll-bg-color: {{ section.settings.hp_scroll_bg_color }};
+      --hp-nav-alignment: {{ section.settings.hp_nav_alignment }};
     }
   {%- endif -%}
 {%- endstyle -%}
@@ -206,6 +216,14 @@
     data-hp-mobile-text-transform="{{ section.settings.hp_mobile_menu_text_transform }}"
     data-hp-smooth-scroll="{{ section.settings.hp_smooth_scroll }}"
     data-hp-reduced-motion="{{ section.settings.hp_respect_reduced_motion }}"
+    data-hp-vertical-align="{{ section.settings.hp_header_vertical_align }}"
+    data-hp-shadow="{{ section.settings.hp_header_shadow }}"
+    data-hp-border-top="{{ section.settings.hp_border_top_show }}"
+    data-hp-scroll-shrink
+    data-hp-scroll-bg="{{ section.settings.hp_scroll_bg_change }}"
+    data-hp-scroll-shadow="{{ section.settings.hp_scroll_shadow }}"
+    data-hp-nav-align="{{ section.settings.hp_nav_alignment }}"
+    data-hp-icon-align="{{ section.settings.hp_icon_alignment }}"
   {%- endif -%}
   class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}{% if section.settings.hp_enable_premium %} header-wrapper--premium header-wrapper--layout-{{ section.settings.hp_header_layout }}{% endif %}{% if hp_transparent_active %} header-wrapper--transparent{% endif %}{% if section.settings.hp_enable_premium and section.settings.hp_header_width == 'boxed' %} header-wrapper--boxed{% endif %}"
 >
@@ -980,6 +998,140 @@
       "id": "hp_sticky_logo",
       "label": "Sticky header logo (optional)",
       "info": "Different logo to show when header is scrolled/sticky. If empty, the main logo is used."
+    },
+    {
+      "type": "header",
+      "content": "Header Layout & Structure (Advanced)"
+    },
+    {
+      "type": "range",
+      "id": "hp_header_height_desktop",
+      "label": "Header height (desktop)",
+      "min": 60,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "hp_header_height_mobile",
+      "label": "Header height (mobile)",
+      "min": 50,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "select",
+      "id": "hp_header_vertical_align",
+      "label": "Header vertical alignment",
+      "options": [
+        { "value": "top", "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "hp_header_bg_opacity",
+      "label": "Header background opacity (%)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 100
+    },
+    {
+      "type": "select",
+      "id": "hp_header_shadow",
+      "label": "Header shadow",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "checkbox",
+      "id": "hp_border_top_show",
+      "label": "Show border at top of header",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "hp_border_top_color",
+      "label": "Border top color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "hp_border_top_width",
+      "label": "Border top width",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "hp_scroll_shrink",
+      "label": "Scroll shrink amount (%)",
+      "info": "How much header shrinks when sticky scrolled",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "checkbox",
+      "id": "hp_scroll_bg_change",
+      "label": "Change background on scroll",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "hp_scroll_bg_color",
+      "label": "Scroll background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "hp_scroll_shadow",
+      "label": "Shadow when sticky",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "subtle", "label": "Subtle" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "strong", "label": "Strong" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "hp_nav_alignment",
+      "label": "Navigation alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" },
+        { "value": "space-between", "label": "Space Between" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "hp_icon_alignment",
+      "label": "Icon alignment",
+      "options": [
+        { "value": "compact", "label": "Compact" },
+        { "value": "spread", "label": "Spread" }
+      ],
+      "default": "compact"
     },
     {
       "type": "header",

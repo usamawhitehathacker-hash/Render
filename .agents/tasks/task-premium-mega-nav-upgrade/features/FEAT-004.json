@@ -2,7 +2,7 @@
   "id": "FEAT-004",
   "type": "feat",
   "description": "Add Header Layout & Structure settings (14 new settings for Area 1) to sections/header.liquid schema, and Badge Colors & Spacing settings (20 new settings for Area 6) to sections/mega-navigation.liquid schema. Also add Mobile & Polish settings (15 new settings for Area 4) to sections/mega-navigation.liquid. Total: 49 new settings across both files.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "STEP 1 - Add 14 Header Layout & Structure settings to sections/header.liquid schema under a new 'Header Layout & Structure' header (insert after existing Phase 2 layout settings). Settings: hp_header_height_desktop (range 60-120 step 5 default 80), hp_header_height_mobile (range 50-80 step 5 default 60), hp_header_vertical_align (select: top/center/bottom, default center), hp_header_bg_opacity (range 0-100 step 5 default 100), hp_header_shadow (select: none/small/medium/large, default none), hp_border_top (checkbox false), hp_border_top_color (color #000000), hp_border_top_width (range 1-5 step 1 default 1), hp_scroll_shrink (range 10-50 step 5 default 20), hp_scroll_bg_change (checkbox false), hp_scroll_bg_color (color #FFFFFF), hp_scroll_shadow (select: none/subtle/medium/strong, default none), hp_nav_alignment (select: left/center/right/space-between, default center), hp_icon_alignment (select: compact/spread, default compact).",
     "STEP 2 - Add CSS variables for the 14 new header settings in the Liquid style block of sections/header.liquid. For hp_header_bg_opacity: output as calc({{ section.settings.hp_header_bg_opacity }} / 100). For hp_scroll_shrink: output as calc({{ section.settings.hp_scroll_shrink }} / 100).",

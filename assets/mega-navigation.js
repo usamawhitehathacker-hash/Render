@@ -222,6 +222,35 @@
         closeMobileDrawer(drawer, overlay, hamburger);
       });
     }
+
+    /* Swipe to close */
+    var swipeEnabled = section.getAttribute('data-mn-swipe-close') === 'true';
+    if (swipeEnabled) {
+      var startX = 0;
+      var startY = 0;
+      var drawerPosition = drawer.getAttribute('data-position') || 'left';
+
+      drawer.addEventListener('touchstart', function (e) {
+        var touch = e.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+      }, { passive: true });
+
+      drawer.addEventListener('touchend', function (e) {
+        var touch = e.changedTouches[0];
+        var diffX = touch.clientX - startX;
+        var diffY = touch.clientY - startY;
+
+        /* Only close on horizontal swipe (not vertical scroll) */
+        if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+          if (drawerPosition === 'left' && diffX < 0) {
+            closeMobileDrawer(drawer, overlay, hamburger);
+          } else if (drawerPosition === 'right' && diffX > 0) {
+            closeMobileDrawer(drawer, overlay, hamburger);
+          }
+        }
+      }, { passive: true });
+    }
   }
 
   function closeMobileDrawer(drawer, overlay, hamburger) {
