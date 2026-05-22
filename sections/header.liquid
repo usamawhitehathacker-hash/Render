@@ -218,8 +218,9 @@
     data-hp-reduced-motion="{{ section.settings.hp_respect_reduced_motion }}"
     data-hp-vertical-align="{{ section.settings.hp_header_vertical_align }}"
     data-hp-shadow="{{ section.settings.hp_header_shadow }}"
+    {% if section.settings.hp_header_bg_opacity < 100 %}data-hp-bg-opacity="{{ section.settings.hp_header_bg_opacity }}"{% endif %}
     data-hp-border-top="{{ section.settings.hp_border_top_show }}"
-    data-hp-scroll-shrink
+    {% if section.settings.hp_scroll_shrink > 0 %}data-hp-scroll-shrink="{{ section.settings.hp_scroll_shrink }}"{% endif %}
     data-hp-scroll-bg="{{ section.settings.hp_scroll_bg_change }}"
     data-hp-scroll-shadow="{{ section.settings.hp_scroll_shadow }}"
     data-hp-nav-align="{{ section.settings.hp_nav_alignment }}"
