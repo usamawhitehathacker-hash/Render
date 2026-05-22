@@ -907,6 +907,358 @@
 }
 
 /* ============================================================
+   ADVANCED HOVER EFFECTS
+   ============================================================ */
+
+/* Hover text color */
+.mega-navigation-section .mega-nav-link:hover {
+  color: var(--mn-hover-text-color, var(--mn-hover-color, #000000));
+}
+
+/* Hover easing - mapped to cubic-bezier values */
+.mega-navigation-section[style*="--mn-hover-easing: ease"] {
+  --mn-hover-resolved-easing: ease;
+}
+
+.mega-navigation-section[style*="--mn-hover-easing: ease-in-out"] {
+  --mn-hover-resolved-easing: ease-in-out;
+}
+
+.mega-navigation-section[style*="--mn-hover-easing: cubic-bezier-smooth"] {
+  --mn-hover-resolved-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mega-navigation-section[style*="--mn-hover-easing: bounce"] {
+  --mn-hover-resolved-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mega-navigation-section[style*="--mn-hover-easing: elastic"] {
+  --mn-hover-resolved-easing: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Apply easing to underline transition */
+.mega-navigation-section .mega-nav-link::after {
+  transition-timing-function: var(--mn-hover-resolved-easing, ease);
+}
+
+/* ============================================================
+   HOVER UNDERLINE STYLES (dashed/dotted/double)
+   ============================================================ */
+.mega-navigation-section[data-mn-hover-underline-style="dashed"] .mega-nav-link::after {
+  background: none;
+  border-bottom-style: dashed;
+  border-bottom-width: var(--mn-hover-underline-thickness, 2px);
+  border-bottom-color: var(--mn-hover-color, #000000);
+  height: 0;
+}
+
+.mega-navigation-section[data-mn-hover-underline-style="dotted"] .mega-nav-link::after {
+  background: none;
+  border-bottom-style: dotted;
+  border-bottom-width: var(--mn-hover-underline-thickness, 2px);
+  border-bottom-color: var(--mn-hover-color, #000000);
+  height: 0;
+}
+
+.mega-navigation-section[data-mn-hover-underline-style="double"] .mega-nav-link::after {
+  background: none;
+  border-bottom-style: double;
+  border-bottom-width: var(--mn-hover-underline-thickness, 2px);
+  border-bottom-color: var(--mn-hover-color, #000000);
+  height: 0;
+}
+
+/* ============================================================
+   HOVER UNDERLINE POSITION
+   ============================================================ */
+.mega-navigation-section[data-mn-hover-underline-position="bottom"] .mega-nav-link::after {
+  bottom: calc(10px + var(--mn-hover-underline-offset, 0px));
+  top: auto;
+}
+
+.mega-navigation-section[data-mn-hover-underline-position="middle"] .mega-nav-link::after {
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%);
+}
+
+.mega-navigation-section[data-mn-hover-underline-position="top"] .mega-nav-link::after {
+  top: 10px;
+  bottom: auto;
+}
+
+/* ============================================================
+   HOVER UNDERLINE WIDTH MODES
+   ============================================================ */
+.mega-navigation-section[data-mn-hover-underline-width="full-width"] .mega-nav-link::after {
+  left: 0;
+  right: 0;
+}
+
+.mega-navigation-section[data-mn-hover-underline-width="full-width"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-underline-width="full-width"] .mega-nav-item.is-active .mega-nav-link::after {
+  left: 0;
+  right: 0;
+  opacity: 1;
+}
+
+.mega-navigation-section[data-mn-hover-underline-width="custom-px"] .mega-nav-link::after {
+  width: 0;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  transition: width 0.3s var(--mn-hover-resolved-easing, ease), opacity 0.3s var(--mn-hover-resolved-easing, ease);
+}
+
+.mega-navigation-section[data-mn-hover-underline-width="custom-px"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-underline-width="custom-px"] .mega-nav-item.is-active .mega-nav-link::after {
+  width: var(--mn-hover-custom-width, 50px);
+  opacity: 1;
+}
+
+/* ============================================================
+   ADVANCED HOVER ANIMATION STYLES (data-mn-hover-anim-style)
+   ============================================================ */
+
+/* Center-expand */
+.mega-navigation-section[data-mn-hover-anim-style="center-expand"] .mega-nav-link::after {
+  left: 50%;
+  right: 50%;
+}
+
+.mega-navigation-section[data-mn-hover-anim-style="center-expand"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-anim-style="center-expand"] .mega-nav-item.is-active .mega-nav-link::after {
+  left: 20px;
+  right: 20px;
+  opacity: 1;
+}
+
+/* Left-to-right */
+.mega-navigation-section[data-mn-hover-anim-style="left-to-right"] .mega-nav-link::after {
+  left: 20px;
+  right: 100%;
+}
+
+.mega-navigation-section[data-mn-hover-anim-style="left-to-right"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-anim-style="left-to-right"] .mega-nav-item.is-active .mega-nav-link::after {
+  right: 20px;
+  opacity: 1;
+}
+
+/* Right-to-left */
+.mega-navigation-section[data-mn-hover-anim-style="right-to-left"] .mega-nav-link::after {
+  left: 100%;
+  right: 20px;
+}
+
+.mega-navigation-section[data-mn-hover-anim-style="right-to-left"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-anim-style="right-to-left"] .mega-nav-item.is-active .mega-nav-link::after {
+  left: 20px;
+  opacity: 1;
+}
+
+/* Fade-in */
+.mega-navigation-section[data-mn-hover-anim-style="fade-in"] .mega-nav-link::after {
+  left: 20px;
+  right: 20px;
+  opacity: 0;
+}
+
+.mega-navigation-section[data-mn-hover-anim-style="fade-in"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-anim-style="fade-in"] .mega-nav-item.is-active .mega-nav-link::after {
+  opacity: 1;
+}
+
+/* Grow-from-dot */
+.mega-navigation-section[data-mn-hover-anim-style="grow-from-dot"] .mega-nav-link::after {
+  width: 0;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  transition: width 0.3s var(--mn-hover-resolved-easing, ease), opacity 0.3s var(--mn-hover-resolved-easing, ease);
+}
+
+.mega-navigation-section[data-mn-hover-anim-style="grow-from-dot"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-anim-style="grow-from-dot"] .mega-nav-item.is-active .mega-nav-link::after {
+  width: calc(100% - 40px);
+  opacity: 1;
+}
+
+/* Slide-bounce */
+.mega-navigation-section[data-mn-hover-anim-style="slide-bounce"] .mega-nav-link::after {
+  left: 20px;
+  right: 100%;
+  transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+
+.mega-navigation-section[data-mn-hover-anim-style="slide-bounce"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-anim-style="slide-bounce"] .mega-nav-item.is-active .mega-nav-link::after {
+  right: 20px;
+  opacity: 1;
+}
+
+/* ============================================================
+   SCALE EFFECT ON HOVER
+   ============================================================ */
+.mega-navigation-section[data-mn-hover-scale="true"] .mega-nav-link {
+  transition: color 0.2s ease, transform 0.2s var(--mn-hover-resolved-easing, ease);
+}
+
+.mega-navigation-section[data-mn-hover-scale="true"] .mega-nav-link:hover {
+  transform: scale(calc(var(--mn-hover-scale-amount, 105) / 100));
+}
+
+/* ============================================================
+   BACKGROUND HIGHLIGHT ON HOVER
+   ============================================================ */
+.mega-navigation-section[data-mn-hover-bg="true"] .mega-nav-link {
+  transition: color 0.2s ease, background-color 0.2s var(--mn-hover-resolved-easing, ease);
+}
+
+.mega-navigation-section[data-mn-hover-bg="true"] .mega-nav-link:hover {
+  background-color: var(--mn-hover-bg-color, #F5F5F5);
+  border-radius: var(--mn-hover-bg-radius, 4px);
+}
+
+/* ============================================================
+   ACTIVE ITEM INDICATORS
+   ============================================================ */
+/* Underline (default - uses existing ::after) */
+[data-mn-active-indicator="underline"] .mega-nav-item.is-active .mega-nav-link::after {
+  opacity: 1;
+}
+
+/* Background */
+[data-mn-active-indicator="background"] .mega-nav-item.is-active .mega-nav-link {
+  background-color: var(--mn-active-color, #000000);
+  color: #fff;
+  border-radius: 4px;
+}
+
+/* Bold */
+[data-mn-active-indicator="bold"] .mega-nav-item.is-active .mega-nav-link {
+  font-weight: 800;
+}
+
+/* Border-left */
+[data-mn-active-indicator="border-left"] .mega-nav-item.is-active .mega-nav-link {
+  border-left: 3px solid var(--mn-active-color, #000000);
+}
+
+/* Dot */
+[data-mn-active-indicator="dot"] .mega-nav-item.is-active .mega-nav-link::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mn-active-color, #000000);
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ============================================================
+   NAVIGATION & TYPOGRAPHY
+   ============================================================ */
+
+/* Menu item spacing (gap) */
+.mega-navigation-section .mega-nav-menu {
+  gap: var(--mn-item-spacing, 0px);
+}
+
+/* Item padding from variables */
+.mega-navigation-section .mega-nav-link {
+  padding: var(--mn-item-padding-v, 16px) var(--mn-item-padding-h, 20px);
+}
+
+/* Line height */
+.mega-navigation-section .mega-nav-link {
+  line-height: calc(var(--mn-line-height, 14) / 10);
+}
+
+/* Word spacing */
+.mega-navigation-section .mega-nav-link {
+  word-spacing: var(--mn-word-spacing, 0px);
+}
+
+/* Font family */
+[data-mn-font-family="body"] .mega-nav-link {
+  font-family: var(--font-body-family, sans-serif);
+}
+
+[data-mn-font-family="heading"] .mega-nav-link {
+  font-family: var(--font-heading-family, sans-serif);
+}
+
+[data-mn-font-family="monospace"] .mega-nav-link {
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+}
+
+/* ============================================================
+   DROPDOWN HEADING TYPOGRAPHY
+   ============================================================ */
+.mega-navigation-section .mega-nav-column__heading {
+  font-size: var(--mn-dropdown-heading-size, 13px);
+  font-weight: var(--mn-dropdown-heading-weight, 700);
+  text-transform: var(--mn-dropdown-heading-transform, uppercase);
+  letter-spacing: var(--mn-dropdown-heading-spacing, 0.5px);
+}
+
+/* ============================================================
+   DROPDOWN LINK TYPOGRAPHY
+   ============================================================ */
+.mega-navigation-section .mega-nav-column__link {
+  font-size: var(--mn-dropdown-link-size, 14px);
+  font-weight: var(--mn-dropdown-link-weight, 400);
+  line-height: calc(var(--mn-dropdown-link-line-height, 16) / 10);
+  transition: padding-left 0.2s ease, color 0.2s ease;
+}
+
+.mega-navigation-section .mega-nav-column__link:hover {
+  padding-left: var(--mn-dropdown-link-hover-indent, 0px);
+}
+
+/* ============================================================
+   SEPARATORS BETWEEN NAV ITEMS
+   ============================================================ */
+[data-mn-separator="dot"] .mega-nav-item + .mega-nav-item::before {
+  content: '\00B7';
+  color: var(--mn-separator-color, #CCCCCC);
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  line-height: 1;
+}
+
+[data-mn-separator="pipe"] .mega-nav-item + .mega-nav-item::before {
+  content: '|';
+  color: var(--mn-separator-color, #CCCCCC);
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1;
+}
+
+[data-mn-separator="slash"] .mega-nav-item + .mega-nav-item::before {
+  content: '/';
+  color: var(--mn-separator-color, #CCCCCC);
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1;
+}
+
+[data-mn-separator="dash"] .mega-nav-item + .mega-nav-item::before {
+  content: '\2013';
+  color: var(--mn-separator-color, #CCCCCC);
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* ============================================================
    STICKY STATE - Stable underline positioning
    ============================================================ */
 .mega-navigation-section.is-sticky .mega-nav-link {
