@@ -16,7 +16,12 @@ Checks:
      Each pair must match. {% liquid %} is intentionally excluded - it is a
      tag-style block with no endliquid.
   5. Each hp_ id appears at least once in
-        (liquid_text minus the schema region) + css_text + js_text.
+        (liquid_text minus the schema region) + css_text + js_text,
+     counting BOTH the literal token (hp_foo) AND the derived CSS / DOM
+     forms (--hp-foo as a custom property, data-hp-foo as an attribute,
+     including hyphenated tails like data-hp-foo-bar). This matches the
+     wiring contract Phase 5 actually uses (Liquid emits --hp-* and
+     data-hp-*; CSS/JS read those forms, not the bare hp_ id).
   6. No bareword `null` in the liquid file (Shopify Liquid uses `nil`).
   7. No width="auto" anywhere in the liquid file.
 
@@ -123,9 +128,9 @@ def main() -> int:
     # 3. Collect hp_ ids
     hp_ids: set[str] = set()
     collect_hp_ids(schema, hp_ids)
-    if len(hp_ids) != 46:
-        fail(f"expected 46 hp_ ids, got {len(hp_ids)}: {sorted(hp_ids)}")
-    print(f"[2] hp_ id count == 46                                    : PASS ({len(hp_ids)} unique)")
+    if len(hp_ids) != 47:
+        fail(f"expected 47 hp_ ids, got {len(hp_ids)}: {sorted(hp_ids)}")
+    print(f"[2] hp_ id count == 47                                    : PASS ({len(hp_ids)} unique)")
 
     # 4. Range math
     ranges = []
@@ -182,13 +187,39 @@ def main() -> int:
         fail("liquid block balance failed")
     print("[4] liquid block balance (all paired tags)                : PASS")
 
-    # 6. hp_ usage coverage
+    # 6. hp_ usage coverage. We count three forms per id, in (liquid body
+    # excluding the schema region) + css + js:
+    #   - the literal Liquid token, e.g. "hp_top_line_height"
+    #   - the CSS custom-property form, "--hp-top-line-height"
+    #   - the data-attribute form, "data-hp-top-line-height"
+    # The Liquid {% style %} block emits --hp-* variables and the wrapper
+    # element emits data-hp-* attributes; CSS/JS read those forms, not the
+    # bare hp_ id. A coverage failure on all three forms means the id is
+    # truly orphaned. Each id must hit at least one form somewhere.
     usage = {}
     coverage_failures = []
     for hp in sorted(hp_ids):
-        body_count = liquid_body_text.count(hp)
-        css_count = css_text.count(hp)
-        js_count = js_text.count(hp)
+        # Derived hyphenated forms.
+        # hp_foo_bar -> hp-foo-bar
+        hyphen = hp.replace("_", "-")
+        css_var = "--" + hyphen
+        data_attr = "data-" + hyphen
+
+        body_count = (
+            liquid_body_text.count(hp)
+            + liquid_body_text.count(css_var)
+            + liquid_body_text.count(data_attr)
+        )
+        css_count = (
+            css_text.count(hp)
+            + css_text.count(css_var)
+            + css_text.count(data_attr)
+        )
+        js_count = (
+            js_text.count(hp)
+            + js_text.count(css_var)
+            + js_text.count(data_attr)
+        )
         usage[hp] = (body_count, css_count, js_count)
         total = body_count + css_count + js_count
         if total < 1:

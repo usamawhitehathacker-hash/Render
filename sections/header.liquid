@@ -200,6 +200,7 @@
     data-hp-hover-style="{{ section.settings.hp_hover_style }}"
     data-hp-cart-badge="{{ section.settings.hp_cart_badge_style }}"
     data-hp-cart-badge-pos="{{ section.settings.hp_cart_badge_position }}"
+    data-hp-cart-badge-override="{{ section.settings.hp_cart_badge_override }}"
     data-hp-mobile-drawer="{{ section.settings.hp_mobile_drawer_position }}"
     data-hp-mobile-anim="{{ section.settings.hp_mobile_menu_anim }}"
     data-hp-mobile-text-transform="{{ section.settings.hp_mobile_menu_text_transform }}"
@@ -560,7 +561,7 @@
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
         </span>
-        <span class="hp-bottom-nav__label">Account</span>
+        <span class="hp-bottom-nav__label">{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}</span>
       </a>
     {%- endif -%}
 
@@ -1208,6 +1209,13 @@
       "default": "#FFFFFF"
     },
     {
+      "type": "checkbox",
+      "id": "hp_cart_badge_override",
+      "label": "Override cart badge colors",
+      "default": false,
+      "info": "Off by default, so flipping Premium Header on does not repaint Dawn's color-scheme accent on the cart badge. Turn this on to apply the badge background and text colors set above."
+    },
+    {
       "type": "color",
       "id": "hp_icon_hover_color",
       "label": "Icon hover color",
@@ -1222,7 +1230,7 @@
       "id": "hp_show_mobile_bottom_nav",
       "label": "Show mobile bottom navigation",
       "default": false,
-      "info": "Fixed bottom bar on mobile with quick links to search, wishlist, account and cart."
+      "info": "Fixed bottom bar on mobile with quick links to search, wishlist, account and cart. Note: any sticky footer, cookie banner, or chat widget pinned to the bottom on mobile will be pushed up by 64px while this bar is visible."
     },
     {
       "type": "color",

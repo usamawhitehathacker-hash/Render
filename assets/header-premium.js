@@ -3,7 +3,7 @@
    ============================================================
    This file extends Dawn's default header with premium behavior.
    It only loads when "Enable Premium Header" is turned ON.
-   
+
    Phase 1: Foundation IIFE + Shopify editor events
    Phase 2: Transparent header content offset
    Phase 3: Hover-trigger dropdowns (Dawn's dropdown is click-only by default)
@@ -18,11 +18,13 @@
   var HOVER_OPEN_DELAY = 80;
   var HOVER_CLOSE_DELAY = 200;
 
+  // Module-scoped MutationObserver for cart-bubble -> bottom-nav cart-count sync.
+  // Re-created on every initPremiumHeader() call; disconnected in unload.
+  var cartBubbleObserver = null;
+
   function initPremiumHeader() {
     var headerWrapper = document.querySelector('.header-wrapper--premium');
     if (!headerWrapper) return;
-
-    headerWrapper.setAttribute('data-hp-initialized', 'true');
 
     handleTransparentHeader();
     setupDropdownTrigger(headerWrapper);
@@ -32,6 +34,7 @@
   /**
    * Phase 2: When transparent header is active, mark section-header
    * so adjacent sections can offset via CSS sibling selector.
+   * (CSS also has a JS-free fallback keying off .header-wrapper--transparent.)
    */
   function handleTransparentHeader() {
     var sectionHeader = document.querySelector('.section-header');
@@ -113,29 +116,53 @@
 
   /**
    * Phase 5: Bottom Navigation Bar
-   * The search button in the bottom nav opens Dawn's existing search modal.
-   * Cart count is auto-synced from cart icon bubble (Dawn updates it on cart events).
+   * - Search button opens whichever Dawn search modal is rendered in the
+   *   section-header (id starts with "Search-In-Modal").
+   * - Cart count is mirrored from #cart-icon-bubble via MutationObserver,
+   *   so it stays in sync with Dawn's PUB_SUB cartUpdate flow without
+   *   needing to import the pubsub broker.
    */
   function setupBottomNav() {
     var bottomNav = document.querySelector('.hp-bottom-nav');
     if (!bottomNav) return;
 
-    // Wire up the search button to trigger Dawn's search modal
+    // Wire up the search button to trigger Dawn's search modal.
+    // Dawn renders the search modal with id "Search-In-Modal-1" (logo top-center
+    // or no menu) or "Search-In-Modal" (icons block). Pin the lookup to either
+    // form so a future details-modal sibling (localization, account) cannot
+    // accidentally be triggered by the bottom-nav search button.
     var searchBtn = bottomNav.querySelector('[data-hp-bottom-action="search"]');
     if (searchBtn) {
       searchBtn.addEventListener('click', function () {
-        // Dawn's search modal trigger - find the existing search summary
-        var searchSummary = document.querySelector('.section-header details-modal summary');
+        var searchSummary = document.querySelector(
+          '.section-header details-modal > details > summary[id^="Search-In-Modal"], ' +
+          '.section-header details-modal summary[id^="Search-In-Modal"]'
+        );
         if (searchSummary) {
           searchSummary.click();
         }
       });
     }
 
-    // Sync cart count: listen for Shopify cart change events that Dawn dispatches
+    // Sync once on init, then observe the cart-icon-bubble container for any
+    // mutation (Dawn replaces the bubble's innerHTML on cart updates and removes
+    // the .cart-count-bubble entirely when the cart goes empty - so we observe
+    // the icon container itself, not the bubble, with subtree:true).
     syncBottomNavCartCount();
-    document.addEventListener('cart:refresh', syncBottomNavCartCount);
-    document.addEventListener('cart-update', syncBottomNavCartCount);
+
+    var cartIconBubble = document.getElementById('cart-icon-bubble');
+    if (cartIconBubble && typeof MutationObserver !== 'undefined') {
+      // Tear down any prior observer (defensive - unload should have done this).
+      if (cartBubbleObserver) {
+        cartBubbleObserver.disconnect();
+      }
+      cartBubbleObserver = new MutationObserver(syncBottomNavCartCount);
+      cartBubbleObserver.observe(cartIconBubble, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+      });
+    }
   }
 
   function syncBottomNavCartCount() {
@@ -148,7 +175,15 @@
       bottomCount.textContent = bubble.textContent.trim();
       bottomCount.style.display = '';
     } else {
+      // Empty cart -> Dawn removes the .cart-count-bubble entirely.
       bottomCount.style.display = 'none';
+    }
+  }
+
+  function teardownPremiumHeader() {
+    if (cartBubbleObserver) {
+      cartBubbleObserver.disconnect();
+      cartBubbleObserver = null;
     }
   }
 
@@ -162,6 +197,7 @@
   // Shopify theme editor: re-init when section is reloaded
   document.addEventListener('shopify:section:load', function (e) {
     if (e.target && e.target.classList && e.target.classList.contains('section-header')) {
+      teardownPremiumHeader();
       initPremiumHeader();
     }
   });
@@ -169,10 +205,7 @@
   // Shopify theme editor: cleanup
   document.addEventListener('shopify:section:unload', function (e) {
     if (e.target && e.target.classList && e.target.classList.contains('section-header')) {
-      var headerWrapper = e.target.querySelector('.header-wrapper--premium');
-      if (headerWrapper) {
-        headerWrapper.removeAttribute('data-hp-initialized');
-      }
+      teardownPremiumHeader();
       e.target.removeAttribute('data-hp-has-transparent');
     }
   });
