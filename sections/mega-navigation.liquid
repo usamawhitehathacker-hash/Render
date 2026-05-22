@@ -48,7 +48,7 @@
     data-mn-mobile-drawer-position="{{ section.settings.mn_mobile_drawer_position }}"
   >
     <nav class="mega-nav-bar" aria-label="Mega navigation">
-      <button class="mega-nav-hamburger" aria-label="Open menu">
+      <button class="mega-nav-hamburger" aria-label="Open menu" aria-expanded="false">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
       </button>
 
@@ -138,13 +138,13 @@
         {% for block in section.blocks %}
           {% if block.type == 'menu_item' %}
             {% assign has_submenu = false %}
-            {% if block.settings.mn_col1_linklist != blank or block.settings.mn_col2_linklist != blank or block.settings.mn_col3_linklist != blank %}
+            {% if block.settings.mn_col1_linklist != blank or block.settings.mn_col2_linklist != blank or block.settings.mn_col3_linklist != blank or block.settings.mn_col4_linklist != blank or block.settings.mn_col5_linklist != blank or block.settings.mn_col6_linklist != blank %}
               {% assign has_submenu = true %}
             {% endif %}
 
             <li class="mega-nav-mobile-item">
               {% if has_submenu %}
-                <button class="mega-nav-mobile-link" data-has-submenu="true">
+                <button class="mega-nav-mobile-link" data-has-submenu="true" aria-expanded="false">
                   <span>{{ block.settings.menu_link }}</span>
                   <span class="mega-nav-accordion-icon">
                     {% if section.settings.mn_mobile_accordion_icon == 'plus' %}
@@ -186,6 +186,39 @@
                     {% assign mobile_links_3 = linklists[block.settings.mn_col3_linklist].links %}
                     <ul class="mega-nav-mobile-submenu__list">
                       {% for link in mobile_links_3 %}
+                        <li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{ link.title }}</a></li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                  {% if block.settings.mn_col4_linklist != blank %}
+                    {% if block.settings.mn_col4_title != blank %}
+                      <h4 class="mega-nav-mobile-submenu__heading">{{ block.settings.mn_col4_title }}</h4>
+                    {% endif %}
+                    {% assign mobile_links_4 = linklists[block.settings.mn_col4_linklist].links %}
+                    <ul class="mega-nav-mobile-submenu__list">
+                      {% for link in mobile_links_4 %}
+                        <li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{ link.title }}</a></li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                  {% if block.settings.mn_col5_linklist != blank %}
+                    {% if block.settings.mn_col5_title != blank %}
+                      <h4 class="mega-nav-mobile-submenu__heading">{{ block.settings.mn_col5_title }}</h4>
+                    {% endif %}
+                    {% assign mobile_links_5 = linklists[block.settings.mn_col5_linklist].links %}
+                    <ul class="mega-nav-mobile-submenu__list">
+                      {% for link in mobile_links_5 %}
+                        <li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{ link.title }}</a></li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                  {% if block.settings.mn_col6_linklist != blank %}
+                    {% if block.settings.mn_col6_title != blank %}
+                      <h4 class="mega-nav-mobile-submenu__heading">{{ block.settings.mn_col6_title }}</h4>
+                    {% endif %}
+                    {% assign mobile_links_6 = linklists[block.settings.mn_col6_linklist].links %}
+                    <ul class="mega-nav-mobile-submenu__list">
+                      {% for link in mobile_links_6 %}
                         <li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{ link.title }}</a></li>
                       {% endfor %}
                     </ul>
