@@ -24,6 +24,18 @@
     else
       assign mn_border_width = '0px'
     endif
+
+    if section.settings.mn_sticky
+      assign mn_sticky_attr = 'true'
+    else
+      assign mn_sticky_attr = 'false'
+    endif
+
+    assign nav_heading_color = section.settings.mn_dropdown_heading_color
+    assign nav_text_color = section.settings.mn_dropdown_text_color
+    assign nav_badge_new = section.settings.mn_badge_new_color
+    assign nav_badge_sale = section.settings.mn_badge_sale_color
+    assign nav_badge_hot = section.settings.mn_badge_hot_color
   -%}
 
   {%- style -%}
@@ -53,14 +65,6 @@
     }
   {%- endstyle -%}
 
-  {%- liquid
-    assign nav_heading_color = section.settings.mn_dropdown_heading_color
-    assign nav_text_color = section.settings.mn_dropdown_text_color
-    assign nav_badge_new = section.settings.mn_badge_new_color
-    assign nav_badge_sale = section.settings.mn_badge_sale_color
-    assign nav_badge_hot = section.settings.mn_badge_hot_color
-  -%}
-
   <div
     id="section-{{ section.id }}"
     class="mega-navigation-section"
@@ -68,7 +72,7 @@
     aria-label="Mega navigation"
     data-mn-hover-animation="{{ section.settings.mn_hover_animation }}"
     data-mn-dropdown-animation="{{ section.settings.mn_dropdown_animation }}"
-    data-mn-sticky="{{ section.settings.mn_sticky }}"
+    data-mn-sticky="{{ mn_sticky_attr }}"
     data-mn-mobile-accordion-icon="{{ section.settings.mn_mobile_accordion_icon }}"
     data-mn-mobile-drawer-position="{{ section.settings.mn_mobile_drawer_position }}"
   >
@@ -88,86 +92,179 @@
       </button>
 
       <ul class="mega-nav-menu">
-        {% for block in section.blocks %}
-          {% if block.type == 'menu_item' %}
-            {%- assign has_dropdown = false -%}
-            {% if block.settings.mn_col1_linklist != blank
-                or block.settings.mn_col2_linklist != blank
-                or block.settings.mn_col3_linklist != blank
-                or block.settings.mn_col4_linklist != blank
-                or block.settings.mn_col5_linklist != blank
-                or block.settings.mn_col6_linklist != blank
-                or block.settings.mn_show_promo
-            %}
-              {%- assign has_dropdown = true -%}
-            {% endif %}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'menu_item' -%}
+
+            {%- liquid
+              assign col1_handle = block.settings.mn_col1_linklist
+              assign col2_handle = block.settings.mn_col2_linklist
+              assign col3_handle = block.settings.mn_col3_linklist
+              assign col4_handle = block.settings.mn_col4_linklist
+              assign col5_handle = block.settings.mn_col5_linklist
+              assign col6_handle = block.settings.mn_col6_linklist
+
+              assign col1_title = block.settings.mn_col1_title
+              assign col2_title = block.settings.mn_col2_title
+              assign col3_title = block.settings.mn_col3_title
+              assign col4_title = block.settings.mn_col4_title
+              assign col5_title = block.settings.mn_col5_title
+              assign col6_title = block.settings.mn_col6_title
+
+              assign has_columns = false
+              if col1_handle != blank
+                assign has_columns = true
+              elsif col2_handle != blank
+                assign has_columns = true
+              elsif col3_handle != blank
+                assign has_columns = true
+              elsif col4_handle != blank
+                assign has_columns = true
+              elsif col5_handle != blank
+                assign has_columns = true
+              elsif col6_handle != blank
+                assign has_columns = true
+              endif
+
+              assign has_promo = false
+              if block.settings.mn_show_promo and block.settings.mn_promo_image != blank
+                assign has_promo = true
+              endif
+
+              assign has_dropdown = false
+              if has_columns or has_promo
+                assign has_dropdown = true
+              endif
+
+              assign menu_link_url = block.settings.menu_url
+              if menu_link_url == blank
+                assign menu_link_url = '#'
+              endif
+            -%}
 
             <li class="mega-nav-item" data-block-id="{{ block.id }}" {{ block.shopify_attributes }}>
               <a
-                href="{{ block.settings.menu_url | default: '#' }}"
+                href="{{ menu_link_url }}"
                 class="mega-nav-link"
-                {% if block.settings.mn_use_custom_color %}
+                {%- if block.settings.mn_use_custom_color -%}
                   data-custom-color="true"
                   style="--mn-item-color: {{ block.settings.mn_item_color }}; --mn-item-hover-color: {{ block.settings.mn_item_hover_color }}; color: {{ block.settings.mn_item_color }};"
-                {% endif %}
+                {%- endif -%}
               >
                 {{- block.settings.menu_link -}}
-                {% if block.settings.mn_item_badge == 'new' %}
-                  <span class="mega-nav-item-badge mega-nav-item-badge--new">NEW</span>
-                {% elsif block.settings.mn_item_badge == 'sale' %}
-                  <span class="mega-nav-item-badge mega-nav-item-badge--sale">SALE</span>
-                {% elsif block.settings.mn_item_badge == 'hot' %}
-                  <span class="mega-nav-item-badge mega-nav-item-badge--hot">HOT</span>
-                {% endif %}
+                {%- case block.settings.mn_item_badge -%}
+                  {%- when 'new' -%}
+                    <span class="mega-nav-item-badge mega-nav-item-badge--new">NEW</span>
+                  {%- when 'sale' -%}
+                    <span class="mega-nav-item-badge mega-nav-item-badge--sale">SALE</span>
+                  {%- when 'hot' -%}
+                    <span class="mega-nav-item-badge mega-nav-item-badge--hot">HOT</span>
+                {%- endcase -%}
               </a>
 
-              {% if has_dropdown %}
-                <div
-                  class="mega-nav-dropdown{% if section.settings.mn_dropdown_shadow %} has-shadow{% endif %}{% if section.settings.mn_dropdown_border %} has-border{% endif %}"
-                >
+              {%- if has_dropdown -%}
+                {%- assign dropdown_classes = 'mega-nav-dropdown' -%}
+                {%- if section.settings.mn_dropdown_shadow -%}
+                  {%- assign dropdown_classes = dropdown_classes | append: ' has-shadow' -%}
+                {%- endif -%}
+                {%- if section.settings.mn_dropdown_border -%}
+                  {%- assign dropdown_classes = dropdown_classes | append: ' has-border' -%}
+                {%- endif -%}
+
+                <div class="{{ dropdown_classes }}">
                   <div class="mega-nav-dropdown__inner">
-                    <div class="mega-nav-dropdown__columns" data-columns="{{ block.settings.mn_columns }}">
-                      {% for col in (1..6) %}
-                        {%- assign title_key = 'mn_col' | append: col | append: '_title' -%}
-                        {%- assign list_key  = 'mn_col' | append: col | append: '_linklist' -%}
-                        {%- assign col_title = block.settings[title_key] -%}
-                        {%- assign col_handle = block.settings[list_key] -%}
-                        {% if col_handle != blank %}
-                          {% render 'mega-nav-column',
-                            column_title: col_title,
-                            linklist_handle: col_handle,
+                    {%- if has_columns -%}
+                      <div class="mega-nav-dropdown__columns" data-columns="{{ block.settings.mn_columns }}">
+                        {%- if col1_handle != blank -%}
+                          {%- render 'mega-nav-column',
+                            column_title: col1_title,
+                            linklist_handle: col1_handle,
                             heading_color: nav_heading_color,
                             text_color: nav_text_color,
                             badge_new_color: nav_badge_new,
                             badge_sale_color: nav_badge_sale,
                             badge_hot_color: nav_badge_hot
-                          %}
-                        {% endif %}
-                      {% endfor %}
-                    </div>
+                          -%}
+                        {%- endif -%}
+                        {%- if col2_handle != blank -%}
+                          {%- render 'mega-nav-column',
+                            column_title: col2_title,
+                            linklist_handle: col2_handle,
+                            heading_color: nav_heading_color,
+                            text_color: nav_text_color,
+                            badge_new_color: nav_badge_new,
+                            badge_sale_color: nav_badge_sale,
+                            badge_hot_color: nav_badge_hot
+                          -%}
+                        {%- endif -%}
+                        {%- if col3_handle != blank -%}
+                          {%- render 'mega-nav-column',
+                            column_title: col3_title,
+                            linklist_handle: col3_handle,
+                            heading_color: nav_heading_color,
+                            text_color: nav_text_color,
+                            badge_new_color: nav_badge_new,
+                            badge_sale_color: nav_badge_sale,
+                            badge_hot_color: nav_badge_hot
+                          -%}
+                        {%- endif -%}
+                        {%- if col4_handle != blank -%}
+                          {%- render 'mega-nav-column',
+                            column_title: col4_title,
+                            linklist_handle: col4_handle,
+                            heading_color: nav_heading_color,
+                            text_color: nav_text_color,
+                            badge_new_color: nav_badge_new,
+                            badge_sale_color: nav_badge_sale,
+                            badge_hot_color: nav_badge_hot
+                          -%}
+                        {%- endif -%}
+                        {%- if col5_handle != blank -%}
+                          {%- render 'mega-nav-column',
+                            column_title: col5_title,
+                            linklist_handle: col5_handle,
+                            heading_color: nav_heading_color,
+                            text_color: nav_text_color,
+                            badge_new_color: nav_badge_new,
+                            badge_sale_color: nav_badge_sale,
+                            badge_hot_color: nav_badge_hot
+                          -%}
+                        {%- endif -%}
+                        {%- if col6_handle != blank -%}
+                          {%- render 'mega-nav-column',
+                            column_title: col6_title,
+                            linklist_handle: col6_handle,
+                            heading_color: nav_heading_color,
+                            text_color: nav_text_color,
+                            badge_new_color: nav_badge_new,
+                            badge_sale_color: nav_badge_sale,
+                            badge_hot_color: nav_badge_hot
+                          -%}
+                        {%- endif -%}
+                      </div>
+                    {%- endif -%}
 
-                    {% if block.settings.mn_show_promo and block.settings.mn_promo_image != blank %}
+                    {%- if has_promo -%}
                       {%- assign promo_img_url = block.settings.mn_promo_image | image_url: width: 560 -%}
                       {%- assign promo_img_alt = block.settings.mn_promo_image.alt | default: block.settings.mn_promo_heading -%}
-                      {% render 'mega-nav-promo',
+                      {%- render 'mega-nav-promo',
                         image: promo_img_url,
                         image_alt: promo_img_alt,
                         heading: block.settings.mn_promo_heading,
                         subheading: block.settings.promo_subheading,
                         button_text: block.settings.promo_button_text,
                         button_url: block.settings.promo_button_url
-                      %}
-                    {% endif %}
+                      -%}
+                    {%- endif -%}
                   </div>
                 </div>
-              {% endif %}
+              {%- endif -%}
             </li>
-          {% endif %}
-        {% endfor %}
+          {%- endif -%}
+        {%- endfor -%}
       </ul>
     </nav>
 
-    {% comment %} ===== Mobile drawer (Prada style) ===== {% endcomment %}
+    {%- comment -%} ===== Mobile drawer (Prada style) ===== {%- endcomment -%}
     <div class="mega-nav-drawer-overlay" aria-hidden="true"></div>
     <div
       id="MegaNavDrawer-{{ section.id }}"
@@ -191,21 +288,47 @@
       </div>
 
       <ul class="mega-nav-mobile-menu">
-        {% for block in section.blocks %}
-          {% if block.type == 'menu_item' %}
-            {%- assign has_submenu = false -%}
-            {% if block.settings.mn_col1_linklist != blank
-                or block.settings.mn_col2_linklist != blank
-                or block.settings.mn_col3_linklist != blank
-                or block.settings.mn_col4_linklist != blank
-                or block.settings.mn_col5_linklist != blank
-                or block.settings.mn_col6_linklist != blank
-            %}
-              {%- assign has_submenu = true -%}
-            {% endif %}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'menu_item' -%}
+
+            {%- liquid
+              assign m_col1_handle = block.settings.mn_col1_linklist
+              assign m_col2_handle = block.settings.mn_col2_linklist
+              assign m_col3_handle = block.settings.mn_col3_linklist
+              assign m_col4_handle = block.settings.mn_col4_linklist
+              assign m_col5_handle = block.settings.mn_col5_linklist
+              assign m_col6_handle = block.settings.mn_col6_linklist
+
+              assign m_col1_title = block.settings.mn_col1_title
+              assign m_col2_title = block.settings.mn_col2_title
+              assign m_col3_title = block.settings.mn_col3_title
+              assign m_col4_title = block.settings.mn_col4_title
+              assign m_col5_title = block.settings.mn_col5_title
+              assign m_col6_title = block.settings.mn_col6_title
+
+              assign has_submenu = false
+              if m_col1_handle != blank
+                assign has_submenu = true
+              elsif m_col2_handle != blank
+                assign has_submenu = true
+              elsif m_col3_handle != blank
+                assign has_submenu = true
+              elsif m_col4_handle != blank
+                assign has_submenu = true
+              elsif m_col5_handle != blank
+                assign has_submenu = true
+              elsif m_col6_handle != blank
+                assign has_submenu = true
+              endif
+
+              assign m_menu_url = block.settings.menu_url
+              if m_menu_url == blank
+                assign m_menu_url = '#'
+              endif
+            -%}
 
             <li class="mega-nav-mobile-item" {{ block.shopify_attributes }}>
-              {% if has_submenu %}
+              {%- if has_submenu -%}
                 <button
                   type="button"
                   class="mega-nav-mobile-link"
@@ -214,40 +337,110 @@
                 >
                   <span>{{ block.settings.menu_link }}</span>
                   <span class="mega-nav-accordion-icon" aria-hidden="true">
-                    {% if section.settings.mn_mobile_accordion_icon == 'plus' %}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    {% elsif section.settings.mn_mobile_accordion_icon == 'chevron' %}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                    {% else %}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                    {% endif %}
+                    {%- case section.settings.mn_mobile_accordion_icon -%}
+                      {%- when 'plus' -%}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                      {%- when 'chevron' -%}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      {%- else -%}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    {%- endcase -%}
                   </span>
                 </button>
 
                 <div class="mega-nav-mobile-submenu">
                   <div class="mega-nav-mobile-submenu__inner">
-                    {% for col in (1..6) %}
-                      {%- assign title_key = 'mn_col' | append: col | append: '_title' -%}
-                      {%- assign list_key  = 'mn_col' | append: col | append: '_linklist' -%}
-                      {%- assign m_title = block.settings[title_key] -%}
-                      {%- assign m_handle = block.settings[list_key] -%}
-                      {% if m_handle != blank %}
-                        {% if m_title != blank %}
-                          <h4 class="mega-nav-mobile-submenu__heading">{{ m_title }}</h4>
-                        {% endif %}
-                        <ul class="mega-nav-mobile-submenu__list">
-                          {% for link in linklists[m_handle].links %}
-                            <li>
-                              <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
-                                {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
-                              </a>
-                            </li>
-                          {% endfor %}
-                        </ul>
-                      {% endif %}
-                    {% endfor %}
+                    {%- if m_col1_handle != blank -%}
+                      {%- if m_col1_title != blank -%}
+                        <h4 class="mega-nav-mobile-submenu__heading">{{ m_col1_title }}</h4>
+                      {%- endif -%}
+                      <ul class="mega-nav-mobile-submenu__list">
+                        {%- for link in linklists[m_col1_handle].links -%}
+                          <li>
+                            <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
+                              {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
+                            </a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
 
-                    {% if block.settings.menu_url != blank %}
+                    {%- if m_col2_handle != blank -%}
+                      {%- if m_col2_title != blank -%}
+                        <h4 class="mega-nav-mobile-submenu__heading">{{ m_col2_title }}</h4>
+                      {%- endif -%}
+                      <ul class="mega-nav-mobile-submenu__list">
+                        {%- for link in linklists[m_col2_handle].links -%}
+                          <li>
+                            <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
+                              {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
+                            </a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+
+                    {%- if m_col3_handle != blank -%}
+                      {%- if m_col3_title != blank -%}
+                        <h4 class="mega-nav-mobile-submenu__heading">{{ m_col3_title }}</h4>
+                      {%- endif -%}
+                      <ul class="mega-nav-mobile-submenu__list">
+                        {%- for link in linklists[m_col3_handle].links -%}
+                          <li>
+                            <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
+                              {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
+                            </a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+
+                    {%- if m_col4_handle != blank -%}
+                      {%- if m_col4_title != blank -%}
+                        <h4 class="mega-nav-mobile-submenu__heading">{{ m_col4_title }}</h4>
+                      {%- endif -%}
+                      <ul class="mega-nav-mobile-submenu__list">
+                        {%- for link in linklists[m_col4_handle].links -%}
+                          <li>
+                            <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
+                              {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
+                            </a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+
+                    {%- if m_col5_handle != blank -%}
+                      {%- if m_col5_title != blank -%}
+                        <h4 class="mega-nav-mobile-submenu__heading">{{ m_col5_title }}</h4>
+                      {%- endif -%}
+                      <ul class="mega-nav-mobile-submenu__list">
+                        {%- for link in linklists[m_col5_handle].links -%}
+                          <li>
+                            <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
+                              {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
+                            </a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+
+                    {%- if m_col6_handle != blank -%}
+                      {%- if m_col6_title != blank -%}
+                        <h4 class="mega-nav-mobile-submenu__heading">{{ m_col6_title }}</h4>
+                      {%- endif -%}
+                      <ul class="mega-nav-mobile-submenu__list">
+                        {%- for link in linklists[m_col6_handle].links -%}
+                          <li>
+                            <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
+                              {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
+                            </a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+
+                    {%- if block.settings.menu_url != blank -%}
                       <a
                         href="{{ block.settings.menu_url }}"
                         class="mega-nav-promo__button"
@@ -255,20 +448,20 @@
                       >
                         Shop all {{ block.settings.menu_link | escape }}
                       </a>
-                    {% endif %}
+                    {%- endif -%}
                   </div>
                 </div>
-              {% else %}
+              {%- else -%}
                 <a
-                  href="{{ block.settings.menu_url | default: '#' }}"
+                  href="{{ m_menu_url }}"
                   class="mega-nav-mobile-link"
                 >
                   <span>{{ block.settings.menu_link }}</span>
                 </a>
-              {% endif %}
+              {%- endif -%}
             </li>
-          {% endif %}
-        {% endfor %}
+          {%- endif -%}
+        {%- endfor -%}
       </ul>
     </div>
   </div>
