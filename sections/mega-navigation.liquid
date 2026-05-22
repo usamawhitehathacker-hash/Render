@@ -2,6 +2,14 @@
   {{ 'mega-navigation.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'mega-navigation.js' | asset_url }}" defer="defer"></script>
 
+  {%- liquid
+    if section.settings.mn_border_bottom
+      assign mn_border_width = '1px'
+    else
+      assign mn_border_width = '0px'
+    endif
+  -%}
+
   {%- style -%}
     .mega-navigation-section {
       --mn-bg-color: {{ section.settings.mn_bg_color }};
@@ -25,11 +33,7 @@
       --mn-mobile-padding: {{ section.settings.mn_mobile_padding }}px;
       --mn-section-padding-top: {{ section.settings.mn_section_padding_top }}px;
       --mn-section-padding-bottom: {{ section.settings.mn_section_padding_bottom }}px;
-      {% if section.settings.mn_border_bottom %}
-        --mn-border-bottom-width: 1px;
-      {% else %}
-        --mn-border-bottom-width: 0px;
-      {% endif %}
+      --mn-border-bottom-width: {{ mn_border_width }};
     }
   {%- endstyle -%}
 
