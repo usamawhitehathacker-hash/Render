@@ -1,8 +1,8 @@
 ========================================================================
 PREMIUM HEADER VALIDATOR
 ========================================================================
-liquid : sections/header.liquid  (49602 bytes)
-css    : assets/header-premium.css  (31306 bytes)
+liquid : sections/header.liquid  (50133 bytes)
+css    : assets/header-premium.css  (31817 bytes)
 js     : assets/header-premium.js  (8043 bytes)
 
 [1] schema JSON parses cleanly                            : PASS
@@ -15,10 +15,10 @@ js     : assets/header-premium.js  (8043 bytes)
 
 Liquid block balance:
   tag           opens  closes
-  if               55      55
+  if               56      56
   for               1       1
   case              1       1
-  comment          11      11
+  comment          12      12
   capture           4       4
   unless            0       0
   form              2       2

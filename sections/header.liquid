@@ -576,9 +576,19 @@
           <circle cx="20" cy="21" r="1"></circle>
           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
         </svg>
-        {%- if cart != empty -%}
-          <span class="hp-bottom-nav__cart-count" aria-hidden="true">{{ cart.item_count }}</span>
-        {%- endif -%}
+        {%- comment -%}
+          Always emit the receiver span so the MutationObserver-driven
+          syncBottomNavCartCount() in header-premium.js has a target to
+          update on the first add-to-cart from an empty-cart boot.
+          When the cart is empty at server render we hide the span via
+          inline display:none; the JS toggles display back on once a
+          non-empty .cart-count-bubble is observed.
+        {%- endcomment -%}
+        <span
+          class="hp-bottom-nav__cart-count"
+          aria-hidden="true"
+          {%- if cart == empty %} style="display: none;"{%- endif %}
+        >{%- if cart != empty -%}{{ cart.item_count }}{%- endif -%}</span>
       </span>
       <span class="hp-bottom-nav__label">{{ 'templates.cart.cart' | t }}</span>
     </a>
@@ -1197,6 +1207,13 @@
       "default": "top-right"
     },
     {
+      "type": "checkbox",
+      "id": "hp_cart_badge_override",
+      "label": "Override cart badge colors",
+      "default": false,
+      "info": "Off by default, so flipping Premium Header on does not repaint Dawn's color-scheme accent on the cart badge. Turn this on to apply the badge background and text colors set below."
+    },
+    {
       "type": "color",
       "id": "hp_cart_badge_bg",
       "label": "Cart badge background",
@@ -1207,13 +1224,6 @@
       "id": "hp_cart_badge_text",
       "label": "Cart badge text color",
       "default": "#FFFFFF"
-    },
-    {
-      "type": "checkbox",
-      "id": "hp_cart_badge_override",
-      "label": "Override cart badge colors",
-      "default": false,
-      "info": "Off by default, so flipping Premium Header on does not repaint Dawn's color-scheme accent on the cart badge. Turn this on to apply the badge background and text colors set above."
     },
     {
       "type": "color",

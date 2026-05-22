@@ -481,3 +481,76 @@ introducing a new locale key would violate the no-new-`t:`-keys rule.
   color-scheme accent on the cart badge - same as before the v1 fix
   intended.
 - All other v1 changes are bug fixes; no defaults shifted.
+
+---
+
+## 14. Post-Review Fixes (v2 round)
+
+A v2 semantic review (`2026-05-22-014602-review.md`) reviewed the v1
+follow-up commit and surfaced 4 new issues. Three are confirmed bugs in
+the v1 fixes themselves; one is a residual localization gap that stays
+deferred under the no-new-`t:`-keys rule. This section records the
+disposition of each.
+
+| # | Issue (one-line)                                                | Disposition | Summary                                                                                                              |
+|---|-----------------------------------------------------------------|-------------|----------------------------------------------------------------------------------------------------------------------|
+| 1 | Empty-cart bottom-nav cart-count gap (receiver span missing)    | fixed       | Receiver span `.hp-bottom-nav__cart-count` now always emitted. When `cart == empty` at server render, the span carries inline `style="display: none;"` and empty inner text; the existing JS toggles `display` back on once the MutationObserver sees a non-empty `.cart-count-bubble`. |
+| 2 | Push + fullscreen mobile drawer animation collision             | fixed       | Push open-state rule scoped with `:not([data-hp-mobile-drawer="fullscreen"])` so fullscreen's `translateY(0)` is not overridden by push's `translateX(0)`. Push still applies cleanly to default, left, and right drawer positions. |
+| 3 | Schema ordering: override checkbox sat below color settings     | fixed       | `hp_cart_badge_override` moved to sit between `hp_cart_badge_position` and `hp_cart_badge_bg`, so the merchant flow is now: pick style -> pick position -> flip override gate -> see the bg/text colors take effect. The checkbox `info` text was updated from "set above" to "set below" to match the new order. |
+| 4 | Bottom-nav `<nav aria-label>` and wishlist labels still English | deferred    | No code change. The `<nav aria-label="Mobile bottom navigation">` does not have a stock Dawn `t:` key that fits naturally; "Wishlist" already had no Dawn equivalent. Both stay English under the user's no-new-`t:`-keys rule for premium custom surface. |
+
+### File-by-file impact (v2)
+
+- `sections/header.liquid`
+  - Bottom-nav cart-icon block: drop the `{%- if cart != empty -%}` gate
+    on the receiver span; always emit `.hp-bottom-nav__cart-count` with
+    inline `style="display: none;"` when the cart is empty at server
+    render. Inner content stays empty for the empty-cart case so screen
+    readers (the span is `aria-hidden="true"` anyway) and visual users
+    see nothing until the JS sync fires.
+  - Schema reorder: `hp_cart_badge_override` moved to sit BEFORE
+    `hp_cart_badge_bg` and `hp_cart_badge_text`. No setting attributes
+    changed; only JSON entry order changed inside the schema.
+
+- `assets/header-premium.css`
+  - Push open-state rule rewritten with the
+    `:not([data-hp-mobile-drawer="fullscreen"])` exclusion on both
+    `menu-drawer[open]` and `details[open] > .menu-drawer` selectors.
+    Comment expanded to explain why the exclusion is necessary
+    (axis-mismatch with fullscreen's translateY).
+
+- `assets/header-premium.js`
+  - No change. The existing `syncBottomNavCartCount()` already toggles
+    `bottomCount.style.display` between `''` (visible) and `'none'`
+    (empty cart), so once the receiver span is always present the JS
+    handles both transitions without any change.
+
+- `.agents/tasks/task-ship-premium-header/validate.py`
+  - No change. The validator continues to assert exactly 47 hp_ ids
+    (no new settings introduced - just reordered).
+
+### Validator after fixes
+
+`python3 .agents/tasks/task-ship-premium-header/validate.py
+sections/header.liquid assets/header-premium.css assets/header-premium.js`
+exits 0. All 7 checks PASS, 47 ids, 14 ranges on-step, all paired
+Liquid blocks balanced. Output captured at `validator-output.txt`.
+
+### Why issue #4 is deferred
+
+The user's master prompt explicitly says **"Use plain English labels
+only (no `t:` keys for new custom settings)"** for the premium custom
+surface. The bottom-nav `<nav aria-label="Mobile bottom navigation">`
+is descriptive of a custom-built UI element that has no semantic
+equivalent in Dawn's locale catalog (`mobile_navigation` is a Dawn
+section heading, not an aria-label string), and the "Wishlist" label
+similarly has no Dawn equivalent. Both remain English by the same
+rule that left the schema labels English. If the user later relaxes
+the rule, both can be migrated in one pass.
+
+### Defaults preserved (v2)
+
+- No defaults changed in v2. All three fixes are either pure CSS
+  scoping, server-render markup that toggles inline display, or
+  JSON entry reordering. No setting type, default, range, or option
+  list was modified.

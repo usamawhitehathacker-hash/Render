@@ -737,12 +737,19 @@
   /* Push animation: drawer pushes page content. Without an explicit open
      state, Dawn's default drawer would never animate to visible. Pair the
      closed translate (from the drawer-position rules above) with an
-     open-state translate(0) so the drawer actually slides into view. */
+     open-state translate(0) so the drawer actually slides into view.
+
+     Exclude data-hp-mobile-drawer="fullscreen" because that variant uses
+     a Y-axis transform (translateY(-100%) -> translateY(0)). At equal
+     specificity the push rule would win on source order and override
+     fullscreen's translateY(0) with translateX(0), causing the drawer
+     to animate between mismatched axes. The :not() exclusion keeps push
+     scoped to the X-axis drawer positions (default, left, right). */
   .header-wrapper--premium[data-hp-mobile-anim="push"] .menu-drawer {
     transition: transform var(--hp-anim-duration, 300ms) cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .header-wrapper--premium[data-hp-mobile-anim="push"] menu-drawer[open] .menu-drawer,
-  .header-wrapper--premium[data-hp-mobile-anim="push"] details[open] > .menu-drawer {
+  .header-wrapper--premium[data-hp-mobile-anim="push"]:not([data-hp-mobile-drawer="fullscreen"]) menu-drawer[open] .menu-drawer,
+  .header-wrapper--premium[data-hp-mobile-anim="push"]:not([data-hp-mobile-drawer="fullscreen"]) details[open] > .menu-drawer {
     transform: translateX(0);
   }
   body:has(.header-wrapper--premium[data-hp-mobile-anim="push"] menu-drawer[open]),
