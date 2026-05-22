@@ -34,6 +34,31 @@
       --mn-section-padding-top: {{ section.settings.mn_section_padding_top }}px;
       --mn-section-padding-bottom: {{ section.settings.mn_section_padding_bottom }}px;
       --mn-border-bottom-width: {{ mn_border_width }};
+      --mn-dropdown-width: {{ section.settings.mn_dropdown_width }};
+      --mn-dropdown-boxed-max-width: {{ section.settings.mn_dropdown_boxed_max_width }}px;
+      --mn-dropdown-layout: {{ section.settings.mn_dropdown_layout }};
+      --mn-dropdown-alignment: {{ section.settings.mn_dropdown_alignment }};
+      --mn-dropdown-padding-h: {{ section.settings.mn_dropdown_padding_h }}px;
+      --mn-dropdown-padding-v: {{ section.settings.mn_dropdown_padding_v }}px;
+      --mn-dropdown-border-radius: {{ section.settings.mn_dropdown_border_radius }}px;
+      --mn-dropdown-border-width: {{ section.settings.mn_dropdown_border_width }}px;
+      --mn-dropdown-border-color: {{ section.settings.mn_dropdown_border_color }};
+      --mn-dropdown-shadow-style: {{ section.settings.mn_dropdown_shadow_style }};
+      --mn-dropdown-bg-type: {{ section.settings.mn_dropdown_bg_type }};
+      --mn-dropdown-gradient-start: {{ section.settings.mn_dropdown_gradient_start }};
+      --mn-dropdown-gradient-end: {{ section.settings.mn_dropdown_gradient_end }};
+      --mn-dropdown-gradient-direction: {{ section.settings.mn_dropdown_gradient_direction }};
+      --mn-col-separator-color: {{ section.settings.mn_col_separator_color }};
+      --mn-col-separator-style: {{ section.settings.mn_col_separator_style }};
+      --mn-col-heading-underline-color: {{ section.settings.mn_col_heading_underline_color }};
+      --mn-view-all-color: {{ section.settings.mn_view_all_color }};
+      --mn-open-delay: {{ section.settings.mn_open_delay }}ms;
+      --mn-close-delay: {{ section.settings.mn_close_delay }}ms;
+      --mn-content-stagger-delay: {{ section.settings.mn_content_stagger_delay }}ms;
+      --mn-animation-easing: {{ section.settings.mn_animation_easing }};
+      --mn-overlay-color: {{ section.settings.mn_overlay_color }};
+      --mn-overlay-opacity: {{ section.settings.mn_overlay_opacity | divided_by: 100.0 }};
+      --mn-dropdown-reveal-origin: {{ section.settings.mn_dropdown_reveal_origin }};
     }
   {%- endstyle -%}
 
@@ -50,7 +75,15 @@
     data-mn-sticky="{{ section.settings.mn_sticky }}"
     data-mn-mobile-accordion-icon="{{ section.settings.mn_mobile_accordion_icon }}"
     data-mn-mobile-drawer-position="{{ section.settings.mn_mobile_drawer_position }}"
+    data-mn-open-trigger="{{ section.settings.mn_open_trigger }}"
+    data-mn-container-animation="{{ section.settings.mn_container_animation }}"
+    data-mn-content-animation="{{ section.settings.mn_content_animation }}"
+    data-mn-close-on-scroll="{{ section.settings.mn_close_on_scroll }}"
+    data-mn-close-animation="{{ section.settings.mn_close_animation }}"
+    data-mn-dropdown-width="{{ section.settings.mn_dropdown_width }}"
+    data-mn-show-overlay="{{ section.settings.mn_show_overlay }}"
   >
+    <div class="mega-nav-overlay" aria-hidden="true"></div>
     <nav class="mega-nav-bar" aria-label="Mega navigation">
       <button class="mega-nav-hamburger" aria-label="Open menu" aria-expanded="false">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
@@ -434,6 +467,342 @@
       "id": "mn_dropdown_border",
       "label": "Show dropdown border",
       "default": false
+    },
+    {
+      "type": "header",
+      "content": "Dropdown Style Variants"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_width",
+      "label": "Dropdown width",
+      "options": [
+        { "value": "full-width", "label": "Full width" },
+        { "value": "contained", "label": "Contained" },
+        { "value": "boxed", "label": "Boxed" },
+        { "value": "auto", "label": "Auto" }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_boxed_max_width",
+      "label": "Boxed max width",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "default": 1000,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_layout",
+      "label": "Dropdown layout",
+      "options": [
+        { "value": "columns-only", "label": "Columns only" },
+        { "value": "columns-promo-right", "label": "Columns + promo right" },
+        { "value": "columns-promo-left", "label": "Columns + promo left" },
+        { "value": "columns-promo-bottom", "label": "Columns + promo bottom" },
+        { "value": "grid-images", "label": "Grid images" },
+        { "value": "tabbed", "label": "Tabbed" }
+      ],
+      "default": "columns-only"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_alignment",
+      "label": "Dropdown alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_padding_h",
+      "label": "Dropdown horizontal padding",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_padding_v",
+      "label": "Dropdown vertical padding",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_border_radius",
+      "label": "Dropdown border radius",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_border_width",
+      "label": "Dropdown border width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "mn_dropdown_border_color",
+      "label": "Dropdown border color",
+      "default": "#E5E5E5"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_shadow_style",
+      "label": "Dropdown shadow style",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "subtle", "label": "Subtle" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "strong", "label": "Strong" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "subtle"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_bg_type",
+      "label": "Dropdown background type",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "gradient", "label": "Gradient" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "color",
+      "id": "mn_dropdown_gradient_start",
+      "label": "Gradient start color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "mn_dropdown_gradient_end",
+      "label": "Gradient end color",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_gradient_direction",
+      "label": "Gradient direction",
+      "options": [
+        { "value": "top-bottom", "label": "Top to bottom" },
+        { "value": "left-right", "label": "Left to right" },
+        { "value": "diagonal", "label": "Diagonal" }
+      ],
+      "default": "top-bottom"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_col_separator_lines",
+      "label": "Show column separator lines",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "mn_col_separator_color",
+      "label": "Column separator color",
+      "default": "#E5E5E5"
+    },
+    {
+      "type": "select",
+      "id": "mn_col_separator_style",
+      "label": "Column separator style",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "dashed", "label": "Dashed" },
+        { "value": "dotted", "label": "Dotted" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_col_heading_underline",
+      "label": "Show column heading underline",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "mn_col_heading_underline_color",
+      "label": "Column heading underline color",
+      "default": "#000000"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_show_view_all",
+      "label": "Show view all link",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "mn_view_all_style",
+      "label": "View all link style",
+      "options": [
+        { "value": "text-arrow", "label": "Text with arrow" },
+        { "value": "button-small", "label": "Small button" },
+        { "value": "underline", "label": "Underline" }
+      ],
+      "default": "text-arrow"
+    },
+    {
+      "type": "color",
+      "id": "mn_view_all_color",
+      "label": "View all link color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Dropdown Open Behavior (TheJacketMaker Style)"
+    },
+    {
+      "type": "select",
+      "id": "mn_open_trigger",
+      "label": "Open trigger",
+      "options": [
+        { "value": "hover-instant", "label": "Hover instant" },
+        { "value": "hover-with-delay", "label": "Hover with delay" },
+        { "value": "click", "label": "Click" }
+      ],
+      "default": "hover-with-delay"
+    },
+    {
+      "type": "range",
+      "id": "mn_open_delay",
+      "label": "Open delay",
+      "min": 0,
+      "max": 400,
+      "step": 50,
+      "default": 100,
+      "unit": "ms"
+    },
+    {
+      "type": "range",
+      "id": "mn_close_delay",
+      "label": "Close delay",
+      "min": 0,
+      "max": 500,
+      "step": 50,
+      "default": 200,
+      "unit": "ms"
+    },
+    {
+      "type": "select",
+      "id": "mn_container_animation",
+      "label": "Container animation",
+      "options": [
+        { "value": "instant", "label": "Instant" },
+        { "value": "slide-down-smooth", "label": "Slide down smooth" },
+        { "value": "height-grow", "label": "Height grow" },
+        { "value": "fade-slide", "label": "Fade slide" },
+        { "value": "curtain-reveal", "label": "Curtain reveal" }
+      ],
+      "default": "fade-slide"
+    },
+    {
+      "type": "select",
+      "id": "mn_content_animation",
+      "label": "Content animation",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "fade-in", "label": "Fade in" },
+        { "value": "fade-up", "label": "Fade up" },
+        { "value": "stagger-left", "label": "Stagger from left" },
+        { "value": "stagger-fade", "label": "Stagger fade" },
+        { "value": "blur-in", "label": "Blur in" }
+      ],
+      "default": "fade-up"
+    },
+    {
+      "type": "range",
+      "id": "mn_content_stagger_delay",
+      "label": "Content stagger delay",
+      "min": 0,
+      "max": 200,
+      "step": 25,
+      "default": 50,
+      "unit": "ms"
+    },
+    {
+      "type": "select",
+      "id": "mn_animation_easing",
+      "label": "Animation easing",
+      "options": [
+        { "value": "ease", "label": "Ease" },
+        { "value": "ease-in-out", "label": "Ease in-out" },
+        { "value": "smooth-cubic", "label": "Smooth cubic" },
+        { "value": "bounce-subtle", "label": "Bounce subtle" },
+        { "value": "spring", "label": "Spring" }
+      ],
+      "default": "ease"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_show_overlay",
+      "label": "Show overlay behind dropdown",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "mn_overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "mn_overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 10,
+      "max": 70,
+      "step": 5,
+      "default": 30
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_close_on_scroll",
+      "label": "Close dropdown on scroll",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "mn_close_animation",
+      "label": "Close animation",
+      "options": [
+        { "value": "same-as-open-reverse", "label": "Same as open (reverse)" },
+        { "value": "fade-out", "label": "Fade out" },
+        { "value": "slide-up", "label": "Slide up" },
+        { "value": "instant", "label": "Instant" }
+      ],
+      "default": "same-as-open-reverse"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_reveal_origin",
+      "label": "Dropdown reveal origin",
+      "options": [
+        { "value": "top-left", "label": "Top left" },
+        { "value": "top-center", "label": "Top center" },
+        { "value": "top-full", "label": "Top full width" }
+      ],
+      "default": "top-full"
     },
     {
       "type": "header",
