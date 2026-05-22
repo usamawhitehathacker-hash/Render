@@ -1,0 +1,53 @@
+{% comment %}
+  Mega Navigation Column Snippet
+  Receives primitive parameters only:
+    - column_title (string)
+    - linklist_handle (string)
+    - heading_color (string - CSS color)
+    - text_color (string - CSS color)
+    - badge_new_color (string - CSS color)
+    - badge_sale_color (string - CSS color)
+    - badge_hot_color (string - CSS color)
+{% endcomment %}
+
+<div class="mega-nav-column">
+  {% if column_title != blank %}
+    <h3 class="mega-nav-column__heading" style="color: {{ heading_color }};">{{ column_title }}</h3>
+  {% endif %}
+
+  {% if linklist_handle != blank %}
+    {% assign links = linklists[linklist_handle].links %}
+    {% if links.size > 0 %}
+      <ul class="mega-nav-column__list">
+        {% for link in links %}
+          {% assign link_title = link.title %}
+          {% assign badge_type = '' %}
+
+          {% if link_title contains '[NEW]' %}
+            {% assign badge_type = 'new' %}
+            {% assign link_title = link_title | remove: '[NEW]' | strip %}
+          {% elsif link_title contains '[SALE]' %}
+            {% assign badge_type = 'sale' %}
+            {% assign link_title = link_title | remove: '[SALE]' | strip %}
+          {% elsif link_title contains '[HOT]' %}
+            {% assign badge_type = 'hot' %}
+            {% assign link_title = link_title | remove: '[HOT]' | strip %}
+          {% endif %}
+
+          <li class="mega-nav-column__item">
+            <a href="{{ link.url }}" class="mega-nav-column__link" style="color: {{ text_color }};">
+              {{- link_title -}}
+              {% if badge_type == 'new' %}
+                <span class="mega-nav-badge mega-nav-badge--new" style="background-color: {{ badge_new_color }};">NEW</span>
+              {% elsif badge_type == 'sale' %}
+                <span class="mega-nav-badge mega-nav-badge--sale" style="background-color: {{ badge_sale_color }};">SALE</span>
+              {% elsif badge_type == 'hot' %}
+                <span class="mega-nav-badge mega-nav-badge--hot" style="background-color: {{ badge_hot_color }};">HOT</span>
+              {% endif %}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endif %}
+</div>

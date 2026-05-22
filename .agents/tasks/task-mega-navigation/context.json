@@ -1,0 +1,25 @@
+{
+  "project_type": "Shopify theme (Dawn-based) - adding a completely independent mega-navigation section with premium Symmetry-like features",
+  "language": "Liquid + CSS + vanilla JavaScript",
+  "build_system": "None - Shopify theme files are uploaded directly via admin code editor. No compile step.",
+  "test_framework": "None - validation is done via JSON schema parsing, Liquid tag-balance counts, range-math checks, and setting usage greps against the source files.",
+  "build_command": "None (no local build). Validation: python3 validate-mega-nav.py on the 5 target files.",
+  "test_command": "python3 /projects/sandbox/Render/.agents/tasks/task-mega-navigation/validate-mega-nav.py /projects/sandbox/Render/sections/mega-navigation.liquid /projects/sandbox/Render/assets/mega-navigation.css /projects/sandbox/Render/assets/mega-navigation.js /projects/sandbox/Render/snippets/mega-nav-column.liquid /projects/sandbox/Render/snippets/mega-nav-promo.liquid",
+  "verification_instructions": "Run the validation script. It checks: (1) schema JSON validity, (2) mn_ setting count in range 35-50, (3) all ranges pass (max-min)/step <= 100 AND (default-min) % step == 0, (4) liquid block balance, (5) all mn_ settings referenced at least once in body+css+js, (6) no bareword null in liquid, (7) no width=auto, (8) no trailing commas in JSON, (9) render tags only pass primitives, (10) snippets use linklists[handle] pattern.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "No setup needed. Working directory is /projects/sandbox/Render. Files to create: sections/mega-navigation.liquid, assets/mega-navigation.css, assets/mega-navigation.js, snippets/mega-nav-column.liquid, snippets/mega-nav-promo.liquid.",
+  "environment_constraints": "Network mode: COMMON_DEPENDENCIES. No Shopify CLI available. No Docker needed. Validation is pure Python3 (pre-installed). Files are standalone Shopify theme files.",
+  "contribution_requirements": "From user's Senior Shopify Developer master prompt: (1) range math (max-min)/step <= 100 AND (default-min)%step == 0, all numeric not strings; (2) plain English labels only (no t: keys for new mn_ settings); (3) JSON validity (no trailing commas, no comments); (4) no null in Liquid (use nil); (5) no width=auto in HTML; (6) no emojis in schema headers; (7) no tag:section or class: in schema root; (8) range step must be integer; (9) render cannot pass full objects - pass individual primitives only; (10) linklists[handle] lookup in snippets, not full linklist object; (11) Liquid block balance; (12) color picker never returns blank - use checkbox gate pattern for per-item color overrides; (13) SVGs must have xmlns attribute; (14) mn_ prefix on all new settings.",
+  "key_patterns": "Existing premium header pattern (hp_ prefix): master toggle gates everything, CSS file + JS file conditionally loaded. CSS uses custom properties (--hp-*) and data attribute selectors. JS wraps in IIFE, handles Shopify editor events. Schema blocks for per-item customization. For the new mega-nav: use mn_ prefix, same IIFE pattern in JS, CSS scoped to .mega-navigation class, section is completely independent of header.liquid.",
+  "relevant_files": [
+    "reference:sections/header.liquid - existing premium header to study patterns (1370 lines)",
+    "reference:assets/header-premium.css - CSS convention reference (836 lines)",
+    "reference:assets/header-premium.js - JS convention reference (212 lines)",
+    "target:sections/mega-navigation.liquid - NEW file to create",
+    "target:assets/mega-navigation.css - NEW file to create",
+    "target:assets/mega-navigation.js - NEW file to create",
+    "target:snippets/mega-nav-column.liquid - NEW file to create",
+    "target:snippets/mega-nav-promo.liquid - NEW file to create"
+  ],
+  "directory_structure": "Workspace root: /projects/sandbox/Render. sections/ has header.liquid. assets/ has header-premium.css, header-premium.js. snippets/ directory does not exist yet (must be created). The mega-navigation section sits below the header in Shopify Customizer - it is a completely separate section file."
+}

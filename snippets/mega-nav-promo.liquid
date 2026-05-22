@@ -1,0 +1,37 @@
+{% comment %}
+  Mega Navigation Promo Snippet
+  Receives primitive parameters only:
+    - image (string - image URL)
+    - image_alt (string)
+    - heading (string)
+    - subheading (string)
+    - button_text (string)
+    - button_url (string)
+{% endcomment %}
+
+<div class="mega-nav-promo">
+  {% if image != blank %}
+    <div class="mega-nav-promo__image-wrapper">
+      <img
+        src="{{ image }}"
+        alt="{{ image_alt }}"
+        loading="lazy"
+        class="mega-nav-promo__image"
+      >
+    </div>
+  {% endif %}
+
+  <div class="mega-nav-promo__content">
+    {% if heading != blank %}
+      <h4 class="mega-nav-promo__heading">{{ heading }}</h4>
+    {% endif %}
+
+    {% if subheading != blank %}
+      <p class="mega-nav-promo__subheading">{{ subheading }}</p>
+    {% endif %}
+
+    {% if button_text != blank and button_url != blank %}
+      <a href="{{ button_url }}" class="mega-nav-promo__button">{{ button_text }}</a>
+    {% endif %}
+  </div>
+</div>
