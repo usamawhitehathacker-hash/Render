@@ -81,6 +81,32 @@
       --mn-dropdown-link-hover-indent: {{ section.settings.mn_dropdown_link_hover_indent }}px;
       --mn-separator-color: {{ section.settings.mn_separator_color }};
       --mn-hover-easing: {{ section.settings.mn_hover_easing }};
+
+      /* Badge Enhancements */
+      --mn-badge-text-color: {{ section.settings.mn_badge_text_color }};
+      --mn-badge-font-size: {{ section.settings.mn_badge_font_size }}px;
+      --mn-badge-font-weight: {{ section.settings.mn_badge_font_weight }};
+      --mn-badge-border-radius: {{ section.settings.mn_badge_border_radius }}px;
+      --mn-badge-padding-h: {{ section.settings.mn_badge_padding_h }}px;
+      --mn-badge-padding-v: {{ section.settings.mn_badge_padding_v }}px;
+      --mn-custom-badge-1-color: {{ section.settings.mn_custom_badge_1_color }};
+      --mn-custom-badge-2-color: {{ section.settings.mn_custom_badge_2_color }};
+
+      /* Spacing */
+      --mn-nav-bar-height: {{ section.settings.mn_nav_bar_height }}px;
+      --mn-nav-bar-padding-h: {{ section.settings.mn_nav_bar_padding_h }}px;
+      --mn-dropdown-gap: {{ section.settings.mn_dropdown_gap }}px;
+      --mn-promo-card-width: {{ section.settings.mn_promo_card_width }}px;
+      --mn-promo-card-gap: {{ section.settings.mn_promo_card_gap }}px;
+      --mn-col-gap-h: {{ section.settings.mn_col_gap_h }}px;
+      --mn-col-link-gap-v: {{ section.settings.mn_col_link_gap_v }}px;
+
+      /* Mobile & Polish */
+      --mn-mobile-drawer-width: {{ section.settings.mn_mobile_drawer_width }}%;
+      --mn-mobile-drawer-bg: {{ section.settings.mn_mobile_drawer_bg }};
+      --mn-mobile-overlay-color: {{ section.settings.mn_mobile_overlay_color }};
+      --mn-mobile-overlay-opacity: {{ section.settings.mn_mobile_overlay_opacity | divided_by: 100.0 }};
+      --mn-mobile-accordion-speed: {{ section.settings.mn_mobile_accordion_speed }}ms;
     }
   {%- endstyle -%}
 
@@ -113,6 +139,9 @@
     data-mn-close-animation="{{ section.settings.mn_close_animation }}"
     data-mn-dropdown-width="{{ section.settings.mn_dropdown_width }}"
     data-mn-show-overlay="{{ section.settings.mn_show_overlay }}"
+    data-mn-badge-style="{{ section.settings.mn_badge_style_type }}"
+    data-mn-badge-anim="{{ section.settings.mn_badge_animation }}"
+    data-mn-swipe-close="{{ section.settings.mn_mobile_swipe_close }}"
   >
     <div class="mega-nav-overlay" aria-hidden="true"></div>
     <nav class="mega-nav-bar" aria-label="Mega navigation">
@@ -1181,6 +1210,199 @@
     },
     {
       "type": "header",
+      "content": "Badge Enhancements"
+    },
+    {
+      "type": "color",
+      "id": "mn_badge_text_color",
+      "label": "Badge text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "mn_badge_font_size",
+      "label": "Badge font size",
+      "min": 8,
+      "max": 12,
+      "step": 1,
+      "default": 9,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "mn_badge_font_weight",
+      "label": "Badge font weight",
+      "options": [
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra-bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "mn_badge_border_radius",
+      "label": "Badge border radius",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "default": 3,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_badge_padding_h",
+      "label": "Badge padding horizontal",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_badge_padding_v",
+      "label": "Badge padding vertical",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 2,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "mn_badge_style_type",
+      "label": "Badge style",
+      "options": [
+        { "value": "filled", "label": "Filled" },
+        { "value": "outline", "label": "Outline" },
+        { "value": "gradient", "label": "Gradient" }
+      ],
+      "default": "filled"
+    },
+    {
+      "type": "select",
+      "id": "mn_badge_position",
+      "label": "Badge position",
+      "options": [
+        { "value": "after-text", "label": "After text" },
+        { "value": "above-text", "label": "Above text" },
+        { "value": "superscript", "label": "Superscript" }
+      ],
+      "default": "after-text"
+    },
+    {
+      "type": "select",
+      "id": "mn_badge_animation",
+      "label": "Badge animation",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "pulse", "label": "Pulse" },
+        { "value": "bounce", "label": "Bounce" },
+        { "value": "shine", "label": "Shine" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "text",
+      "id": "mn_custom_badge_1_text",
+      "label": "Custom badge 1 text",
+      "default": "LIMITED"
+    },
+    {
+      "type": "color",
+      "id": "mn_custom_badge_1_color",
+      "label": "Custom badge 1 color",
+      "default": "#8B5CF6"
+    },
+    {
+      "type": "text",
+      "id": "mn_custom_badge_2_text",
+      "label": "Custom badge 2 text",
+      "default": "TRENDING"
+    },
+    {
+      "type": "color",
+      "id": "mn_custom_badge_2_color",
+      "label": "Custom badge 2 color",
+      "default": "#0EA5E9"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "mn_nav_bar_height",
+      "label": "Nav bar height",
+      "min": 40,
+      "max": 70,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_nav_bar_padding_h",
+      "label": "Nav bar padding horizontal",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_gap",
+      "label": "Dropdown gap from nav",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_promo_card_width",
+      "label": "Promo card width",
+      "min": 180,
+      "max": 400,
+      "step": 20,
+      "default": 280,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_promo_card_gap",
+      "label": "Promo card gap from columns",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_col_gap_h",
+      "label": "Column gap horizontal",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_col_link_gap_v",
+      "label": "Column link gap vertical",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "unit": "px"
+    },
+    {
+      "type": "header",
       "content": "Mobile Settings"
     },
     {
@@ -1224,6 +1446,142 @@
         { "value": "arrow", "label": "Arrow" }
       ],
       "default": "plus"
+    },
+    {
+      "type": "header",
+      "content": "Mobile & Polish (Advanced)"
+    },
+    {
+      "type": "select",
+      "id": "mn_mobile_header_style",
+      "label": "Mobile header style",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "simplified", "label": "Simplified" },
+        { "value": "centered-logo-only", "label": "Centered logo only" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "select",
+      "id": "mn_mobile_menu_style",
+      "label": "Mobile menu style",
+      "options": [
+        { "value": "list", "label": "List" },
+        { "value": "grid-icons", "label": "Grid with icons" },
+        { "value": "cards", "label": "Cards" }
+      ],
+      "default": "list"
+    },
+    {
+      "type": "select",
+      "id": "mn_mobile_nested_anim",
+      "label": "Mobile nested menu animation",
+      "options": [
+        { "value": "slide-right", "label": "Slide right" },
+        { "value": "accordion-expand", "label": "Accordion expand" },
+        { "value": "fade", "label": "Fade" }
+      ],
+      "default": "accordion-expand"
+    },
+    {
+      "type": "range",
+      "id": "mn_mobile_drawer_width",
+      "label": "Mobile drawer width (%)",
+      "info": "Percentage of screen width",
+      "min": 70,
+      "max": 100,
+      "step": 5,
+      "default": 85
+    },
+    {
+      "type": "color",
+      "id": "mn_mobile_drawer_bg",
+      "label": "Mobile drawer background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "mn_mobile_overlay_color",
+      "label": "Mobile overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "mn_mobile_overlay_opacity",
+      "label": "Mobile overlay opacity",
+      "info": "10 = 10%, 90 = 90%",
+      "min": 10,
+      "max": 90,
+      "step": 10,
+      "default": 50
+    },
+    {
+      "type": "select",
+      "id": "mn_mobile_close_style",
+      "label": "Close button style",
+      "options": [
+        { "value": "x-icon", "label": "X icon" },
+        { "value": "arrow-back", "label": "Back arrow" },
+        { "value": "text-close", "label": "Text: Close" }
+      ],
+      "default": "x-icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_mobile_show_logo",
+      "label": "Show logo in mobile drawer",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_mobile_footer_social",
+      "label": "Show social icons in drawer footer",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "mn_mobile_accordion_speed",
+      "label": "Accordion animation speed",
+      "min": 150,
+      "max": 500,
+      "step": 50,
+      "default": 300,
+      "unit": "ms"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_mobile_swipe_close",
+      "label": "Swipe to close drawer",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "mn_mobile_bottom_icon_style",
+      "label": "Mobile bottom nav icon style",
+      "options": [
+        { "value": "outline", "label": "Outline" },
+        { "value": "filled", "label": "Filled" },
+        { "value": "minimal", "label": "Minimal" }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_mobile_bottom_labels",
+      "label": "Show bottom nav labels",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "mn_mobile_bottom_active",
+      "label": "Bottom nav active indicator",
+      "options": [
+        { "value": "dot", "label": "Dot" },
+        { "value": "line", "label": "Line" },
+        { "value": "color-fill", "label": "Color fill" }
+      ],
+      "default": "dot"
     },
     {
       "type": "header",
