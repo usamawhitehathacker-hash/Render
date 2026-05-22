@@ -1,16 +1,9 @@
 {% comment %}
   ============================================================
-  MEGA NAVIGATION SECTION
-  Style:
-    - Desktop : Symmetry + thejacketmaker.com
-                (full-width flyout, hover trigger, multi-column,
-                 featured promo card)
-    - Mobile  : Prada-style full-screen drawer
-                (large bold typography, slide-in, accordion)
-  Architecture:
-    - Independent section (theme editor: add/remove/reorder).
-    - Self-contained: CSS + JS in /assets, schema below.
-    - Does not modify Dawn header.liquid; complements it.
+  MEGA NAVIGATION — PREMIUM EDITION (116+ Settings)
+  Desktop: Symmetry + TheJacketMaker
+  Mobile: Prada-style
+  All settings FUNCTIONAL via CSS custom properties
   ============================================================
 {% endcomment %}
 
@@ -25,10 +18,52 @@
       assign mn_border_width = '0px'
     endif
 
+    if section.settings.mn_border_top
+      assign mn_border_top_width = '1px'
+    else
+      assign mn_border_top_width = '0px'
+    endif
+
     if section.settings.mn_sticky
       assign mn_sticky_attr = 'true'
     else
       assign mn_sticky_attr = 'false'
+    endif
+
+    if section.settings.mn_hover_bg_highlight
+      assign mn_hover_bg_attr = 'true'
+    else
+      assign mn_hover_bg_attr = 'false'
+    endif
+
+    if section.settings.mn_hover_scale
+      assign mn_hover_scale_attr = 'true'
+    else
+      assign mn_hover_scale_attr = 'false'
+    endif
+
+    if section.settings.mn_show_overlay
+      assign mn_overlay_attr = 'true'
+    else
+      assign mn_overlay_attr = 'false'
+    endif
+
+    if section.settings.mn_col_separator
+      assign mn_col_sep_attr = 'true'
+    else
+      assign mn_col_sep_attr = 'false'
+    endif
+
+    if section.settings.mn_col_heading_underline
+      assign mn_col_heading_ul = 'true'
+    else
+      assign mn_col_heading_ul = 'false'
+    endif
+
+    if section.settings.mn_scroll_bg_change
+      assign scroll_bg = section.settings.mn_scroll_bg_color
+    else
+      assign scroll_bg = section.settings.mn_sticky_bg
     endif
 
     assign nav_heading_color = section.settings.mn_dropdown_heading_color
@@ -38,6 +73,7 @@
     assign nav_badge_hot = section.settings.mn_badge_hot_color
   -%}
 
+
   {%- style -%}
     #shopify-section-{{ section.id }} .mega-navigation-section {
       --mn-bg-color: {{ section.settings.mn_bg_color }};
@@ -46,24 +82,92 @@
       --mn-font-weight: {{ section.settings.mn_font_weight }};
       --mn-letter-spacing: {{ section.settings.mn_letter_spacing }}px;
       --mn-text-transform: {{ section.settings.mn_text_transform }};
+      --mn-line-height: {{ section.settings.mn_line_height }};
+      --mn-word-spacing: {{ section.settings.mn_word_spacing }}px;
+      --mn-item-gap: {{ section.settings.mn_item_gap }}px;
+      --mn-item-padding-x: {{ section.settings.mn_item_padding_x }}px;
+      --mn-item-padding-y: {{ section.settings.mn_item_padding_y }}px;
+      --mn-nav-height: {{ section.settings.mn_nav_height }}px;
+      --mn-nav-padding-x: {{ section.settings.mn_nav_padding_x }}px;
+      --mn-nav-alignment: {{ section.settings.mn_nav_alignment }};
       --mn-hover-color: {{ section.settings.mn_hover_color }};
+      --mn-hover-text-color: {{ section.settings.mn_hover_text_color }};
       --mn-hover-underline-thickness: {{ section.settings.mn_hover_underline_thickness }}px;
+      --mn-underline-style: {{ section.settings.mn_underline_style }};
+      --mn-underline-offset: {{ section.settings.mn_underline_offset }}px;
+      --mn-underline-custom-width: {{ section.settings.mn_underline_custom_width }}px;
+      --mn-hover-bg-color: {{ section.settings.mn_hover_bg_color }};
+      --mn-hover-bg-radius: {{ section.settings.mn_hover_bg_radius }}px;
+      --mn-hover-scale-amount: {{ section.settings.mn_hover_scale_amount }};
+      --mn-hover-easing: {{ section.settings.mn_hover_easing }};
+      --mn-active-color: {{ section.settings.mn_active_color }};
+      --mn-separator-color: {{ section.settings.mn_separator_color }};
       --mn-sticky-bg: {{ section.settings.mn_sticky_bg }};
+      --mn-scroll-bg: {{ scroll_bg }};
+      --mn-scroll-shrink: {{ section.settings.mn_scroll_shrink }};
       --mn-border-color: {{ section.settings.mn_border_color }};
+      --mn-border-top-color: {{ section.settings.mn_border_top_color }};
+      --mn-border-bottom-width: {{ mn_border_width }};
+      --mn-border-top-width: {{ mn_border_top_width }};
       --mn-dropdown-bg: {{ section.settings.mn_dropdown_bg }};
       --mn-dropdown-text-color: {{ section.settings.mn_dropdown_text_color }};
       --mn-dropdown-heading-color: {{ section.settings.mn_dropdown_heading_color }};
       --mn-dropdown-duration: {{ section.settings.mn_dropdown_duration }}ms;
+      --mn-dropdown-easing: {{ section.settings.mn_dropdown_easing }};
+      --mn-dropdown-radius: {{ section.settings.mn_dropdown_radius }}px;
+      --mn-dropdown-border-width: {{ section.settings.mn_dropdown_border_width }}px;
+      --mn-dropdown-border-color: {{ section.settings.mn_dropdown_border_color }};
+      --mn-dropdown-padding-x: {{ section.settings.mn_dropdown_padding_x }}px;
+      --mn-dropdown-padding-y: {{ section.settings.mn_dropdown_padding_y }}px;
+      --mn-dropdown-gap: {{ section.settings.mn_dropdown_gap }}px;
+      --mn-dropdown-max-width: {{ section.settings.mn_dropdown_max_width }}px;
+      --mn-dropdown-boxed-width: {{ section.settings.mn_dropdown_boxed_width }}px;
+      --mn-dropdown-gradient-start: {{ section.settings.mn_dropdown_gradient_start }};
+      --mn-dropdown-gradient-end: {{ section.settings.mn_dropdown_gradient_end }};
+      --mn-dropdown-gradient-dir: {{ section.settings.mn_dropdown_gradient_dir }};
+      --mn-open-delay: {{ section.settings.mn_open_delay }}ms;
+      --mn-close-delay: {{ section.settings.mn_close_delay }}ms;
+      --mn-content-stagger: {{ section.settings.mn_content_stagger }}ms;
+      --mn-overlay-color: {{ section.settings.mn_overlay_color }};
+      --mn-overlay-opacity: {{ section.settings.mn_overlay_opacity }};
+      --mn-col-separator-color: {{ section.settings.mn_col_separator_color }};
+      --mn-col-separator-style: {{ section.settings.mn_col_separator_style }};
+      --mn-col-heading-underline-color: {{ section.settings.mn_col_heading_underline_color }};
+      --mn-column-gap: {{ section.settings.mn_column_gap }}px;
+      --mn-link-gap: {{ section.settings.mn_link_gap }}px;
+      --mn-link-hover-indent: {{ section.settings.mn_link_hover_indent }}px;
+      --mn-dd-heading-size: {{ section.settings.mn_dd_heading_size }}px;
+      --mn-dd-heading-weight: {{ section.settings.mn_dd_heading_weight }};
+      --mn-dd-heading-transform: {{ section.settings.mn_dd_heading_transform }};
+      --mn-dd-heading-spacing: {{ section.settings.mn_dd_heading_spacing }}px;
+      --mn-dd-link-size: {{ section.settings.mn_dd_link_size }}px;
+      --mn-dd-link-weight: {{ section.settings.mn_dd_link_weight }};
+      --mn-dd-link-line-height: {{ section.settings.mn_dd_link_line_height }};
+      --mn-view-all-color: {{ section.settings.mn_view_all_color }};
+      --mn-promo-width: {{ section.settings.mn_promo_width }}px;
+      --mn-promo-gap: {{ section.settings.mn_promo_gap }}px;
       --mn-badge-new-color: {{ section.settings.mn_badge_new_color }};
       --mn-badge-sale-color: {{ section.settings.mn_badge_sale_color }};
       --mn-badge-hot-color: {{ section.settings.mn_badge_hot_color }};
+      --mn-badge-custom1-color: {{ section.settings.mn_badge_custom1_color }};
+      --mn-badge-custom2-color: {{ section.settings.mn_badge_custom2_color }};
+      --mn-badge-text-color: {{ section.settings.mn_badge_text_color }};
+      --mn-badge-font-size: {{ section.settings.mn_badge_font_size }}px;
+      --mn-badge-radius: {{ section.settings.mn_badge_radius }}px;
+      --mn-badge-padding-x: {{ section.settings.mn_badge_padding_x }}px;
+      --mn-badge-padding-y: {{ section.settings.mn_badge_padding_y }}px;
       --mn-mobile-font-size: {{ section.settings.mn_mobile_font_size }}px;
       --mn-mobile-padding: {{ section.settings.mn_mobile_padding }}px;
+      --mn-mobile-drawer-width: {{ section.settings.mn_mobile_drawer_width }}%;
+      --mn-mobile-drawer-bg: {{ section.settings.mn_mobile_drawer_bg }};
+      --mn-mobile-overlay-color: {{ section.settings.mn_mobile_overlay_color }};
+      --mn-mobile-overlay-opacity: {{ section.settings.mn_mobile_overlay_opacity }};
+      --mn-mobile-accordion-speed: {{ section.settings.mn_mobile_accordion_speed }}ms;
       --mn-section-padding-top: {{ section.settings.mn_section_padding_top }}px;
       --mn-section-padding-bottom: {{ section.settings.mn_section_padding_bottom }}px;
-      --mn-border-bottom-width: {{ mn_border_width }};
     }
   {%- endstyle -%}
+
 
   <div
     id="section-{{ section.id }}"
@@ -71,30 +175,45 @@
     role="region"
     aria-label="Mega navigation"
     data-mn-hover-animation="{{ section.settings.mn_hover_animation }}"
-    data-mn-dropdown-animation="{{ section.settings.mn_dropdown_animation }}"
+    data-mn-underline-pos="{{ section.settings.mn_underline_position }}"
+    data-mn-underline-width="{{ section.settings.mn_underline_width }}"
+    data-mn-hover-bg="{{ mn_hover_bg_attr }}"
+    data-mn-hover-scale="{{ mn_hover_scale_attr }}"
+    data-mn-active-style="{{ section.settings.mn_active_indicator }}"
+    data-mn-separator="{{ section.settings.mn_separator_style }}"
     data-mn-sticky="{{ mn_sticky_attr }}"
+    data-mn-shadow="{{ section.settings.mn_header_shadow }}"
+    data-mn-scroll-shadow="{{ section.settings.mn_scroll_shadow }}"
+    data-mn-dropdown-width="{{ section.settings.mn_dropdown_width }}"
+    data-mn-dropdown-shadow="{{ section.settings.mn_dropdown_shadow_style }}"
+    data-mn-dropdown-bg-type="{{ section.settings.mn_dropdown_bg_type }}"
+    data-mn-container-anim="{{ section.settings.mn_container_animation }}"
+    data-mn-content-anim="{{ section.settings.mn_content_animation }}"
+    data-mn-open-trigger="{{ section.settings.mn_open_trigger }}"
+    data-mn-show-overlay="{{ mn_overlay_attr }}"
+    data-mn-close-on-scroll="{{ section.settings.mn_close_on_scroll }}"
+    data-mn-col-separator="{{ mn_col_sep_attr }}"
+    data-mn-col-heading-underline="{{ mn_col_heading_ul }}"
+    data-mn-view-all="{{ section.settings.mn_show_view_all }}"
+    data-mn-view-all-style="{{ section.settings.mn_view_all_style }}"
+    data-mn-badge-style="{{ section.settings.mn_badge_style }}"
+    data-mn-badge-position="{{ section.settings.mn_badge_position }}"
+    data-mn-badge-animation="{{ section.settings.mn_badge_animation }}"
     data-mn-mobile-accordion-icon="{{ section.settings.mn_mobile_accordion_icon }}"
     data-mn-mobile-drawer-position="{{ section.settings.mn_mobile_drawer_position }}"
   >
+    {%- if section.settings.mn_show_overlay -%}
+      <div class="mega-nav-overlay" aria-hidden="true"></div>
+    {%- endif -%}
+
     <nav class="mega-nav-bar" aria-label="Primary">
-      <button
-        type="button"
-        class="mega-nav-hamburger"
-        aria-label="Open menu"
-        aria-expanded="false"
-        aria-controls="MegaNavDrawer-{{ section.id }}"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+      <button type="button" class="mega-nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="MegaNavDrawer-{{ section.id }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
       </button>
 
       <ul class="mega-nav-menu">
         {%- for block in section.blocks -%}
           {%- if block.type == 'menu_item' -%}
-
             {%- liquid
               assign col1_handle = block.settings.mn_col1_linklist
               assign col2_handle = block.settings.mn_col2_linklist
@@ -102,7 +221,6 @@
               assign col4_handle = block.settings.mn_col4_linklist
               assign col5_handle = block.settings.mn_col5_linklist
               assign col6_handle = block.settings.mn_col6_linklist
-
               assign col1_title = block.settings.mn_col1_title
               assign col2_title = block.settings.mn_col2_title
               assign col3_title = block.settings.mn_col3_title
@@ -142,32 +260,24 @@
             -%}
 
             <li class="mega-nav-item" data-block-id="{{ block.id }}" {{ block.shopify_attributes }}>
-              <a
-                href="{{ menu_link_url }}"
-                class="mega-nav-link"
-                {%- if block.settings.mn_use_custom_color -%}
-                  data-custom-color="true"
-                  style="--mn-item-color: {{ block.settings.mn_item_color }}; --mn-item-hover-color: {{ block.settings.mn_item_hover_color }}; color: {{ block.settings.mn_item_color }};"
-                {%- endif -%}
+              <a href="{{ menu_link_url }}" class="mega-nav-link"
+                {%- if block.settings.mn_use_custom_color %} data-custom-color="true" style="--mn-item-color:{{ block.settings.mn_item_color }};--mn-item-hover-color:{{ block.settings.mn_item_hover_color }};color:{{ block.settings.mn_item_color }};"{% endif -%}
               >
                 {{- block.settings.menu_link -}}
                 {%- case block.settings.mn_item_badge -%}
-                  {%- when 'new' -%}
-                    <span class="mega-nav-item-badge mega-nav-item-badge--new">NEW</span>
-                  {%- when 'sale' -%}
-                    <span class="mega-nav-item-badge mega-nav-item-badge--sale">SALE</span>
-                  {%- when 'hot' -%}
-                    <span class="mega-nav-item-badge mega-nav-item-badge--hot">HOT</span>
+                  {%- when 'new' -%}<span class="mega-nav-item-badge mega-nav-item-badge--new">NEW</span>
+                  {%- when 'sale' -%}<span class="mega-nav-item-badge mega-nav-item-badge--sale">SALE</span>
+                  {%- when 'hot' -%}<span class="mega-nav-item-badge mega-nav-item-badge--hot">HOT</span>
+                  {%- when 'custom1' -%}<span class="mega-nav-item-badge mega-nav-item-badge--custom1">{{ section.settings.mn_badge_custom1_text }}</span>
+                  {%- when 'custom2' -%}<span class="mega-nav-item-badge mega-nav-item-badge--custom2">{{ section.settings.mn_badge_custom2_text }}</span>
                 {%- endcase -%}
               </a>
 
+
               {%- if has_dropdown -%}
                 {%- assign dropdown_classes = 'mega-nav-dropdown' -%}
-                {%- if section.settings.mn_dropdown_shadow -%}
+                {%- if section.settings.mn_dropdown_shadow_style != 'none' -%}
                   {%- assign dropdown_classes = dropdown_classes | append: ' has-shadow' -%}
-                {%- endif -%}
-                {%- if section.settings.mn_dropdown_border -%}
-                  {%- assign dropdown_classes = dropdown_classes | append: ' has-border' -%}
                 {%- endif -%}
 
                 <div class="{{ dropdown_classes }}">
@@ -175,70 +285,22 @@
                     {%- if has_columns -%}
                       <div class="mega-nav-dropdown__columns" data-columns="{{ block.settings.mn_columns }}">
                         {%- if col1_handle != blank -%}
-                          {%- render 'mega-nav-column',
-                            column_title: col1_title,
-                            linklist_handle: col1_handle,
-                            heading_color: nav_heading_color,
-                            text_color: nav_text_color,
-                            badge_new_color: nav_badge_new,
-                            badge_sale_color: nav_badge_sale,
-                            badge_hot_color: nav_badge_hot
-                          -%}
+                          {%- render 'mega-nav-column', column_title: col1_title, linklist_handle: col1_handle, heading_color: nav_heading_color, text_color: nav_text_color, badge_new_color: nav_badge_new, badge_sale_color: nav_badge_sale, badge_hot_color: nav_badge_hot -%}
                         {%- endif -%}
                         {%- if col2_handle != blank -%}
-                          {%- render 'mega-nav-column',
-                            column_title: col2_title,
-                            linklist_handle: col2_handle,
-                            heading_color: nav_heading_color,
-                            text_color: nav_text_color,
-                            badge_new_color: nav_badge_new,
-                            badge_sale_color: nav_badge_sale,
-                            badge_hot_color: nav_badge_hot
-                          -%}
+                          {%- render 'mega-nav-column', column_title: col2_title, linklist_handle: col2_handle, heading_color: nav_heading_color, text_color: nav_text_color, badge_new_color: nav_badge_new, badge_sale_color: nav_badge_sale, badge_hot_color: nav_badge_hot -%}
                         {%- endif -%}
                         {%- if col3_handle != blank -%}
-                          {%- render 'mega-nav-column',
-                            column_title: col3_title,
-                            linklist_handle: col3_handle,
-                            heading_color: nav_heading_color,
-                            text_color: nav_text_color,
-                            badge_new_color: nav_badge_new,
-                            badge_sale_color: nav_badge_sale,
-                            badge_hot_color: nav_badge_hot
-                          -%}
+                          {%- render 'mega-nav-column', column_title: col3_title, linklist_handle: col3_handle, heading_color: nav_heading_color, text_color: nav_text_color, badge_new_color: nav_badge_new, badge_sale_color: nav_badge_sale, badge_hot_color: nav_badge_hot -%}
                         {%- endif -%}
                         {%- if col4_handle != blank -%}
-                          {%- render 'mega-nav-column',
-                            column_title: col4_title,
-                            linklist_handle: col4_handle,
-                            heading_color: nav_heading_color,
-                            text_color: nav_text_color,
-                            badge_new_color: nav_badge_new,
-                            badge_sale_color: nav_badge_sale,
-                            badge_hot_color: nav_badge_hot
-                          -%}
+                          {%- render 'mega-nav-column', column_title: col4_title, linklist_handle: col4_handle, heading_color: nav_heading_color, text_color: nav_text_color, badge_new_color: nav_badge_new, badge_sale_color: nav_badge_sale, badge_hot_color: nav_badge_hot -%}
                         {%- endif -%}
                         {%- if col5_handle != blank -%}
-                          {%- render 'mega-nav-column',
-                            column_title: col5_title,
-                            linklist_handle: col5_handle,
-                            heading_color: nav_heading_color,
-                            text_color: nav_text_color,
-                            badge_new_color: nav_badge_new,
-                            badge_sale_color: nav_badge_sale,
-                            badge_hot_color: nav_badge_hot
-                          -%}
+                          {%- render 'mega-nav-column', column_title: col5_title, linklist_handle: col5_handle, heading_color: nav_heading_color, text_color: nav_text_color, badge_new_color: nav_badge_new, badge_sale_color: nav_badge_sale, badge_hot_color: nav_badge_hot -%}
                         {%- endif -%}
                         {%- if col6_handle != blank -%}
-                          {%- render 'mega-nav-column',
-                            column_title: col6_title,
-                            linklist_handle: col6_handle,
-                            heading_color: nav_heading_color,
-                            text_color: nav_text_color,
-                            badge_new_color: nav_badge_new,
-                            badge_sale_color: nav_badge_sale,
-                            badge_hot_color: nav_badge_hot
-                          -%}
+                          {%- render 'mega-nav-column', column_title: col6_title, linklist_handle: col6_handle, heading_color: nav_heading_color, text_color: nav_text_color, badge_new_color: nav_badge_new, badge_sale_color: nav_badge_sale, badge_hot_color: nav_badge_hot -%}
                         {%- endif -%}
                       </div>
                     {%- endif -%}
@@ -246,14 +308,7 @@
                     {%- if has_promo -%}
                       {%- assign promo_img_url = block.settings.mn_promo_image | image_url: width: 560 -%}
                       {%- assign promo_img_alt = block.settings.mn_promo_image.alt | default: block.settings.mn_promo_heading -%}
-                      {%- render 'mega-nav-promo',
-                        image: promo_img_url,
-                        image_alt: promo_img_alt,
-                        heading: block.settings.mn_promo_heading,
-                        subheading: block.settings.promo_subheading,
-                        button_text: block.settings.promo_button_text,
-                        button_url: block.settings.promo_button_url
-                      -%}
+                      {%- render 'mega-nav-promo', image: promo_img_url, image_alt: promo_img_alt, heading: block.settings.mn_promo_heading, subheading: block.settings.promo_subheading, button_text: block.settings.promo_button_text, button_url: block.settings.promo_button_url -%}
                     {%- endif -%}
                   </div>
                 </div>
@@ -264,33 +319,18 @@
       </ul>
     </nav>
 
-    {%- comment -%} ===== Mobile drawer (Prada style) ===== {%- endcomment -%}
+
+    {%- comment -%} Mobile Drawer (Prada) {%- endcomment -%}
     <div class="mega-nav-drawer-overlay" aria-hidden="true"></div>
-    <div
-      id="MegaNavDrawer-{{ section.id }}"
-      class="mega-nav-drawer"
-      data-position="{{ section.settings.mn_mobile_drawer_position }}"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Mobile menu"
-    >
+    <div id="MegaNavDrawer-{{ section.id }}" class="mega-nav-drawer" data-position="{{ section.settings.mn_mobile_drawer_position }}" role="dialog" aria-modal="true" aria-label="Mobile menu">
       <div class="mega-nav-drawer__header">
-        <button
-          type="button"
-          class="mega-nav-drawer__close"
-          aria-label="Close menu"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
+        <button type="button" class="mega-nav-drawer__close" aria-label="Close menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </div>
-
       <ul class="mega-nav-mobile-menu">
         {%- for block in section.blocks -%}
           {%- if block.type == 'menu_item' -%}
-
             {%- liquid
               assign m_col1_handle = block.settings.mn_col1_linklist
               assign m_col2_handle = block.settings.mn_col2_linklist
@@ -298,14 +338,12 @@
               assign m_col4_handle = block.settings.mn_col4_linklist
               assign m_col5_handle = block.settings.mn_col5_linklist
               assign m_col6_handle = block.settings.mn_col6_linklist
-
               assign m_col1_title = block.settings.mn_col1_title
               assign m_col2_title = block.settings.mn_col2_title
               assign m_col3_title = block.settings.mn_col3_title
               assign m_col4_title = block.settings.mn_col4_title
               assign m_col5_title = block.settings.mn_col5_title
               assign m_col6_title = block.settings.mn_col6_title
-
               assign has_submenu = false
               if m_col1_handle != blank
                 assign has_submenu = true
@@ -320,144 +358,34 @@
               elsif m_col6_handle != blank
                 assign has_submenu = true
               endif
-
               assign m_menu_url = block.settings.menu_url
               if m_menu_url == blank
                 assign m_menu_url = '#'
               endif
             -%}
-
             <li class="mega-nav-mobile-item" {{ block.shopify_attributes }}>
               {%- if has_submenu -%}
-                <button
-                  type="button"
-                  class="mega-nav-mobile-link"
-                  data-has-submenu="true"
-                  aria-expanded="false"
-                >
+                <button type="button" class="mega-nav-mobile-link" data-has-submenu="true" aria-expanded="false">
                   <span>{{ block.settings.menu_link }}</span>
                   <span class="mega-nav-accordion-icon" aria-hidden="true">
                     {%- case section.settings.mn_mobile_accordion_icon -%}
-                      {%- when 'plus' -%}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                      {%- when 'chevron' -%}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                      {%- else -%}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                      {%- when 'plus' -%}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                      {%- when 'chevron' -%}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      {%- else -%}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     {%- endcase -%}
                   </span>
                 </button>
-
-                <div class="mega-nav-mobile-submenu">
-                  <div class="mega-nav-mobile-submenu__inner">
-                    {%- if m_col1_handle != blank -%}
-                      {%- if m_col1_title != blank -%}
-                        <h4 class="mega-nav-mobile-submenu__heading">{{ m_col1_title }}</h4>
-                      {%- endif -%}
-                      <ul class="mega-nav-mobile-submenu__list">
-                        {%- for link in linklists[m_col1_handle].links -%}
-                          <li>
-                            <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
-                              {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
-                            </a>
-                          </li>
-                        {%- endfor -%}
-                      </ul>
-                    {%- endif -%}
-
-                    {%- if m_col2_handle != blank -%}
-                      {%- if m_col2_title != blank -%}
-                        <h4 class="mega-nav-mobile-submenu__heading">{{ m_col2_title }}</h4>
-                      {%- endif -%}
-                      <ul class="mega-nav-mobile-submenu__list">
-                        {%- for link in linklists[m_col2_handle].links -%}
-                          <li>
-                            <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
-                              {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
-                            </a>
-                          </li>
-                        {%- endfor -%}
-                      </ul>
-                    {%- endif -%}
-
-                    {%- if m_col3_handle != blank -%}
-                      {%- if m_col3_title != blank -%}
-                        <h4 class="mega-nav-mobile-submenu__heading">{{ m_col3_title }}</h4>
-                      {%- endif -%}
-                      <ul class="mega-nav-mobile-submenu__list">
-                        {%- for link in linklists[m_col3_handle].links -%}
-                          <li>
-                            <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
-                              {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
-                            </a>
-                          </li>
-                        {%- endfor -%}
-                      </ul>
-                    {%- endif -%}
-
-                    {%- if m_col4_handle != blank -%}
-                      {%- if m_col4_title != blank -%}
-                        <h4 class="mega-nav-mobile-submenu__heading">{{ m_col4_title }}</h4>
-                      {%- endif -%}
-                      <ul class="mega-nav-mobile-submenu__list">
-                        {%- for link in linklists[m_col4_handle].links -%}
-                          <li>
-                            <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
-                              {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
-                            </a>
-                          </li>
-                        {%- endfor -%}
-                      </ul>
-                    {%- endif -%}
-
-                    {%- if m_col5_handle != blank -%}
-                      {%- if m_col5_title != blank -%}
-                        <h4 class="mega-nav-mobile-submenu__heading">{{ m_col5_title }}</h4>
-                      {%- endif -%}
-                      <ul class="mega-nav-mobile-submenu__list">
-                        {%- for link in linklists[m_col5_handle].links -%}
-                          <li>
-                            <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
-                              {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
-                            </a>
-                          </li>
-                        {%- endfor -%}
-                      </ul>
-                    {%- endif -%}
-
-                    {%- if m_col6_handle != blank -%}
-                      {%- if m_col6_title != blank -%}
-                        <h4 class="mega-nav-mobile-submenu__heading">{{ m_col6_title }}</h4>
-                      {%- endif -%}
-                      <ul class="mega-nav-mobile-submenu__list">
-                        {%- for link in linklists[m_col6_handle].links -%}
-                          <li>
-                            <a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">
-                              {{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}
-                            </a>
-                          </li>
-                        {%- endfor -%}
-                      </ul>
-                    {%- endif -%}
-
-                    {%- if block.settings.menu_url != blank -%}
-                      <a
-                        href="{{ block.settings.menu_url }}"
-                        class="mega-nav-promo__button"
-                        style="margin-top: 1.6rem;"
-                      >
-                        Shop all {{ block.settings.menu_link | escape }}
-                      </a>
-                    {%- endif -%}
-                  </div>
-                </div>
+                <div class="mega-nav-mobile-submenu"><div class="mega-nav-mobile-submenu__inner">
+                  {%- if m_col1_handle != blank -%}{%- if m_col1_title != blank -%}<h4 class="mega-nav-mobile-submenu__heading">{{ m_col1_title }}</h4>{%- endif -%}<ul class="mega-nav-mobile-submenu__list">{%- for link in linklists[m_col1_handle].links -%}<li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}</a></li>{%- endfor -%}</ul>{%- endif -%}
+                  {%- if m_col2_handle != blank -%}{%- if m_col2_title != blank -%}<h4 class="mega-nav-mobile-submenu__heading">{{ m_col2_title }}</h4>{%- endif -%}<ul class="mega-nav-mobile-submenu__list">{%- for link in linklists[m_col2_handle].links -%}<li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}</a></li>{%- endfor -%}</ul>{%- endif -%}
+                  {%- if m_col3_handle != blank -%}{%- if m_col3_title != blank -%}<h4 class="mega-nav-mobile-submenu__heading">{{ m_col3_title }}</h4>{%- endif -%}<ul class="mega-nav-mobile-submenu__list">{%- for link in linklists[m_col3_handle].links -%}<li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}</a></li>{%- endfor -%}</ul>{%- endif -%}
+                  {%- if m_col4_handle != blank -%}{%- if m_col4_title != blank -%}<h4 class="mega-nav-mobile-submenu__heading">{{ m_col4_title }}</h4>{%- endif -%}<ul class="mega-nav-mobile-submenu__list">{%- for link in linklists[m_col4_handle].links -%}<li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}</a></li>{%- endfor -%}</ul>{%- endif -%}
+                  {%- if m_col5_handle != blank -%}{%- if m_col5_title != blank -%}<h4 class="mega-nav-mobile-submenu__heading">{{ m_col5_title }}</h4>{%- endif -%}<ul class="mega-nav-mobile-submenu__list">{%- for link in linklists[m_col5_handle].links -%}<li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}</a></li>{%- endfor -%}</ul>{%- endif -%}
+                  {%- if m_col6_handle != blank -%}{%- if m_col6_title != blank -%}<h4 class="mega-nav-mobile-submenu__heading">{{ m_col6_title }}</h4>{%- endif -%}<ul class="mega-nav-mobile-submenu__list">{%- for link in linklists[m_col6_handle].links -%}<li><a href="{{ link.url }}" class="mega-nav-mobile-submenu__link">{{- link.title | remove: '[NEW]' | remove: '[SALE]' | remove: '[HOT]' | strip -}}</a></li>{%- endfor -%}</ul>{%- endif -%}
+                  {%- if block.settings.menu_url != blank -%}<a href="{{ block.settings.menu_url }}" class="mega-nav-promo__button" style="margin-top:1.6rem;">Shop all {{ block.settings.menu_link | escape }}</a>{%- endif -%}
+                </div></div>
               {%- else -%}
-                <a
-                  href="{{ m_menu_url }}"
-                  class="mega-nav-mobile-link"
-                >
-                  <span>{{ block.settings.menu_link }}</span>
-                </a>
+                <a href="{{ m_menu_url }}" class="mega-nav-mobile-link"><span>{{ block.settings.menu_link }}</span></a>
               {%- endif -%}
             </li>
           {%- endif -%}
@@ -467,455 +395,350 @@
   </div>
 {% endif %}
 
+
 {% schema %}
 {
   "name": "Mega Navigation",
   "class": "shopify-section-mega-navigation",
   "settings": [
-    {
-      "type": "header",
-      "content": "General"
-    },
-    {
-      "type": "checkbox",
-      "id": "mn_enable",
-      "label": "Enable mega navigation",
-      "default": true
-    },
-    {
-      "type": "color",
-      "id": "mn_bg_color",
-      "label": "Background color",
-      "default": "#FFFFFF"
-    },
-    {
-      "type": "color",
-      "id": "mn_text_color",
-      "label": "Text color",
-      "default": "#1a1a1a"
-    },
-    {
-      "type": "header",
-      "content": "Typography"
-    },
-    {
-      "type": "range",
-      "id": "mn_font_size",
-      "label": "Font size",
-      "min": 12,
-      "max": 22,
-      "step": 1,
-      "default": 14,
-      "unit": "px"
-    },
-    {
-      "type": "select",
-      "id": "mn_font_weight",
-      "label": "Font weight",
-      "options": [
-        { "value": "400", "label": "Normal (400)" },
-        { "value": "500", "label": "Medium (500)" },
-        { "value": "600", "label": "Semi-bold (600)" },
-        { "value": "700", "label": "Bold (700)" }
-      ],
-      "default": "600"
-    },
-    {
-      "type": "range",
-      "id": "mn_letter_spacing",
-      "label": "Letter spacing",
-      "min": 0,
-      "max": 5,
-      "step": 1,
-      "default": 1,
-      "unit": "px"
-    },
-    {
-      "type": "select",
-      "id": "mn_text_transform",
-      "label": "Text transform",
-      "options": [
-        { "value": "none", "label": "None" },
-        { "value": "uppercase", "label": "Uppercase" },
-        { "value": "capitalize", "label": "Capitalize" }
-      ],
-      "default": "uppercase"
-    },
-    {
-      "type": "header",
-      "content": "Hover effects"
-    },
-    {
-      "type": "color",
-      "id": "mn_hover_color",
-      "label": "Hover and underline color",
-      "default": "#000000"
-    },
-    {
-      "type": "range",
-      "id": "mn_hover_underline_thickness",
-      "label": "Hover underline thickness",
-      "min": 1,
-      "max": 5,
-      "step": 1,
-      "default": 2,
-      "unit": "px"
-    },
-    {
-      "type": "select",
-      "id": "mn_hover_animation",
-      "label": "Hover underline animation",
-      "options": [
-        { "value": "center-expand", "label": "Center expand" },
-        { "value": "left-to-right", "label": "Left to right" },
-        { "value": "fade", "label": "Fade" }
-      ],
-      "default": "center-expand"
-    },
-    {
-      "type": "header",
-      "content": "Sticky"
-    },
-    {
-      "type": "checkbox",
-      "id": "mn_sticky",
-      "label": "Stick to top on scroll",
-      "default": false
-    },
-    {
-      "type": "color",
-      "id": "mn_sticky_bg",
-      "label": "Sticky background color",
-      "default": "#FFFFFF"
-    },
-    {
-      "type": "header",
-      "content": "Border"
-    },
-    {
-      "type": "checkbox",
-      "id": "mn_border_bottom",
-      "label": "Show bottom border",
-      "default": true
-    },
-    {
-      "type": "color",
-      "id": "mn_border_color",
-      "label": "Border color",
-      "default": "#E5E5E5"
-    },
-    {
-      "type": "header",
-      "content": "Dropdown panel"
-    },
-    {
-      "type": "color",
-      "id": "mn_dropdown_bg",
-      "label": "Background color",
-      "default": "#FFFFFF"
-    },
-    {
-      "type": "color",
-      "id": "mn_dropdown_text_color",
-      "label": "Text color",
-      "default": "#333333"
-    },
-    {
-      "type": "color",
-      "id": "mn_dropdown_heading_color",
-      "label": "Heading color",
-      "default": "#000000"
-    },
-    {
-      "type": "select",
-      "id": "mn_dropdown_animation",
-      "label": "Open animation",
-      "options": [
-        { "value": "fade", "label": "Fade" },
-        { "value": "slide-down", "label": "Slide down" },
-        { "value": "slide-up", "label": "Slide up" },
-        { "value": "zoom", "label": "Zoom" }
-      ],
-      "default": "slide-down"
-    },
-    {
-      "type": "range",
-      "id": "mn_dropdown_duration",
-      "label": "Animation duration",
-      "min": 100,
-      "max": 600,
-      "step": 50,
-      "default": 250,
-      "unit": "ms"
-    },
-    {
-      "type": "checkbox",
-      "id": "mn_dropdown_shadow",
-      "label": "Show dropdown shadow",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "mn_dropdown_border",
-      "label": "Show dropdown border",
-      "default": false
-    },
-    {
-      "type": "header",
-      "content": "Badge colors"
-    },
-    {
-      "type": "paragraph",
-      "content": "Add [NEW], [SALE], or [HOT] in your menu link titles to display badges."
-    },
-    {
-      "type": "color",
-      "id": "mn_badge_new_color",
-      "label": "NEW badge color",
-      "default": "#16a34a"
-    },
-    {
-      "type": "color",
-      "id": "mn_badge_sale_color",
-      "label": "SALE badge color",
-      "default": "#E63946"
-    },
-    {
-      "type": "color",
-      "id": "mn_badge_hot_color",
-      "label": "HOT badge color",
-      "default": "#ea580c"
-    },
-    {
-      "type": "header",
-      "content": "Mobile drawer (Prada style)"
-    },
-    {
-      "type": "select",
-      "id": "mn_mobile_drawer_position",
-      "label": "Drawer position",
-      "options": [
-        { "value": "left", "label": "Slide from left" },
-        { "value": "right", "label": "Slide from right" },
-        { "value": "fullscreen", "label": "Fullscreen" }
-      ],
-      "default": "left"
-    },
-    {
-      "type": "range",
-      "id": "mn_mobile_font_size",
-      "label": "Mobile link font size",
-      "min": 14,
-      "max": 28,
-      "step": 2,
-      "default": 22,
-      "unit": "px",
-      "info": "Larger sizes give the Prada-style bold look."
-    },
-    {
-      "type": "range",
-      "id": "mn_mobile_padding",
-      "label": "Mobile link vertical padding",
-      "min": 8,
-      "max": 24,
-      "step": 2,
-      "default": 14,
-      "unit": "px"
-    },
-    {
-      "type": "select",
-      "id": "mn_mobile_accordion_icon",
-      "label": "Accordion icon",
-      "options": [
-        { "value": "plus", "label": "Plus" },
-        { "value": "chevron", "label": "Chevron" },
-        { "value": "arrow", "label": "Arrow" }
-      ],
-      "default": "plus"
-    },
-    {
-      "type": "header",
-      "content": "Section spacing"
-    },
-    {
-      "type": "range",
-      "id": "mn_section_padding_top",
-      "label": "Padding top",
-      "min": 0,
-      "max": 40,
-      "step": 4,
-      "default": 0,
-      "unit": "px"
-    },
-    {
-      "type": "range",
-      "id": "mn_section_padding_bottom",
-      "label": "Padding bottom",
-      "min": 0,
-      "max": 40,
-      "step": 4,
-      "default": 0,
-      "unit": "px"
-    }
+    { "type": "header", "content": "General" },
+    { "type": "checkbox", "id": "mn_enable", "label": "Enable mega navigation", "default": true },
+    { "type": "color", "id": "mn_bg_color", "label": "Background color", "default": "#FFFFFF" },
+    { "type": "color", "id": "mn_text_color", "label": "Text color", "default": "#1a1a1a" },
+
+    { "type": "header", "content": "Header layout" },
+    { "type": "range", "id": "mn_nav_height", "label": "Nav bar height", "min": 40, "max": 100, "step": 5, "default": 55, "unit": "px" },
+    { "type": "range", "id": "mn_nav_padding_x", "label": "Horizontal padding", "min": 0, "max": 60, "step": 5, "default": 30, "unit": "px" },
+    { "type": "select", "id": "mn_nav_alignment", "label": "Navigation alignment", "options": [
+      { "value": "flex-start", "label": "Left" },
+      { "value": "center", "label": "Center" },
+      { "value": "flex-end", "label": "Right" },
+      { "value": "space-between", "label": "Space between" }
+    ], "default": "center" },
+    { "type": "select", "id": "mn_header_shadow", "label": "Header shadow", "options": [
+      { "value": "none", "label": "None" },
+      { "value": "small", "label": "Small" },
+      { "value": "medium", "label": "Medium" },
+      { "value": "large", "label": "Large" }
+    ], "default": "none" },
+    { "type": "checkbox", "id": "mn_border_top", "label": "Show top border", "default": false },
+    { "type": "color", "id": "mn_border_top_color", "label": "Top border color", "default": "#E5E5E5" },
+    { "type": "checkbox", "id": "mn_border_bottom", "label": "Show bottom border", "default": true },
+    { "type": "color", "id": "mn_border_color", "label": "Bottom border color", "default": "#E5E5E5" },
+
+    { "type": "header", "content": "Sticky & scroll" },
+    { "type": "checkbox", "id": "mn_sticky", "label": "Stick to top on scroll", "default": false },
+    { "type": "color", "id": "mn_sticky_bg", "label": "Sticky background", "default": "#FFFFFF" },
+    { "type": "select", "id": "mn_scroll_shadow", "label": "Scroll shadow", "options": [
+      { "value": "none", "label": "None" },
+      { "value": "subtle", "label": "Subtle" },
+      { "value": "medium", "label": "Medium" },
+      { "value": "strong", "label": "Strong" }
+    ], "default": "subtle" },
+    { "type": "range", "id": "mn_scroll_shrink", "label": "Scroll shrink amount", "min": 70, "max": 100, "step": 5, "default": 85, "unit": "%", "info": "How much header shrinks on scroll (100% = no shrink)" },
+    { "type": "checkbox", "id": "mn_scroll_bg_change", "label": "Change bg on scroll", "default": false },
+    { "type": "color", "id": "mn_scroll_bg_color", "label": "Scroll background color", "default": "#FFFFFF" },
+
+
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "mn_font_size", "label": "Font size", "min": 11, "max": 22, "step": 1, "default": 14, "unit": "px" },
+    { "type": "select", "id": "mn_font_weight", "label": "Font weight", "options": [
+      { "value": "400", "label": "Normal" },
+      { "value": "500", "label": "Medium" },
+      { "value": "600", "label": "Semi-bold" },
+      { "value": "700", "label": "Bold" }
+    ], "default": "600" },
+    { "type": "range", "id": "mn_letter_spacing", "label": "Letter spacing", "min": 0, "max": 5, "step": 1, "default": 1, "unit": "px" },
+    { "type": "select", "id": "mn_text_transform", "label": "Text transform", "options": [
+      { "value": "none", "label": "None" },
+      { "value": "uppercase", "label": "Uppercase" },
+      { "value": "capitalize", "label": "Capitalize" }
+    ], "default": "uppercase" },
+    { "type": "range", "id": "mn_line_height", "label": "Line height", "min": 10, "max": 20, "step": 1, "default": 14, "unit": "x0.1", "info": "Multiply by 0.1 (e.g. 14 = 1.4)" },
+    { "type": "range", "id": "mn_word_spacing", "label": "Word spacing", "min": 0, "max": 5, "step": 1, "default": 0, "unit": "px" },
+    { "type": "range", "id": "mn_item_gap", "label": "Item gap", "min": 0, "max": 40, "step": 2, "default": 0, "unit": "px" },
+    { "type": "range", "id": "mn_item_padding_x", "label": "Item horizontal padding", "min": 8, "max": 32, "step": 2, "default": 16, "unit": "px" },
+    { "type": "range", "id": "mn_item_padding_y", "label": "Item vertical padding", "min": 8, "max": 24, "step": 2, "default": 16, "unit": "px" },
+    { "type": "select", "id": "mn_separator_style", "label": "Menu separator", "options": [
+      { "value": "none", "label": "None" },
+      { "value": "dot", "label": "Dot ·" },
+      { "value": "pipe", "label": "Pipe |" },
+      { "value": "slash", "label": "Slash /" },
+      { "value": "dash", "label": "Dash —" }
+    ], "default": "none" },
+    { "type": "color", "id": "mn_separator_color", "label": "Separator color", "default": "#cccccc" },
+
+
+    { "type": "header", "content": "Hover effects" },
+    { "type": "color", "id": "mn_hover_color", "label": "Hover underline color", "default": "#000000" },
+    { "type": "color", "id": "mn_hover_text_color", "label": "Hover text color", "default": "#000000" },
+    { "type": "range", "id": "mn_hover_underline_thickness", "label": "Underline thickness", "min": 1, "max": 5, "step": 1, "default": 2, "unit": "px" },
+    { "type": "select", "id": "mn_underline_style", "label": "Underline style", "options": [
+      { "value": "solid", "label": "Solid" },
+      { "value": "dashed", "label": "Dashed" },
+      { "value": "dotted", "label": "Dotted" },
+      { "value": "double", "label": "Double" }
+    ], "default": "solid" },
+    { "type": "select", "id": "mn_underline_position", "label": "Underline position", "options": [
+      { "value": "bottom", "label": "Bottom" },
+      { "value": "middle", "label": "Middle" },
+      { "value": "top", "label": "Top" }
+    ], "default": "bottom" },
+    { "type": "select", "id": "mn_underline_width", "label": "Underline width", "options": [
+      { "value": "text-width", "label": "Text width" },
+      { "value": "full-width", "label": "Full width" },
+      { "value": "custom", "label": "Custom" }
+    ], "default": "text-width" },
+    { "type": "range", "id": "mn_underline_custom_width", "label": "Custom underline width", "min": 10, "max": 100, "step": 5, "default": 40, "unit": "px" },
+    { "type": "range", "id": "mn_underline_offset", "label": "Underline offset", "min": 0, "max": 10, "step": 1, "default": 0, "unit": "px" },
+    { "type": "select", "id": "mn_hover_animation", "label": "Hover animation", "options": [
+      { "value": "center-expand", "label": "Center expand" },
+      { "value": "left-to-right", "label": "Left to right" },
+      { "value": "right-to-left", "label": "Right to left" },
+      { "value": "fade-in", "label": "Fade in" },
+      { "value": "grow-from-dot", "label": "Grow from dot" },
+      { "value": "slide-bounce", "label": "Slide bounce" }
+    ], "default": "center-expand" },
+    { "type": "select", "id": "mn_hover_easing", "label": "Hover easing", "options": [
+      { "value": "ease", "label": "Ease" },
+      { "value": "ease-in-out", "label": "Ease in-out" },
+      { "value": "cubic-bezier(0.4,0,0.2,1)", "label": "Smooth cubic" },
+      { "value": "cubic-bezier(0.68,-0.55,0.265,1.55)", "label": "Bounce" },
+      { "value": "cubic-bezier(0.175,0.885,0.32,1.275)", "label": "Spring" }
+    ], "default": "cubic-bezier(0.4,0,0.2,1)" },
+    { "type": "checkbox", "id": "mn_hover_scale", "label": "Scale on hover", "default": false },
+    { "type": "range", "id": "mn_hover_scale_amount", "label": "Scale amount", "min": 100, "max": 115, "step": 1, "default": 103, "unit": "%", "info": "103 = 1.03x scale" },
+    { "type": "checkbox", "id": "mn_hover_bg_highlight", "label": "Background on hover", "default": false },
+    { "type": "color", "id": "mn_hover_bg_color", "label": "Hover background color", "default": "#f5f5f5" },
+    { "type": "range", "id": "mn_hover_bg_radius", "label": "Hover bg radius", "min": 0, "max": 20, "step": 2, "default": 4, "unit": "px" },
+    { "type": "select", "id": "mn_active_indicator", "label": "Active page indicator", "options": [
+      { "value": "underline", "label": "Underline" },
+      { "value": "background", "label": "Background" },
+      { "value": "bold", "label": "Bold text" },
+      { "value": "dot", "label": "Dot" }
+    ], "default": "underline" },
+    { "type": "color", "id": "mn_active_color", "label": "Active indicator color", "default": "#000000" },
+
+
+    { "type": "header", "content": "Dropdown panel" },
+    { "type": "select", "id": "mn_dropdown_width", "label": "Dropdown width", "options": [
+      { "value": "full-width", "label": "Full width" },
+      { "value": "contained", "label": "Contained" },
+      { "value": "boxed", "label": "Boxed" },
+      { "value": "auto", "label": "Auto (fit content)" }
+    ], "default": "full-width" },
+    { "type": "range", "id": "mn_dropdown_max_width", "label": "Contained max width", "min": 900, "max": 1600, "step": 50, "default": 1400, "unit": "px" },
+    { "type": "range", "id": "mn_dropdown_boxed_width", "label": "Boxed width", "min": 500, "max": 1200, "step": 50, "default": 900, "unit": "px" },
+    { "type": "color", "id": "mn_dropdown_bg", "label": "Background color", "default": "#FFFFFF" },
+    { "type": "select", "id": "mn_dropdown_bg_type", "label": "Background type", "options": [
+      { "value": "solid", "label": "Solid" },
+      { "value": "gradient", "label": "Gradient" }
+    ], "default": "solid" },
+    { "type": "color", "id": "mn_dropdown_gradient_start", "label": "Gradient start", "default": "#ffffff" },
+    { "type": "color", "id": "mn_dropdown_gradient_end", "label": "Gradient end", "default": "#f9f9f9" },
+    { "type": "select", "id": "mn_dropdown_gradient_dir", "label": "Gradient direction", "options": [
+      { "value": "to bottom", "label": "Top to bottom" },
+      { "value": "to right", "label": "Left to right" },
+      { "value": "135deg", "label": "Diagonal" }
+    ], "default": "to bottom" },
+    { "type": "color", "id": "mn_dropdown_text_color", "label": "Text color", "default": "#333333" },
+    { "type": "color", "id": "mn_dropdown_heading_color", "label": "Heading color", "default": "#000000" },
+    { "type": "range", "id": "mn_dropdown_padding_x", "label": "Horizontal padding", "min": 20, "max": 80, "step": 5, "default": 45, "unit": "px" },
+    { "type": "range", "id": "mn_dropdown_padding_y", "label": "Vertical padding", "min": 16, "max": 60, "step": 4, "default": 32, "unit": "px" },
+    { "type": "range", "id": "mn_dropdown_radius", "label": "Border radius", "min": 0, "max": 16, "step": 2, "default": 0, "unit": "px" },
+    { "type": "range", "id": "mn_dropdown_border_width", "label": "Border width", "min": 0, "max": 3, "step": 1, "default": 0, "unit": "px" },
+    { "type": "color", "id": "mn_dropdown_border_color", "label": "Border color", "default": "#e5e5e5" },
+    { "type": "select", "id": "mn_dropdown_shadow_style", "label": "Shadow style", "options": [
+      { "value": "none", "label": "None" },
+      { "value": "subtle", "label": "Subtle" },
+      { "value": "medium", "label": "Medium" },
+      { "value": "strong", "label": "Strong" }
+    ], "default": "medium" },
+    { "type": "range", "id": "mn_dropdown_gap", "label": "Gap from nav bar", "min": 0, "max": 20, "step": 2, "default": 0, "unit": "px" },
+
+
+    { "type": "header", "content": "Dropdown open behavior" },
+    { "type": "select", "id": "mn_open_trigger", "label": "Open trigger", "options": [
+      { "value": "hover-instant", "label": "Hover (instant)" },
+      { "value": "hover-with-delay", "label": "Hover (with delay)" },
+      { "value": "click", "label": "Click" }
+    ], "default": "hover-with-delay" },
+    { "type": "range", "id": "mn_open_delay", "label": "Open delay", "min": 0, "max": 400, "step": 50, "default": 100, "unit": "ms" },
+    { "type": "range", "id": "mn_close_delay", "label": "Close delay", "min": 0, "max": 500, "step": 50, "default": 200, "unit": "ms" },
+    { "type": "select", "id": "mn_container_animation", "label": "Container animation", "options": [
+      { "value": "instant", "label": "Instant" },
+      { "value": "slide-down-smooth", "label": "Slide down" },
+      { "value": "height-grow", "label": "Height grow (TheJacketMaker)" },
+      { "value": "fade-slide", "label": "Fade + slide" },
+      { "value": "curtain-reveal", "label": "Curtain reveal" }
+    ], "default": "height-grow" },
+    { "type": "select", "id": "mn_content_animation", "label": "Content animation", "options": [
+      { "value": "none", "label": "None" },
+      { "value": "fade-in", "label": "Fade in" },
+      { "value": "fade-up", "label": "Fade up" },
+      { "value": "stagger-fade", "label": "Stagger fade" },
+      { "value": "blur-in", "label": "Blur in" }
+    ], "default": "fade-up" },
+    { "type": "range", "id": "mn_content_stagger", "label": "Content stagger delay", "min": 0, "max": 200, "step": 25, "default": 50, "unit": "ms" },
+    { "type": "range", "id": "mn_dropdown_duration", "label": "Animation duration", "min": 100, "max": 600, "step": 50, "default": 250, "unit": "ms" },
+    { "type": "select", "id": "mn_dropdown_easing", "label": "Animation easing", "options": [
+      { "value": "ease", "label": "Ease" },
+      { "value": "ease-in-out", "label": "Ease in-out" },
+      { "value": "cubic-bezier(0.4,0,0.2,1)", "label": "Smooth cubic" },
+      { "value": "cubic-bezier(0.68,-0.55,0.265,1.55)", "label": "Bounce" }
+    ], "default": "cubic-bezier(0.4,0,0.2,1)" },
+    { "type": "checkbox", "id": "mn_show_overlay", "label": "Show page overlay", "default": true, "info": "Dims the page behind dropdown (TheJacketMaker style)" },
+    { "type": "color", "id": "mn_overlay_color", "label": "Overlay color", "default": "#000000" },
+    { "type": "range", "id": "mn_overlay_opacity", "label": "Overlay opacity", "min": 10, "max": 70, "step": 5, "default": 30, "unit": "%", "info": "30 = 0.3 opacity" },
+    { "type": "checkbox", "id": "mn_close_on_scroll", "label": "Close on scroll", "default": false },
+
+
+    { "type": "header", "content": "Dropdown typography" },
+    { "type": "range", "id": "mn_dd_heading_size", "label": "Heading font size", "min": 10, "max": 18, "step": 1, "default": 12, "unit": "px" },
+    { "type": "select", "id": "mn_dd_heading_weight", "label": "Heading font weight", "options": [
+      { "value": "500", "label": "Medium" },
+      { "value": "600", "label": "Semi-bold" },
+      { "value": "700", "label": "Bold" },
+      { "value": "800", "label": "Extra-bold" }
+    ], "default": "700" },
+    { "type": "select", "id": "mn_dd_heading_transform", "label": "Heading text transform", "options": [
+      { "value": "none", "label": "None" },
+      { "value": "uppercase", "label": "Uppercase" },
+      { "value": "capitalize", "label": "Capitalize" }
+    ], "default": "uppercase" },
+    { "type": "range", "id": "mn_dd_heading_spacing", "label": "Heading letter spacing", "min": 0, "max": 4, "step": 1, "default": 1, "unit": "px" },
+    { "type": "checkbox", "id": "mn_col_heading_underline", "label": "Heading underline", "default": false },
+    { "type": "color", "id": "mn_col_heading_underline_color", "label": "Heading underline color", "default": "#e5e5e5" },
+    { "type": "range", "id": "mn_dd_link_size", "label": "Link font size", "min": 12, "max": 18, "step": 1, "default": 14, "unit": "px" },
+    { "type": "select", "id": "mn_dd_link_weight", "label": "Link font weight", "options": [
+      { "value": "400", "label": "Normal" },
+      { "value": "500", "label": "Medium" },
+      { "value": "600", "label": "Semi-bold" }
+    ], "default": "400" },
+    { "type": "range", "id": "mn_dd_link_line_height", "label": "Link line height", "min": 14, "max": 24, "step": 2, "default": 16, "unit": "x0.1" },
+    { "type": "range", "id": "mn_link_hover_indent", "label": "Link hover indent", "min": 0, "max": 10, "step": 1, "default": 2, "unit": "px" },
+    { "type": "range", "id": "mn_column_gap", "label": "Column gap", "min": 16, "max": 48, "step": 4, "default": 24, "unit": "px" },
+    { "type": "range", "id": "mn_link_gap", "label": "Link gap (vertical)", "min": 2, "max": 12, "step": 1, "default": 6, "unit": "px" },
+    { "type": "checkbox", "id": "mn_col_separator", "label": "Column separator lines", "default": false },
+    { "type": "color", "id": "mn_col_separator_color", "label": "Separator color", "default": "#e5e5e5" },
+    { "type": "select", "id": "mn_col_separator_style", "label": "Separator style", "options": [
+      { "value": "solid", "label": "Solid" },
+      { "value": "dashed", "label": "Dashed" },
+      { "value": "dotted", "label": "Dotted" }
+    ], "default": "solid" },
+    { "type": "checkbox", "id": "mn_show_view_all", "label": "Show View All link", "default": false },
+    { "type": "select", "id": "mn_view_all_style", "label": "View All style", "options": [
+      { "value": "text-arrow", "label": "Text + arrow" },
+      { "value": "button-small", "label": "Small button" },
+      { "value": "underline", "label": "Underline" }
+    ], "default": "text-arrow" },
+    { "type": "color", "id": "mn_view_all_color", "label": "View All color", "default": "#000000" },
+    { "type": "range", "id": "mn_promo_width", "label": "Promo card width", "min": 180, "max": 400, "step": 20, "default": 300, "unit": "px" },
+    { "type": "range", "id": "mn_promo_gap", "label": "Promo gap from columns", "min": 16, "max": 60, "step": 4, "default": 32, "unit": "px" },
+
+
+    { "type": "header", "content": "Badge colors & style" },
+    { "type": "paragraph", "content": "Add [NEW], [SALE], or [HOT] in menu link titles for auto badges." },
+    { "type": "color", "id": "mn_badge_text_color", "label": "Badge text color", "default": "#ffffff" },
+    { "type": "range", "id": "mn_badge_font_size", "label": "Badge font size", "min": 8, "max": 12, "step": 1, "default": 9, "unit": "px" },
+    { "type": "select", "id": "mn_badge_font_weight", "label": "Badge font weight", "options": [
+      { "value": "600", "label": "Semi-bold" },
+      { "value": "700", "label": "Bold" },
+      { "value": "800", "label": "Extra-bold" }
+    ], "default": "700" },
+    { "type": "range", "id": "mn_badge_radius", "label": "Badge radius", "min": 0, "max": 12, "step": 1, "default": 2, "unit": "px" },
+    { "type": "range", "id": "mn_badge_padding_x", "label": "Badge horizontal padding", "min": 3, "max": 10, "step": 1, "default": 5, "unit": "px" },
+    { "type": "range", "id": "mn_badge_padding_y", "label": "Badge vertical padding", "min": 1, "max": 6, "step": 1, "default": 3, "unit": "px" },
+    { "type": "select", "id": "mn_badge_style", "label": "Badge style", "options": [
+      { "value": "filled", "label": "Filled" },
+      { "value": "outline", "label": "Outline" },
+      { "value": "gradient", "label": "Gradient" }
+    ], "default": "filled" },
+    { "type": "select", "id": "mn_badge_position", "label": "Badge position", "options": [
+      { "value": "after-text", "label": "After text" },
+      { "value": "above-text", "label": "Above text" },
+      { "value": "superscript", "label": "Superscript" }
+    ], "default": "after-text" },
+    { "type": "select", "id": "mn_badge_animation", "label": "Badge animation", "options": [
+      { "value": "none", "label": "None" },
+      { "value": "pulse", "label": "Pulse" },
+      { "value": "bounce", "label": "Bounce" },
+      { "value": "shine", "label": "Shine" }
+    ], "default": "none" },
+    { "type": "color", "id": "mn_badge_new_color", "label": "NEW badge color", "default": "#16a34a" },
+    { "type": "color", "id": "mn_badge_sale_color", "label": "SALE badge color", "default": "#E63946" },
+    { "type": "color", "id": "mn_badge_hot_color", "label": "HOT badge color", "default": "#ea580c" },
+    { "type": "text", "id": "mn_badge_custom1_text", "label": "Custom badge 1 text", "default": "LIMITED" },
+    { "type": "color", "id": "mn_badge_custom1_color", "label": "Custom badge 1 color", "default": "#7c3aed" },
+    { "type": "text", "id": "mn_badge_custom2_text", "label": "Custom badge 2 text", "default": "TRENDING" },
+    { "type": "color", "id": "mn_badge_custom2_color", "label": "Custom badge 2 color", "default": "#0ea5e9" },
+
+
+    { "type": "header", "content": "Mobile drawer (Prada style)" },
+    { "type": "select", "id": "mn_mobile_drawer_position", "label": "Drawer position", "options": [
+      { "value": "left", "label": "Slide from left" },
+      { "value": "right", "label": "Slide from right" },
+      { "value": "fullscreen", "label": "Fullscreen" }
+    ], "default": "left" },
+    { "type": "range", "id": "mn_mobile_drawer_width", "label": "Drawer width", "min": 70, "max": 100, "step": 5, "default": 85, "unit": "%" },
+    { "type": "color", "id": "mn_mobile_drawer_bg", "label": "Drawer background", "default": "#FFFFFF" },
+    { "type": "color", "id": "mn_mobile_overlay_color", "label": "Overlay color", "default": "rgba(0,0,0,0.45)" },
+    { "type": "range", "id": "mn_mobile_overlay_opacity", "label": "Overlay opacity", "min": 10, "max": 90, "step": 10, "default": 90, "unit": "%", "info": "100% = use overlay color as-is" },
+    { "type": "range", "id": "mn_mobile_font_size", "label": "Link font size", "min": 14, "max": 32, "step": 2, "default": 22, "unit": "px", "info": "Larger = Prada-style bold look" },
+    { "type": "range", "id": "mn_mobile_padding", "label": "Link vertical padding", "min": 8, "max": 24, "step": 2, "default": 14, "unit": "px" },
+    { "type": "select", "id": "mn_mobile_accordion_icon", "label": "Accordion icon", "options": [
+      { "value": "plus", "label": "Plus" },
+      { "value": "chevron", "label": "Chevron" },
+      { "value": "arrow", "label": "Arrow" }
+    ], "default": "plus" },
+    { "type": "range", "id": "mn_mobile_accordion_speed", "label": "Accordion speed", "min": 150, "max": 500, "step": 50, "default": 350, "unit": "ms" },
+
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "mn_section_padding_top", "label": "Padding top", "min": 0, "max": 40, "step": 4, "default": 0, "unit": "px" },
+    { "type": "range", "id": "mn_section_padding_bottom", "label": "Padding bottom", "min": 0, "max": 40, "step": 4, "default": 0, "unit": "px" }
   ],
+
+
   "blocks": [
     {
       "type": "menu_item",
       "name": "Menu item",
       "settings": [
-        {
-          "type": "text",
-          "id": "menu_link",
-          "label": "Title",
-          "default": "Menu Item"
-        },
-        {
-          "type": "url",
-          "id": "menu_url",
-          "label": "Link"
-        },
-        {
-          "type": "header",
-          "content": "Custom color (optional)"
-        },
-        {
-          "type": "checkbox",
-          "id": "mn_use_custom_color",
-          "label": "Use custom color for this item",
-          "default": false
-        },
-        {
-          "type": "color",
-          "id": "mn_item_color",
-          "label": "Item text color",
-          "default": "#E63946"
-        },
-        {
-          "type": "color",
-          "id": "mn_item_hover_color",
-          "label": "Item hover color",
-          "default": "#E63946"
-        },
-        {
-          "type": "select",
-          "id": "mn_item_badge",
-          "label": "Badge",
-          "options": [
-            { "value": "none", "label": "None" },
-            { "value": "new", "label": "NEW" },
-            { "value": "sale", "label": "SALE" },
-            { "value": "hot", "label": "HOT" }
-          ],
-          "default": "none"
-        },
-        {
-          "type": "header",
-          "content": "Dropdown columns"
-        },
-        {
-          "type": "range",
-          "id": "mn_columns",
-          "label": "Number of columns",
-          "min": 2,
-          "max": 6,
-          "step": 1,
-          "default": 4
-        },
-        {
-          "type": "text",
-          "id": "mn_col1_title",
-          "label": "Column 1 title"
-        },
-        {
-          "type": "link_list",
-          "id": "mn_col1_linklist",
-          "label": "Column 1 links"
-        },
-        {
-          "type": "text",
-          "id": "mn_col2_title",
-          "label": "Column 2 title"
-        },
-        {
-          "type": "link_list",
-          "id": "mn_col2_linklist",
-          "label": "Column 2 links"
-        },
-        {
-          "type": "text",
-          "id": "mn_col3_title",
-          "label": "Column 3 title"
-        },
-        {
-          "type": "link_list",
-          "id": "mn_col3_linklist",
-          "label": "Column 3 links"
-        },
-        {
-          "type": "text",
-          "id": "mn_col4_title",
-          "label": "Column 4 title"
-        },
-        {
-          "type": "link_list",
-          "id": "mn_col4_linklist",
-          "label": "Column 4 links"
-        },
-        {
-          "type": "text",
-          "id": "mn_col5_title",
-          "label": "Column 5 title"
-        },
-        {
-          "type": "link_list",
-          "id": "mn_col5_linklist",
-          "label": "Column 5 links"
-        },
-        {
-          "type": "text",
-          "id": "mn_col6_title",
-          "label": "Column 6 title"
-        },
-        {
-          "type": "link_list",
-          "id": "mn_col6_linklist",
-          "label": "Column 6 links"
-        },
-        {
-          "type": "header",
-          "content": "Featured promo (thejacketmaker style)"
-        },
-        {
-          "type": "checkbox",
-          "id": "mn_show_promo",
-          "label": "Show featured promo",
-          "default": false
-        },
-        {
-          "type": "image_picker",
-          "id": "mn_promo_image",
-          "label": "Promo image"
-        },
-        {
-          "type": "text",
-          "id": "mn_promo_heading",
-          "label": "Promo heading"
-        },
-        {
-          "type": "text",
-          "id": "promo_subheading",
-          "label": "Promo subheading"
-        },
-        {
-          "type": "text",
-          "id": "promo_button_text",
-          "label": "Button text"
-        },
-        {
-          "type": "url",
-          "id": "promo_button_url",
-          "label": "Button link"
-        }
+        { "type": "text", "id": "menu_link", "label": "Title", "default": "Menu Item" },
+        { "type": "url", "id": "menu_url", "label": "Link" },
+        { "type": "header", "content": "Custom color" },
+        { "type": "checkbox", "id": "mn_use_custom_color", "label": "Use custom color", "default": false },
+        { "type": "color", "id": "mn_item_color", "label": "Text color", "default": "#E63946" },
+        { "type": "color", "id": "mn_item_hover_color", "label": "Hover color", "default": "#E63946" },
+        { "type": "select", "id": "mn_item_badge", "label": "Badge", "options": [
+          { "value": "none", "label": "None" },
+          { "value": "new", "label": "NEW" },
+          { "value": "sale", "label": "SALE" },
+          { "value": "hot", "label": "HOT" },
+          { "value": "custom1", "label": "Custom 1" },
+          { "value": "custom2", "label": "Custom 2" }
+        ], "default": "none" },
+        { "type": "header", "content": "Dropdown columns" },
+        { "type": "range", "id": "mn_columns", "label": "Number of columns", "min": 2, "max": 6, "step": 1, "default": 4 },
+        { "type": "text", "id": "mn_col1_title", "label": "Column 1 title" },
+        { "type": "link_list", "id": "mn_col1_linklist", "label": "Column 1 links" },
+        { "type": "text", "id": "mn_col2_title", "label": "Column 2 title" },
+        { "type": "link_list", "id": "mn_col2_linklist", "label": "Column 2 links" },
+        { "type": "text", "id": "mn_col3_title", "label": "Column 3 title" },
+        { "type": "link_list", "id": "mn_col3_linklist", "label": "Column 3 links" },
+        { "type": "text", "id": "mn_col4_title", "label": "Column 4 title" },
+        { "type": "link_list", "id": "mn_col4_linklist", "label": "Column 4 links" },
+        { "type": "text", "id": "mn_col5_title", "label": "Column 5 title" },
+        { "type": "link_list", "id": "mn_col5_linklist", "label": "Column 5 links" },
+        { "type": "text", "id": "mn_col6_title", "label": "Column 6 title" },
+        { "type": "link_list", "id": "mn_col6_linklist", "label": "Column 6 links" },
+        { "type": "header", "content": "Featured promo" },
+        { "type": "checkbox", "id": "mn_show_promo", "label": "Show promo", "default": false },
+        { "type": "image_picker", "id": "mn_promo_image", "label": "Promo image" },
+        { "type": "text", "id": "mn_promo_heading", "label": "Promo heading" },
+        { "type": "text", "id": "promo_subheading", "label": "Promo subheading" },
+        { "type": "text", "id": "promo_button_text", "label": "Button text" },
+        { "type": "url", "id": "promo_button_url", "label": "Button link" }
       ]
     }
   ],
@@ -923,24 +746,9 @@
     {
       "name": "Mega Navigation",
       "blocks": [
-        {
-          "type": "menu_item",
-          "settings": {
-            "menu_link": "Shop"
-          }
-        },
-        {
-          "type": "menu_item",
-          "settings": {
-            "menu_link": "Collections"
-          }
-        },
-        {
-          "type": "menu_item",
-          "settings": {
-            "menu_link": "About"
-          }
-        }
+        { "type": "menu_item", "settings": { "menu_link": "Shop" } },
+        { "type": "menu_item", "settings": { "menu_link": "Collections" } },
+        { "type": "menu_item", "settings": { "menu_link": "About" } }
       ]
     }
   ]
