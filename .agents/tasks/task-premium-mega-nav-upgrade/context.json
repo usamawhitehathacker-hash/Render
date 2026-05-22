@@ -1,0 +1,25 @@
+{
+  "project_type": "Shopify Dawn-based theme with premium header and mega navigation sections",
+  "language": "Liquid (Shopify), CSS, JavaScript (ES5 IIFE pattern)",
+  "build_system": "None - Shopify theme files served directly. No compilation step.",
+  "test_framework": "None - manual Shopify theme validation. AST/syntax checking via Python scripts in prior tasks.",
+  "build_command": "N/A - no build step. Validation is done by checking Liquid syntax and JSON schema validity.",
+  "test_command": "python3 -c \"import json; [json.loads(open(f).read().split('{% schema %}')[1].split('{% endschema %}')[0]) for f in ['sections/header.liquid','sections/mega-navigation.liquid']]\"",
+  "verification_instructions": "1. Validate JSON schemas parse correctly. 2. Check that all CSS variables referenced in Liquid have corresponding schema settings. 3. Verify no unclosed tags/brackets. 4. Count settings match expected totals.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "No setup needed - pure file editing of Liquid/CSS/JS files.",
+  "environment_constraints": "COMMON_DEPENDENCIES network mode. No Shopify CLI available. No Docker needed. Validation via Python JSON parsing and manual inspection.",
+  "contribution_requirements": "Shopify range settings: default MUST be a valid step from min. Shopify color picker never returns blank. Range settings only support integers. For decimal values use integers and divide in CSS.",
+  "key_patterns": "CSS: BEM-like classes prefixed with mega-nav- or hp-. JS: IIFE pattern with no globals. Liquid: section settings use mn_ prefix for mega-nav, hp_ prefix for premium header. Schema JSON is embedded in {% schema %} tags. CSS vars set in Liquid style block, consumed in separate .css asset files.",
+  "relevant_files": [
+    "sections/header.liquid",
+    "sections/mega-navigation.liquid",
+    "assets/header-premium.css",
+    "assets/header-premium.js",
+    "assets/mega-navigation.css",
+    "assets/mega-navigation.js",
+    "snippets/mega-nav-column.liquid",
+    "snippets/mega-nav-promo.liquid"
+  ],
+  "directory_structure": "sections/ - Liquid section files with schema. assets/ - CSS and JS files. snippets/ - reusable Liquid partials."
+}
