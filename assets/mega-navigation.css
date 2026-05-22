@@ -551,6 +551,24 @@
 /* ============================================================
    RESPONSIVE
    ============================================================ */
+/* ============================================================
+   EMPTY DROPDOWN SAFETY
+   ============================================================ */
+.mega-navigation-section .mega-nav-dropdown:empty {
+  display: none;
+}
+
+/* ============================================================
+   STICKY STATE - Stable underline positioning
+   ============================================================ */
+.mega-navigation-section.is-sticky .mega-nav-link {
+  position: relative;
+  will-change: transform;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media screen and (max-width: 989px) {
   .mega-navigation-section .mega-nav-menu {
     display: none;

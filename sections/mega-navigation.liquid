@@ -77,6 +77,7 @@
                 {% endif %}
               </a>
 
+              {% if block.settings.mn_col1_linklist != blank or block.settings.mn_col2_linklist != blank or block.settings.mn_col3_linklist != blank or block.settings.mn_col4_linklist != blank or block.settings.mn_col5_linklist != blank or block.settings.mn_col6_linklist != blank or (block.settings.mn_show_promo and block.settings.mn_promo_image != blank) %}
               <div class="mega-nav-dropdown {% if section.settings.mn_dropdown_shadow %}has-shadow{% endif %} {% if section.settings.mn_dropdown_border %}has-border{% endif %}">
                 <div class="mega-nav-dropdown__inner">
                   <div class="mega-nav-dropdown__columns" data-columns="{{ block.settings.mn_columns }}">
@@ -124,6 +125,7 @@
                   {% endif %}
                 </div>
               </div>
+              {% endif %}
             </li>
           {% endif %}
         {% endfor %}
