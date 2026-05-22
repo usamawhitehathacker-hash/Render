@@ -30,6 +30,12 @@
    ============================================================ */
 .mega-navigation-section {
   position: relative;
+  /* z-index: auto intentionally avoids creating a stacking context on this section.
+     This means the dropdown (z-index: 999) and overlay (position: fixed) compete at
+     the page-root stacking level, which is correct: the overlay escapes the section,
+     and the dropdown layers above most page content. Adjacent sections with their own
+     z-index would need values above 999 to occlude the dropdown, which is unlikely
+     in standard Dawn themes (they use z-index 1-10). */
   z-index: auto;
   padding-top: var(--mn-section-padding-top, 0px);
   padding-bottom: var(--mn-section-padding-bottom, 0px);
@@ -266,13 +272,13 @@
    COLUMN STYLES
    ============================================================ */
 .mega-navigation-section .mega-nav-column__heading {
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: var(--mn-dropdown-heading-size, 13px);
+  font-weight: var(--mn-dropdown-heading-weight, 700);
+  text-transform: var(--mn-dropdown-heading-transform, uppercase);
+  letter-spacing: var(--mn-dropdown-heading-spacing, 0.5px);
   margin: 0 0 12px 0;
   padding-bottom: 8px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: none;
   color: var(--mn-dropdown-heading-color, #000000);
 }
 
@@ -603,6 +609,10 @@
 
 /* ============================================================
    DROPDOWN WIDTH VARIANTS
+   "Contained" uses Shopify's --page-width variable so the dropdown automatically
+   matches the rest of the page layout width. "Boxed" uses a custom
+   --mn-dropdown-boxed-max-width setting, allowing the merchant to specify an
+   arbitrary max-width independent of the global page width.
    ============================================================ */
 .mega-navigation-section[data-mn-dropdown-width="contained"] .mega-nav-dropdown {
   max-width: var(--page-width, 120rem);
@@ -710,7 +720,7 @@
 /* ============================================================
    COLUMN HEADING UNDERLINE
    ============================================================ */
-.mega-navigation-section .mega-nav-column__heading {
+.mega-navigation-section[data-mn-col-heading-underline="true"] .mega-nav-column__heading {
   border-bottom-style: solid;
   border-bottom-width: 1px;
   border-bottom-color: var(--mn-col-heading-underline-color, #000000);
@@ -1250,13 +1260,8 @@
 
 /* ============================================================
    DROPDOWN HEADING TYPOGRAPHY
+   (Variable-driven overrides consolidated into COLUMN STYLES block above)
    ============================================================ */
-.mega-navigation-section .mega-nav-column__heading {
-  font-size: var(--mn-dropdown-heading-size, 13px);
-  font-weight: var(--mn-dropdown-heading-weight, 700);
-  text-transform: var(--mn-dropdown-heading-transform, uppercase);
-  letter-spacing: var(--mn-dropdown-heading-spacing, 0.5px);
-}
 
 /* ============================================================
    DROPDOWN LINK TYPOGRAPHY
