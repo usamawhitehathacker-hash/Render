@@ -57,6 +57,7 @@
         t.openTimer = setTimeout(function () {
           closeAllDropdowns(section);
           item.classList.add('is-active');
+          hasActiveDropdown = true;
           applyStaggerIndices(item);
           addContentAnimating(item);
           showOverlay(section);
@@ -69,6 +70,7 @@
         clearTimeout(t.openTimer);
         t.closeTimer = setTimeout(function () {
           item.classList.remove('is-active');
+          hasActiveDropdown = section.querySelectorAll('.mega-nav-item.is-active').length > 0;
           hideOverlayIfNone(section);
         }, closeDelay);
       });
@@ -100,10 +102,12 @@
 
         if (!wasActive) {
           item.classList.add('is-active');
+          hasActiveDropdown = true;
           applyStaggerIndices(item);
           addContentAnimating(item);
           showOverlay(section);
         } else {
+          hasActiveDropdown = false;
           hideOverlayIfNone(section);
         }
       });
@@ -169,12 +173,35 @@
   /* ============================================================
      CLOSE ALL DROPDOWNS
      ============================================================ */
+  var hasActiveDropdown = false;
+
   function closeAllDropdowns(section) {
+    var closeAnimation = section.getAttribute('data-mn-close-animation') || 'same-as-open-reverse';
     var activeItems = section.querySelectorAll('.mega-nav-item.is-active');
-    activeItems.forEach(function (item) {
-      item.classList.remove('is-active');
-    });
-    hideOverlayIfNone(section);
+
+    if (activeItems.length === 0) return;
+
+    if (closeAnimation === 'same-as-open-reverse' || closeAnimation === 'instant') {
+      activeItems.forEach(function (item) {
+        item.classList.remove('is-active');
+      });
+      hasActiveDropdown = false;
+      hideOverlayIfNone(section);
+    } else {
+      /* Animate close: add .is-closing, wait for transition, then remove classes */
+      var duration = parseInt(getComputedStyle(section).getPropertyValue('--mn-dropdown-duration') || '250', 10);
+      activeItems.forEach(function (item) {
+        item.classList.add('is-closing');
+        item.classList.remove('is-active');
+      });
+      hideOverlayIfNone(section);
+      setTimeout(function () {
+        activeItems.forEach(function (item) {
+          item.classList.remove('is-closing');
+        });
+        hasActiveDropdown = false;
+      }, duration);
+    }
   }
 
   /* ============================================================
@@ -185,10 +212,8 @@
     if (closeOnScroll !== 'true') return;
 
     window.addEventListener('scroll', function () {
-      var activeItems = section.querySelectorAll('.mega-nav-item.is-active');
-      if (activeItems.length > 0) {
-        closeAllDropdowns(section);
-      }
+      if (!hasActiveDropdown) return;
+      closeAllDropdowns(section);
     }, { passive: true });
   }
 
