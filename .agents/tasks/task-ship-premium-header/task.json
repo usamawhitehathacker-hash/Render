@@ -1,7 +1,36 @@
 {
   "task_id": "task-ship-premium-header",
-  "task_description": "Reality-check the claimed Premium Shopify Header work on the feature/premium-header-phase-5 branch, then ship the verified files (sections/header.liquid, assets/header-premium.css, assets/header-premium.js) to the main branch in one clean commit. The five phase branches (PRs #5-#9) were never merged to main - main currently only contains Ignore.zip. The reality check (already performed during planning) confirmed that Phase 5 is genuinely complete: all 46 hp_ settings present, schema valid JSON, range math correct, Liquid blocks balanced, every feature wired through Liquid+CSS+JS, full Dawn backward compatibility preserved. Therefore the task is to: (1) run a final validator pass on the cached Phase 5 files, (2) copy them to their target locations, (3) re-validate at the target locations, (4) produce a reality-check.md report, (5) commit to main.",
-  "status": "in_progress",
-  "feature_order": ["FEAT-001"],
-  "blocked_reason": null
+  "task_description": "Reality-check the claimed Premium Shopify Header work on the feature/premium-header-phase-5 branch, then ship the verified files to main. Three rounds of semantic review followed: v1 raised 10 findings, v2 raised 4, v3 verdict APPROVED. After v1 fixes, hp_ count moved from 46 to 47 (added hp_cart_badge_override gate so flipping the master toggle does not silently repaint Dawn's color-scheme accent on the cart badge).",
+  "status": "completed",
+  "feature_order": [
+    "FEAT-001"
+  ],
+  "blocked_reason": null,
+  "verification": {
+    "build": "n/a",
+    "tests": "pass",
+    "test_quality": "pass",
+    "docker_build": "skipped",
+    "summary": "No traditional build or test framework (Shopify theme). Validator at .agents/tasks/task-ship-premium-header/validate.py runs 7 checks: schema JSON validity, hp_ count == 47, range math, Liquid block balance, hp_ usage coverage (literal + --hp- + data-hp- forms), no null in liquid, no width=auto. Exits 0 against final paths. Ignore.zip untouched. Four commits: 9268703 feat ship; 2e2b5a0 fix v1; 50f08a9 fix v2; fd08705 chore v3 review."
+  },
+  "review_history": [
+    {
+      "version": "v1",
+      "file": ".agents/tasks/task-ship-premium-header/2026-05-22-013017-review.md",
+      "findings_count": 10,
+      "addressed_in_commit": "2e2b5a0"
+    },
+    {
+      "version": "v2",
+      "file": ".agents/tasks/task-ship-premium-header/2026-05-22-014602-review.md",
+      "findings_count": 4,
+      "addressed_in_commit": "50f08a9"
+    },
+    {
+      "version": "v3",
+      "file": ".agents/tasks/task-ship-premium-header/2026-05-22-015640-review.md",
+      "findings_count": 0,
+      "verdict": "APPROVED"
+    }
+  ]
 }
