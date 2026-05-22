@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Fix two critical bugs: (1) Page goes black when clicking menu items - the mega-nav-dropdown div renders for ALL menu items even those without columns, creating a full-viewport overlay panel. When .is-active is toggled, an empty dropdown appears covering the page. (2) Menu line moves fully up when clicking header - the .hp-top-line or hover underline pseudo-element jumps position during sticky header transitions.",
+  "status": "in_progress",
+  "steps": [
+    "BUG 1 FIX - In assets/mega-navigation.js, modify setupDesktopHover() to NOT add .is-active class to items whose .mega-nav-dropdown has no actual column content. Check if the dropdown's .mega-nav-dropdown__columns has any children before toggling. Add a guard: if the item's dropdown panel has no visible content (no rendered columns and no promo), skip the is-active toggle.",
+    "BUG 1 FIX - In sections/mega-navigation.liquid, conditionally render the .mega-nav-dropdown div ONLY when at least one column linklist is configured (col1 through col6). Wrap the entire <div class='mega-nav-dropdown'> block in a check: {% if block.settings.mn_col1_linklist != blank or block.settings.mn_col2_linklist != blank or block.settings.mn_col3_linklist != blank or block.settings.mn_col4_linklist != blank or block.settings.mn_col5_linklist != blank or block.settings.mn_col6_linklist != blank or (block.settings.mn_show_promo and block.settings.mn_promo_image != blank) %}",
+    "BUG 1 FIX - In assets/mega-navigation.css, add a safety rule: .mega-navigation-section .mega-nav-dropdown:empty { display: none; } and ensure the dropdown panel does not render with a dark/black background by default. Verify --mn-dropdown-bg defaults to #FFFFFF not #000000.",
+    "BUG 2 FIX - In assets/mega-navigation.css, fix the hover underline ::after position. The current bottom:10px is relative but when the nav becomes sticky (position: fixed), the containing block changes. Fix by ensuring .mega-nav-link has position:relative always set (it already does in the current CSS but verify), and change the underline to use a stable bottom value. Also check if the underline transition on left/right from 50% to 20px causes a visual 'jump' when the item receives focus/active state.",
+    "BUG 2 FIX - In assets/header-premium.css, check the .hp-top-line behavior during sticky transitions. The current rule '.shopify-section-header-hidden .hp-top-line { visibility: hidden; }' still occupies space. Change to 'display: none' or add height: 0 with overflow: hidden when header is hidden, and add a smooth transition so it doesn't jump.",
+    "BUG 2 FIX - In assets/mega-navigation.js, ensure that when the sticky nav triggers (setupStickyNav), the .mega-nav-bar position:fixed doesn't cause child ::after pseudo-elements to lose their relative positioning. Add will-change: transform to .mega-nav-link when sticky to create a new stacking context.",
+    "Test all fixes by verifying: (a) JSON schemas still parse, (b) no syntax errors in Liquid, (c) CSS has no unclosed braces, (d) JS has balanced parentheses/braces."
+  ],
+  "acceptance_criteria": [
+    "Menu items without dropdown content (no columns, no promo) do NOT render a .mega-nav-dropdown div in the HTML output",
+    "The .mega-nav-dropdown panel always has a white (or configured) background, never black/transparent causing page to go black",
+    "The hover underline ::after element stays anchored at the bottom of .mega-nav-link during all states: normal, hover, sticky, scroll",
+    "The .hp-top-line does not cause visual jumping when sticky header transitions occur",
+    "All JSON schemas in header.liquid and mega-navigation.liquid parse without errors",
+    "No JavaScript syntax errors (balanced braces, proper function structure)"
+  ],
+  "verification": [
+    "Run: python3 -c \"import json; schema=open('sections/mega-navigation.liquid').read().split('{% schema %}')[1].split('{% endschema %}')[0]; json.loads(schema); print('mega-nav schema OK')\"",
+    "Run: python3 -c \"import json; schema=open('sections/header.liquid').read().split('{% schema %}')[1].split('{% endschema %}')[0]; json.loads(schema); print('header schema OK')\"",
+    "Run: python3 -c \"css=open('assets/mega-navigation.css').read(); assert css.count('{') == css.count('}'), f'Unbalanced braces: {css.count(\"{\")} open vs {css.count(\"}\")} close'; print('CSS braces balanced')\"",
+    "Run: python3 -c \"js=open('assets/mega-navigation.js').read(); assert js.count('{') == js.count('}'), f'Unbalanced: {js.count(\"{\")} vs {js.count(\"}\")}'; print('JS braces balanced')\""
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

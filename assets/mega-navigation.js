@@ -38,6 +38,10 @@
 
       item.addEventListener('mouseenter', function () {
         if (window.innerWidth < 990) return;
+        var dropdown = item.querySelector('.mega-nav-dropdown');
+        if (!dropdown) return;
+        var columns = dropdown.querySelector('.mega-nav-dropdown__columns');
+        if (columns && columns.children.length === 0 && !dropdown.querySelector('.mega-nav-promo')) return;
         var t = hoverTimers.get(item);
         clearTimeout(t.closeTimer);
         t.openTimer = setTimeout(function () {
