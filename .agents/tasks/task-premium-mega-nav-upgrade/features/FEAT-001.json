@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "fix",
   "description": "Fix two critical bugs: (1) Page goes black when clicking menu items - the mega-nav-dropdown div renders for ALL menu items even those without columns, creating a full-viewport overlay panel. When .is-active is toggled, an empty dropdown appears covering the page. (2) Menu line moves fully up when clicking header - the .hp-top-line or hover underline pseudo-element jumps position during sticky header transitions.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "BUG 1 FIX - In assets/mega-navigation.js, modify setupDesktopHover() to NOT add .is-active class to items whose .mega-nav-dropdown has no actual column content. Check if the dropdown's .mega-nav-dropdown__columns has any children before toggling. Add a guard: if the item's dropdown panel has no visible content (no rendered columns and no promo), skip the is-active toggle.",
     "BUG 1 FIX - In sections/mega-navigation.liquid, conditionally render the .mega-nav-dropdown div ONLY when at least one column linklist is configured (col1 through col6). Wrap the entire <div class='mega-nav-dropdown'> block in a check: {% if block.settings.mn_col1_linklist != blank or block.settings.mn_col2_linklist != blank or block.settings.mn_col3_linklist != blank or block.settings.mn_col4_linklist != blank or block.settings.mn_col5_linklist != blank or block.settings.mn_col6_linklist != blank or (block.settings.mn_show_promo and block.settings.mn_promo_image != blank) %}",
@@ -27,5 +27,5 @@
     "Run: python3 -c \"js=open('assets/mega-navigation.js').read(); assert js.count('{') == js.count('}'), f'Unbalanced: {js.count(\"{\")} vs {js.count(\"}\")}'; print('JS braces balanced')\""
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All fixes applied cleanly. Dropdown conditional uses 6-column OR promo check. JS guard checks for .mega-nav-dropdown presence and columns children count. CSS :empty rule added as safety net. Sticky underline fix uses will-change:transform. Header top-line now collapses with height:0 instead of visibility:hidden. All validations pass."
 }
