@@ -1,0 +1,43 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Add the Phase 5 premium header files (sections/header.liquid, assets/header-premium.css, assets/header-premium.js) to the main branch. The reality-check confirmed Phase 5 is real, complete, and correct - all 46 hp_ settings present, schema valid, ranges valid, Liquid blocks balanced, every feature wired through Liquid+CSS+JS. The only real gap is that these files were never merged from the feature/premium-header-phase-5 branch into main. This feature copies the cached Phase 5 files into the working tree, runs a comprehensive validator, writes the reality-check report at .agents/tasks/task-ship-premium-header/reality-check.md, and creates one clean commit on main containing exactly these three files (Ignore.zip stays untouched).",
+  "status": "in_progress",
+  "steps": [
+    "Run validation on the cached Phase 5 sources first to confirm they pass before copying. Create .agents/tasks/task-ship-premium-header/validate.py with a Python script that, given a header.liquid path plus the css and js paths, verifies: (a) extracts the {% schema %}...{% endschema %} block and json.loads it without error, (b) counts hp_ ids and asserts == 46, (c) for every type==range setting in the schema asserts (max-min)/step <= 100 and (default-min)%step == 0 and all four are int/float, (d) counts {% if %} vs {% endif %}, {% for %} vs {% endfor %}, {% case %} vs {% endcase %}, {% comment %} vs {% endcomment %}, {% capture %} vs {% endcapture %}, {% unless %} vs {% endunless %}, {% form %} vs {% endform %}, {% style %} vs {% endstyle %}, {% javascript %} vs {% endjavascript %}, {% schema %} vs {% endschema %} and asserts each pair matches (note: {% liquid %} is a tag-style block and has NO endliquid - do not include it in the balance check), (e) extracts all hp_ ids from the schema and asserts each one appears at least once in the union of (liquid body, css file, js file), (f) asserts no occurrence of the bareword null in the liquid file, (g) asserts no occurrence of width=\"auto\" in the liquid file. The script should print a clear PASS/FAIL summary and exit 1 on any failure.",
+    "Run `python3 .agents/tasks/task-ship-premium-header/validate.py .agents/phases-cache/p5/header.liquid .agents/phases-cache/p5/header-premium.css .agents/phases-cache/p5/header-premium.js` and confirm it exits 0. If it fails, stop and report the failure - do NOT attempt to fix Phase 5 sources without the planner's approval.",
+    "Create the directories `sections/` and `assets/` at the workspace root if they do not exist.",
+    "Copy `.agents/phases-cache/p5/header.liquid` to `sections/header.liquid` (use `cp`).",
+    "Copy `.agents/phases-cache/p5/header-premium.css` to `assets/header-premium.css`.",
+    "Copy `.agents/phases-cache/p5/header-premium.js` to `assets/header-premium.js`.",
+    "Run the same validate.py script against the newly copied files at their final paths: `python3 .agents/tasks/task-ship-premium-header/validate.py sections/header.liquid assets/header-premium.css assets/header-premium.js` and confirm it exits 0.",
+    "Write the reality-check report to `.agents/tasks/task-ship-premium-header/reality-check.md`. Use the data already gathered in context.json (the reality_check_summary field) plus what the validator prints. The report MUST contain: (1) a top-level verdict (Phase 5 is real and complete - no fabrication), (2) per-file presence and size on the phase-5 branch, (3) the exact 46 hp_ ids list grouped by phase (Phase 1: 4 ids, Phase 2: 11 ids, Phase 3: 10 ids, Phase 4: 11 ids, Phase 5: 10 ids), (4) per-feature status table with columns 'setting id | type | declared in schema | used in liquid | used in css | used in js | status' for all 46 hp_ ids, (5) liquid block balance counts, (6) range math results table for all 14 ranges, (7) any minor observations, (8) the action taken (shipped to main). Use the validator's output to fill in the per-feature status. Write it in Roman Urdu / Hinglish mixed with English (the user's preferred style) - clear and direct, no fluff.",
+    "Verify git status shows exactly four new files staged/unstaged: sections/header.liquid, assets/header-premium.css, assets/header-premium.js, plus the .agents/ task state directory. The .agents/phases-cache/ should be ignored via the .gitignore that already exists. Ignore.zip should remain unchanged.",
+    "Stage the three theme files plus the task state files: `git add sections/header.liquid assets/header-premium.css assets/header-premium.js .gitignore .agents/tasks/task-ship-premium-header/`. Do NOT use `git add -A` or `git add .`.",
+    "Verify the staged diff is sane with `git diff --cached --stat` - should show exactly the three new theme files (added) plus the task state files. Roughly the theme files alone should be ~85 KB in size combined.",
+    "Create one commit on main with message: 'feat(header): add premium header system (Phases 1-5) - 46 hp_ settings'. The commit body should briefly note: master toggle hp_enable_premium=false preserves default Dawn behavior; CSS and JS load only when premium is on; all 46 settings validated for schema correctness, range math, and feature usage.",
+    "Do NOT push - the planner/orchestrator handles push/PR. Just leave the commit on the local main branch."
+  ],
+  "acceptance_criteria": [
+    "sections/header.liquid exists in working tree, byte-identical to .agents/phases-cache/p5/header.liquid (1352 lines, 48947 bytes).",
+    "assets/header-premium.css exists in working tree, byte-identical to .agents/phases-cache/p5/header-premium.css (809 lines, 29826 bytes).",
+    "assets/header-premium.js exists in working tree, byte-identical to .agents/phases-cache/p5/header-premium.js (179 lines, 6604 bytes).",
+    "`python3 .agents/tasks/task-ship-premium-header/validate.py sections/header.liquid assets/header-premium.css assets/header-premium.js` exits 0 with all checks PASS.",
+    ".agents/tasks/task-ship-premium-header/reality-check.md exists with the per-setting status table for all 46 hp_ ids.",
+    "Ignore.zip is untouched (same hash as before the task started).",
+    "Exactly one new commit exists on main with the three theme files plus task state files; commit message starts with 'feat(header):'.",
+    "git log --stat HEAD -1 shows only the expected files - no surprise additions."
+  ],
+  "verification": [
+    "diff -q sections/header.liquid .agents/phases-cache/p5/header.liquid (must be silent / empty output, exit 0)",
+    "diff -q assets/header-premium.css .agents/phases-cache/p5/header-premium.css (silent)",
+    "diff -q assets/header-premium.js .agents/phases-cache/p5/header-premium.js (silent)",
+    "python3 .agents/tasks/task-ship-premium-header/validate.py sections/header.liquid assets/header-premium.css assets/header-premium.js (exit 0)",
+    "test -f .agents/tasks/task-ship-premium-header/reality-check.md && wc -l .agents/tasks/task-ship-premium-header/reality-check.md (file exists, non-empty)",
+    "git log --oneline -1 (shows the new feat(header) commit)",
+    "git log --stat HEAD -1 | grep -E 'header.liquid|header-premium.css|header-premium.js' (all three files listed)",
+    "git status (clean working tree after commit)"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

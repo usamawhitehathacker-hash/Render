@@ -1,0 +1,44 @@
+{
+  "project_type": "Shopify theme (Dawn-based) - single section being upgraded with premium features",
+  "language": "Liquid + CSS + vanilla JavaScript",
+  "build_system": "None - Shopify theme files are uploaded directly via admin code editor (no compile step). The user pastes files into Shopify's online code editor.",
+  "test_framework": "None - validation is done via JSON schema parsing, Liquid tag-balance counts, range-math checks, and feature usage greps against the source files.",
+  "build_command": "None (no local build). Validation: python3 -c 'import json; json.load(open(...))' on extracted schema",
+  "test_command": "None. Verification consists of: (a) JSON schema parses, (b) every {% if %}/{% for %}/{% case %}/{% comment %}/{% capture %}/{% form %}/{% style %}/{% javascript %}/{% schema %} has matching close tag (note: {% liquid %} is a tag-style block with no endliquid - excluded), (c) every range setting satisfies (max-min)/step <= 100 and (default-min) % step == 0, (d) all 46 hp_ settings are referenced at least once in liquid body, CSS, or JS.",
+  "verification_instructions": "Run the validation script at .agents/tasks/task-ship-premium-header/validate.py on the three target files (sections/header.liquid, assets/header-premium.css, assets/header-premium.js). Exit code 0 means pass. The script checks: schema JSON validity, hp_ count == 46, range math, liquid block balance, hp_ usage coverage, no 'null' literals, no width=\"auto\".",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "No setup needed. Working directory is /projects/sandbox/Render. The phase 5 source files have been pre-fetched from GitHub raw URLs and cached at .agents/phases-cache/p5/ (gitignored). They are: header.liquid (1352 lines), header-premium.css (809 lines), header-premium.js (179 lines).",
+  "environment_constraints": "Network mode: COMMON_DEPENDENCIES. git fetch via the gateway origin fails with 'Missing header field, please provide AuthToken' - therefore branches cannot be checked out via git. Workaround: raw GitHub URLs work via curl with --cacert /etc/pki/tls/certs/ca-bundle.crt (system bundle). Default curl fails with TLS trust-anchor error unless CURL_CA_BUNDLE is set. The 5 phase branches (feature/premium-header-phase-1..5) exist on origin and have all been fetched into .agents/phases-cache/. The PRs (#5-#9) are open but never merged - main currently only has Ignore.zip.",
+  "contribution_requirements": "User specified rules from a 'Senior Shopify Developer' master prompt: (1) range math (max-min)/step <= 100 AND (default-min)%step == 0, with all numeric (not strings); (2) plain English labels for new hp_ settings, no t: keys; (3) JSON validity (no trailing commas, no comments); (4) CSS scoped to .header-wrapper--premium; (5) backward compat - hp_enable_premium=false MUST behave like default Dawn; (6) Liquid block balance; (7) no JavaScript 'null' literal in Liquid (use 'nil'); (8) no image width=\"auto\"; (9) Shopify editor events handled (shopify:section:load/unload); (10) hp_ prefix on all new settings; (11) preserve all existing Dawn t: keys, settings, and behaviors.",
+  "key_patterns": "Pattern in Phase 5: master toggle hp_enable_premium gates everything. CSS file and JS file are conditionally loaded only when premium is on (via {% if section.settings.hp_enable_premium %}). All hp_ values are exposed as either CSS custom properties (--hp-*) on .section-header in a {% style %} block, or as data-hp-* attributes on the wrapper element, or as conditional {% if %} renders inside the markup. CSS uses .header-wrapper--premium scope plus [data-hp-*] attribute selectors and CSS variables. JavaScript wraps everything in IIFE, listens to shopify:section:load/unload, and handles hover-trigger dropdowns + bottom-nav search trigger + cart-count sync.",
+  "relevant_files": [
+    "main:/Ignore.zip (existing) - leave alone, do not delete",
+    "target:sections/header.liquid (new file to be added to main from phase-5 branch)",
+    "target:assets/header-premium.css (new file to be added to main from phase-5 branch)",
+    "target:assets/header-premium.js (new file to be added to main from phase-5 branch)",
+    "source:.agents/phases-cache/p5/header.liquid - pre-fetched phase-5 source (1352 lines, 48947 bytes)",
+    "source:.agents/phases-cache/p5/header-premium.css - pre-fetched phase-5 source (809 lines, 29826 bytes)",
+    "source:.agents/phases-cache/p5/header-premium.js - pre-fetched phase-5 source (179 lines, 6604 bytes)",
+    "reference:.agents/phases-cache/dawn-header.liquid - upstream Dawn header for sanity-comparison (638 lines)"
+  ],
+  "directory_structure": "Workspace root (/projects/sandbox/Render) currently contains only Ignore.zip (a website backup zip the user wants kept) and .git/. After this task it will additionally contain sections/header.liquid, assets/header-premium.css, assets/header-premium.js, and .agents/ (task state). Shopify theme convention: section liquid files go in sections/, asset files (CSS/JS/images) go in assets/.",
+  "reality_check_summary": {
+    "verdict": "Phase 5 is REAL and SUBSTANTIALLY COMPLETE. The earlier suspicion that the agent fabricated work was unfounded for Phase 5.",
+    "files_present_on_phase_5_branch": {
+      "sections/header.liquid": "1352 lines, 48947 bytes - PRESENT",
+      "assets/header-premium.css": "809 lines, 29826 bytes - PRESENT",
+      "assets/header-premium.js": "179 lines, 6604 bytes - PRESENT"
+    },
+    "hp_settings_in_schema": "46 unique hp_ ids found - matches the claimed count exactly",
+    "schema_json_valid": true,
+    "liquid_block_balance": "All balanced. if=54/54, for=1/1, case=1/1, comment=11/11, capture=4/4, form=2/2, style=1/1, javascript=1/1, schema=1/1. Note: {% liquid %} appears 6 times with 0 endliquid - this is correct (it is a tag-style block with no closer).",
+    "range_math_check": "All 14 range settings (11 hp_ + 3 Dawn) pass: (max-min)/step <= 100 and (default-min)%step == 0",
+    "feature_usage_coverage": "All 46 hp_ ids are referenced at least once in the liquid body. CSS uses CSS custom properties (--hp-*) and data attribute selectors (data-hp-*) which transitively cover them. JS handles hover-trigger, bottom-nav, and editor events.",
+    "dawn_compatibility": "All original Dawn schema ids preserved (0 missing). All Dawn t: keys preserved for existing settings. Premium gating correctly hides everything when hp_enable_premium=false.",
+    "minor_observations": [
+      "Phase 5 wraps Dawn's 2nd header-search render with a hp_show_inline_search toggle - both modal IDs (Search-In-Modal-1 and Search-In-Modal) match Dawn's stock pattern, so no duplicate-id collision.",
+      "No null literals in Liquid. No image width=\"auto\". No trailing commas in schema."
+    ],
+    "issues_found": "None blocking. Phase 5 files can be shipped to main as-is."
+  }
+}

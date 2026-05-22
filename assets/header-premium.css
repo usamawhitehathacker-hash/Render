@@ -1,0 +1,809 @@
+/* ============================================================
+   PREMIUM HEADER - Phase 1 + Phase 2
+   ============================================================
+   This file extends Dawn's default header with premium features.
+   It only loads when "Enable Premium Header" is turned ON.
+   
+   Phase 1: Top accent line + foundation
+   Phase 2: Header layouts, transparent header, sticky/transparent logos
+   ============================================================ */
+
+/* ============================================================
+   PHASE 1: Top Accent Line
+   ============================================================ */
+.header-wrapper--premium .hp-top-line {
+  display: block;
+  width: 100%;
+  height: var(--hp-top-line-height, 2px);
+  background-color: var(--hp-top-line-color, #000);
+  position: relative;
+  z-index: 5;
+}
+
+.shopify-section-header-hidden .hp-top-line {
+  visibility: hidden;
+}
+
+/* ============================================================
+   PHASE 2: Boxed Header Width
+   ============================================================ */
+.header-wrapper--premium.header-wrapper--boxed .header {
+  max-width: var(--hp-header-max-width, 1440px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================================
+   PHASE 2: Logo Padding
+   ============================================================ */
+.header-wrapper--premium .header__heading-logo-wrapper {
+  padding-top: var(--hp-logo-padding, 0);
+  padding-bottom: var(--hp-logo-padding, 0);
+  position: relative;
+}
+
+/* ============================================================
+   PHASE 2: Sticky Logo (alternate logo when scrolled)
+   ============================================================ */
+.header-wrapper--premium .header__heading-logo--sticky {
+  display: none;
+}
+
+/* When scrolled past header, show sticky logo, hide main logo */
+.shopify-section-header-sticky .header-wrapper--premium .header__heading-logo:not(.header__heading-logo--transparent):not(.header__heading-logo--sticky),
+.scrolled-past-header .header-wrapper--premium .header__heading-logo:not(.header__heading-logo--transparent):not(.header__heading-logo--sticky) {
+  /* If a sticky logo exists, the main logo will be hidden by the sibling rule below */
+}
+
+.header-wrapper--premium .header__heading-logo-wrapper:has(.header__heading-logo--sticky) .header__heading-logo:not(.header__heading-logo--sticky):not(.header__heading-logo--transparent) {
+  display: block;
+}
+
+/* When sticky/scrolled, swap to sticky logo */
+.shopify-section-header-sticky .header-wrapper--premium .header__heading-logo-wrapper:has(.header__heading-logo--sticky) .header__heading-logo:not(.header__heading-logo--sticky):not(.header__heading-logo--transparent),
+.scrolled-past-header .header-wrapper--premium .header__heading-logo-wrapper:has(.header__heading-logo--sticky) .header__heading-logo:not(.header__heading-logo--sticky):not(.header__heading-logo--transparent) {
+  display: none;
+}
+
+.shopify-section-header-sticky .header-wrapper--premium .header__heading-logo--sticky,
+.scrolled-past-header .header-wrapper--premium .header__heading-logo--sticky {
+  display: block;
+}
+
+/* ============================================================
+   PHASE 2: Transparent Header
+   ============================================================ */
+
+/* When transparent: header floats over content */
+.header-wrapper--transparent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background: transparent !important;
+  z-index: 4;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header-wrapper--transparent.shopify-section-header-sticky {
+  position: fixed;
+  background: var(--color-background) !important;
+}
+
+/* Transparent border control */
+.header-wrapper--transparent[data-hp-transparent-border="false"] {
+  border-bottom: none !important;
+}
+
+/* Transparent text color */
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .header__heading-link,
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .header__menu-item,
+.header-wrapper--transparent:not(.shopify-section-header-sticky) summary,
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .list-menu__item,
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .header__active-menu-item {
+  color: var(--hp-transparent-text, #fff);
+}
+
+/* Transparent icon color */
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .header__icon,
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .header__icon svg,
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .header__icon .svg-wrapper {
+  color: var(--hp-transparent-icon, #fff);
+}
+
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .header__icon svg {
+  fill: currentColor;
+}
+
+/* Transparent logo: hide main logo, show transparent logo */
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .header__heading-logo-wrapper:has(.header__heading-logo--transparent) .header__heading-logo:not(.header__heading-logo--transparent):not(.header__heading-logo--sticky) {
+  display: none;
+}
+
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .header__heading-logo--transparent {
+  display: block;
+}
+
+/* When transparent + sticky: revert to main logo */
+.header-wrapper--transparent.shopify-section-header-sticky .header__heading-logo--transparent {
+  display: none;
+}
+
+/* Push body content below absolute header on transparent pages */
+.shopify-section.section-header[data-hp-has-transparent="true"] + * {
+  margin-top: 0 !important;
+}
+
+/* ============================================================
+   PHASE 2: Premium Header Layouts
+   ============================================================ */
+
+/* Layout: Logo Left + Nav Right (Symmetry-style) */
+@media screen and (min-width: 990px) {
+  .header-wrapper--premium.header-wrapper--layout-logo-left-nav-right .header {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "heading navigation icons";
+  }
+  .header-wrapper--premium.header-wrapper--layout-logo-left-nav-right .header__heading,
+  .header-wrapper--premium.header-wrapper--layout-logo-left-nav-right .header__heading-link {
+    grid-area: heading;
+    justify-self: start;
+  }
+  .header-wrapper--premium.header-wrapper--layout-logo-left-nav-right .header__inline-menu {
+    grid-area: navigation;
+    justify-self: end;
+    margin-right: 2rem;
+  }
+  .header-wrapper--premium.header-wrapper--layout-logo-left-nav-right .header__icons {
+    grid-area: icons;
+  }
+}
+
+/* Layout: Logo Center + Nav Below */
+@media screen and (min-width: 990px) {
+  .header-wrapper--premium.header-wrapper--layout-logo-center-nav-below .header {
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-areas:
+      ".       heading icons"
+      "navigation navigation navigation";
+    row-gap: 1rem;
+  }
+  .header-wrapper--premium.header-wrapper--layout-logo-center-nav-below .header__heading,
+  .header-wrapper--premium.header-wrapper--layout-logo-center-nav-below .header__heading-link {
+    grid-area: heading;
+    justify-self: center;
+  }
+  .header-wrapper--premium.header-wrapper--layout-logo-center-nav-below .header__inline-menu {
+    grid-area: navigation;
+    justify-self: center;
+  }
+  .header-wrapper--premium.header-wrapper--layout-logo-center-nav-below .header__icons {
+    grid-area: icons;
+    justify-self: end;
+  }
+}
+
+/* Layout: Logo Center + Nav Sides (split menu around logo) */
+@media screen and (min-width: 990px) {
+  .header-wrapper--premium.header-wrapper--layout-logo-center-nav-sides .header {
+    grid-template-columns: 1fr auto 1fr auto;
+    grid-template-areas: "navigation heading . icons";
+    align-items: center;
+  }
+  .header-wrapper--premium.header-wrapper--layout-logo-center-nav-sides .header__heading,
+  .header-wrapper--premium.header-wrapper--layout-logo-center-nav-sides .header__heading-link {
+    grid-area: heading;
+    justify-self: center;
+  }
+  .header-wrapper--premium.header-wrapper--layout-logo-center-nav-sides .header__inline-menu {
+    grid-area: navigation;
+    justify-self: end;
+    margin-right: 2rem;
+  }
+  .header-wrapper--premium.header-wrapper--layout-logo-center-nav-sides .header__icons {
+    grid-area: icons;
+  }
+}
+
+/* Layout: Logo Left + Nav Center (TheJacketMaker-style) */
+@media screen and (min-width: 990px) {
+  .header-wrapper--premium.header-wrapper--layout-logo-left-nav-center .header {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "heading navigation icons";
+    align-items: center;
+  }
+  .header-wrapper--premium.header-wrapper--layout-logo-left-nav-center .header__heading,
+  .header-wrapper--premium.header-wrapper--layout-logo-left-nav-center .header__heading-link {
+    grid-area: heading;
+    justify-self: start;
+  }
+  .header-wrapper--premium.header-wrapper--layout-logo-left-nav-center .header__inline-menu {
+    grid-area: navigation;
+    justify-self: center;
+  }
+  .header-wrapper--premium.header-wrapper--layout-logo-left-nav-center .header__icons {
+    grid-area: icons;
+    justify-self: end;
+  }
+}
+
+/* ============================================================
+   PHASE 1+2: Smoother sticky transitions
+   ============================================================ */
+.header-wrapper--premium .scrolled-past-header .header__heading-logo-wrapper {
+  transition: width 0.3s ease;
+}
+
+.header-wrapper--premium {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+/* ============================================================
+   PHASE 3: Premium Navigation - Typography
+   ============================================================ */
+
+/* Apply premium typography only on desktop where inline menu is visible */
+@media screen and (min-width: 990px) {
+  .header-wrapper--premium .header__menu-item,
+  .header-wrapper--premium .list-menu__item--link,
+  .header-wrapper--premium summary.list-menu__item,
+  .header-wrapper--premium .header__active-menu-item {
+    font-size: var(--hp-menu-font-size, 14px);
+    font-weight: var(--hp-menu-font-weight, 500);
+    letter-spacing: var(--hp-menu-letter-spacing, 1px);
+  }
+}
+
+/* Text transform via attribute selector */
+.header-wrapper--premium[data-hp-text-transform="uppercase"] .header__menu-item,
+.header-wrapper--premium[data-hp-text-transform="uppercase"] .list-menu__item--link,
+.header-wrapper--premium[data-hp-text-transform="uppercase"] summary.list-menu__item span,
+.header-wrapper--premium[data-hp-text-transform="uppercase"] .header__active-menu-item {
+  text-transform: uppercase;
+}
+
+.header-wrapper--premium[data-hp-text-transform="capitalize"] .header__menu-item,
+.header-wrapper--premium[data-hp-text-transform="capitalize"] .list-menu__item--link,
+.header-wrapper--premium[data-hp-text-transform="capitalize"] summary.list-menu__item span,
+.header-wrapper--premium[data-hp-text-transform="capitalize"] .header__active-menu-item {
+  text-transform: capitalize;
+}
+
+.header-wrapper--premium[data-hp-text-transform="lowercase"] .header__menu-item,
+.header-wrapper--premium[data-hp-text-transform="lowercase"] .list-menu__item--link,
+.header-wrapper--premium[data-hp-text-transform="lowercase"] summary.list-menu__item span,
+.header-wrapper--premium[data-hp-text-transform="lowercase"] .header__active-menu-item {
+  text-transform: lowercase;
+}
+
+.header-wrapper--premium[data-hp-text-transform="none"] .header__menu-item,
+.header-wrapper--premium[data-hp-text-transform="none"] .list-menu__item--link,
+.header-wrapper--premium[data-hp-text-transform="none"] summary.list-menu__item span,
+.header-wrapper--premium[data-hp-text-transform="none"] .header__active-menu-item {
+  text-transform: none;
+}
+
+/* ============================================================
+   PHASE 3: Hover Effects (4 variants)
+   ============================================================ */
+
+/* Position relative needed for ::after underline */
+@media screen and (min-width: 990px) {
+  .header-wrapper--premium .header__menu-item,
+  .header-wrapper--premium .list-menu__item--link,
+  .header-wrapper--premium summary.list-menu__item {
+    position: relative;
+  }
+}
+
+/* Hover style: underline (Jacket Maker style) */
+.header-wrapper--premium[data-hp-hover-style="underline"] .header__menu-item::after,
+.header-wrapper--premium[data-hp-hover-style="underline"] .list-menu__item--link::after,
+.header-wrapper--premium[data-hp-hover-style="underline"] summary.list-menu__item::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .header__menu-item::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .list-menu__item--link::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] summary.list-menu__item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: var(--hp-hover-underline-thickness, 2px);
+  background-color: var(--hp-hover-underline-color, #000);
+  transition: width var(--hp-anim-duration, 300ms) ease;
+  pointer-events: none;
+}
+
+.header-wrapper--premium[data-hp-hover-style="underline"] .header__menu-item:hover::after,
+.header-wrapper--premium[data-hp-hover-style="underline"] .list-menu__item--link:hover::after,
+.header-wrapper--premium[data-hp-hover-style="underline"] summary.list-menu__item:hover::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .header__menu-item:hover::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .list-menu__item--link:hover::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] summary.list-menu__item:hover::after,
+.header-wrapper--premium[data-hp-hover-style="underline"] .header__menu-item--active::after,
+.header-wrapper--premium[data-hp-hover-style="underline"] li.header__active-menu-item::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .header__menu-item--active::after,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] li.header__active-menu-item::after {
+  width: 30px;
+}
+
+/* Hover style: color (color change only) */
+.header-wrapper--premium[data-hp-hover-style="color"] .header__menu-item:hover,
+.header-wrapper--premium[data-hp-hover-style="color"] .list-menu__item--link:hover,
+.header-wrapper--premium[data-hp-hover-style="color"] summary.list-menu__item:hover,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .header__menu-item:hover,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] .list-menu__item--link:hover,
+.header-wrapper--premium[data-hp-hover-style="underline-color"] summary.list-menu__item:hover {
+  color: var(--hp-hover-underline-color, #000);
+}
+
+/* All hover styles get a smooth color transition */
+.header-wrapper--premium .header__menu-item,
+.header-wrapper--premium .list-menu__item--link,
+.header-wrapper--premium summary.list-menu__item {
+  transition: color var(--hp-anim-duration, 300ms) ease;
+}
+
+/* ============================================================
+   PHASE 3: Dropdown Animation Styles
+   ============================================================ */
+
+/* Dawn dropdowns are <details>/<summary> with .header__submenu (ul) */
+.header-wrapper--premium .header__submenu,
+.header-wrapper--premium .mega-menu__content {
+  transition:
+    opacity var(--hp-anim-duration, 300ms) ease,
+    transform var(--hp-anim-duration, 300ms) ease,
+    visibility var(--hp-anim-duration, 300ms) ease;
+}
+
+/* Animation: fade (default) */
+.header-wrapper--premium[data-hp-anim="fade"] details[open] .header__submenu,
+.header-wrapper--premium[data-hp-anim="fade"] details[open] .mega-menu__content {
+  animation: hp-fade-in var(--hp-anim-duration, 300ms) ease;
+}
+
+@keyframes hp-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Animation: slide-down */
+.header-wrapper--premium[data-hp-anim="slide-down"] details[open] .header__submenu,
+.header-wrapper--premium[data-hp-anim="slide-down"] details[open] .mega-menu__content {
+  animation: hp-slide-down var(--hp-anim-duration, 300ms) ease;
+}
+
+@keyframes hp-slide-down {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Animation: slide-up */
+.header-wrapper--premium[data-hp-anim="slide-up"] details[open] .header__submenu,
+.header-wrapper--premium[data-hp-anim="slide-up"] details[open] .mega-menu__content {
+  animation: hp-slide-up var(--hp-anim-duration, 300ms) ease;
+}
+
+@keyframes hp-slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Animation: zoom */
+.header-wrapper--premium[data-hp-anim="zoom"] details[open] .header__submenu,
+.header-wrapper--premium[data-hp-anim="zoom"] details[open] .mega-menu__content {
+  animation: hp-zoom-in var(--hp-anim-duration, 300ms) ease;
+  transform-origin: top center;
+}
+
+@keyframes hp-zoom-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ============================================================
+   PHASE 3: Hover-trigger dropdown (auto open on mouseenter)
+   ============================================================ */
+
+@media screen and (min-width: 990px) and (hover: hover) {
+  .header-wrapper--premium[data-hp-trigger="hover"] header-menu:hover details,
+  .header-wrapper--premium[data-hp-trigger="hover"] .mega-menu:hover details {
+    /* JS will toggle the [open] attribute via mouseenter/leave events.
+       This selector is here as a hint for higher specificity if needed. */
+  }
+}
+
+/* When trigger is click, prevent flicker by disabling hover open */
+.header-wrapper--premium[data-hp-trigger="click"] header-menu details,
+.header-wrapper--premium[data-hp-trigger="click"] .mega-menu details {
+  /* JS handles click toggle. No CSS-only hover. */
+}
+
+
+/* ============================================================
+   PHASE 4: Header Icons & Actions
+   ============================================================ */
+
+/* Icon size and spacing */
+.header-wrapper--premium .header__icons {
+  gap: var(--hp-icon-spacing, 8px);
+}
+
+.header-wrapper--premium .header__icon svg,
+.header-wrapper--premium .header__icon .svg-wrapper svg {
+  width: var(--hp-icon-size, 20px);
+  height: var(--hp-icon-size, 20px);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* Icon hover color */
+.header-wrapper--premium .header__icon:hover,
+.header-wrapper--premium .header__icon:hover svg {
+  color: var(--hp-icon-hover-color, #666);
+}
+
+/* Wishlist icon styling */
+.header-wrapper--premium .hp-icon-wishlist {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.header-wrapper--premium .hp-icon-wishlist svg {
+  width: var(--hp-icon-size, 20px);
+  height: var(--hp-icon-size, 20px);
+}
+
+/* ============================================================
+   PHASE 4: Inline Search Bar
+   ============================================================ */
+.header-wrapper--premium .hp-inline-search {
+  display: none;
+  align-items: center;
+  position: relative;
+  width: clamp(180px, 22vw, 280px);
+  margin-right: 0.5rem;
+}
+
+@media screen and (min-width: 990px) {
+  .header-wrapper--premium .hp-inline-search {
+    display: flex;
+  }
+}
+
+.header-wrapper--premium .hp-inline-search__input {
+  width: 100%;
+  padding: 0.6rem 2.2rem 0.6rem 0.9rem;
+  font-size: 1.3rem;
+  border: 1px solid rgba(var(--color-foreground), 0.2);
+  border-radius: 999px;
+  background: rgba(var(--color-foreground), 0.03);
+  color: rgb(var(--color-foreground));
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.header-wrapper--premium .hp-inline-search__input::placeholder {
+  color: rgba(var(--color-foreground), 0.55);
+}
+
+.header-wrapper--premium .hp-inline-search__input:focus {
+  border-color: rgb(var(--color-foreground));
+  background: rgba(var(--color-foreground), 0.05);
+}
+
+.header-wrapper--premium .hp-inline-search__submit {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgb(var(--color-foreground));
+}
+
+.header-wrapper--premium .hp-inline-search__submit svg,
+.header-wrapper--premium .hp-inline-search__submit .svg-wrapper svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Inline search inside a transparent header */
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .hp-inline-search__input {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--hp-transparent-text, #fff);
+}
+
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .hp-inline-search__input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.header-wrapper--transparent:not(.shopify-section-header-sticky) .hp-inline-search__submit {
+  color: var(--hp-transparent-icon, #fff);
+}
+
+/* ============================================================
+   PHASE 4: Cart Badge Variants
+   ============================================================ */
+
+/* Default circle is Dawn's default; only override when premium attr set */
+.header-wrapper--premium .cart-count-bubble {
+  background-color: var(--hp-cart-badge-bg, #000);
+  color: var(--hp-cart-badge-text, #fff);
+  transition: background-color 0.2s ease;
+}
+
+/* Square badge */
+.header-wrapper--premium[data-hp-cart-badge="square"] .cart-count-bubble {
+  border-radius: 2px;
+}
+
+/* Dot badge (no number) */
+.header-wrapper--premium[data-hp-cart-badge="dot"] .cart-count-bubble {
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.header-wrapper--premium[data-hp-cart-badge="dot"] .cart-count-bubble span[aria-hidden="true"] {
+  display: none;
+}
+
+/* Cart badge position: top-left */
+.header-wrapper--premium[data-hp-cart-badge-pos="top-left"] .header__icon--cart {
+  position: relative;
+}
+
+.header-wrapper--premium[data-hp-cart-badge-pos="top-left"] .cart-count-bubble {
+  right: auto;
+  left: 0;
+}
+
+/* ============================================================
+   PHASE 4: Mobile-friendly tweaks
+   ============================================================ */
+@media screen and (max-width: 749px) {
+  .header-wrapper--premium .header__icons {
+    gap: max(4px, calc(var(--hp-icon-spacing, 8px) * 0.5));
+  }
+}
+
+
+
+/* ============================================================
+   PHASE 5: Mobile Bottom Navigation Bar
+   ============================================================ */
+.hp-bottom-nav {
+  display: none;
+}
+
+@media screen and (max-width: 749px) {
+  .hp-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    align-items: stretch;
+    background: var(--hp-mobile-bottom-nav-bg, #fff);
+    border-top: 1px solid var(--hp-mobile-bottom-nav-border, #e5e5e5);
+    padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Push body content above bottom nav so last section isn't hidden */
+  body:has(.hp-bottom-nav) {
+    padding-bottom: 64px;
+  }
+
+  .hp-bottom-nav__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 4px 8px;
+    background: transparent;
+    border: none;
+    color: rgb(var(--color-foreground));
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 10px;
+    line-height: 1.2;
+    text-align: center;
+    transition: color 0.15s ease, transform 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .hp-bottom-nav__item:active {
+    transform: scale(0.94);
+  }
+
+  .hp-bottom-nav__item .svg-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .hp-bottom-nav__item .svg-wrapper svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .hp-bottom-nav__label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  /* Cart count bubble inside bottom nav */
+  .hp-bottom-nav__cart-count {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--hp-cart-badge-bg, #000);
+    color: var(--hp-cart-badge-text, #fff);
+    font-size: 9px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+}
+
+/* ============================================================
+   PHASE 5: Mobile Drawer Position Variants
+   Dawn's drawer is .menu-drawer inside <menu-drawer> custom element
+   ============================================================ */
+
+/* Slide from right */
+@media screen and (max-width: 989px) {
+  .header-wrapper--premium[data-hp-mobile-drawer="right"] .menu-drawer {
+    left: auto;
+    right: 0;
+    transform: translateX(100%);
+  }
+  .header-wrapper--premium[data-hp-mobile-drawer="right"] menu-drawer[open] .menu-drawer,
+  .header-wrapper--premium[data-hp-mobile-drawer="right"] details[open] > .menu-drawer {
+    transform: translateX(0);
+  }
+
+  /* Fullscreen variant */
+  .header-wrapper--premium[data-hp-mobile-drawer="fullscreen"] .menu-drawer {
+    width: 100% !important;
+    max-width: 100% !important;
+    left: 0;
+    right: 0;
+    transform: translateY(-100%);
+  }
+  .header-wrapper--premium[data-hp-mobile-drawer="fullscreen"] menu-drawer[open] .menu-drawer,
+  .header-wrapper--premium[data-hp-mobile-drawer="fullscreen"] details[open] > .menu-drawer {
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   PHASE 5: Mobile Menu Animation Styles
+   ============================================================ */
+@media screen and (max-width: 989px) {
+  /* Fade animation */
+  .header-wrapper--premium[data-hp-mobile-anim="fade"] .menu-drawer {
+    transition: opacity var(--hp-anim-duration, 300ms) ease, visibility var(--hp-anim-duration, 300ms) ease;
+    opacity: 0;
+  }
+  .header-wrapper--premium[data-hp-mobile-anim="fade"] menu-drawer[open] .menu-drawer,
+  .header-wrapper--premium[data-hp-mobile-anim="fade"] details[open] > .menu-drawer {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Push animation: drawer pushes page content */
+  .header-wrapper--premium[data-hp-mobile-anim="push"] .menu-drawer {
+    transition: transform var(--hp-anim-duration, 300ms) cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  body:has(.header-wrapper--premium[data-hp-mobile-anim="push"] menu-drawer[open]),
+  body:has(.header-wrapper--premium[data-hp-mobile-anim="push"] details[open] > .menu-drawer) {
+    overflow: hidden;
+  }
+}
+
+/* ============================================================
+   PHASE 5: Mobile Menu Typography
+   ============================================================ */
+@media screen and (max-width: 989px) {
+  .header-wrapper--premium .menu-drawer__menu-item,
+  .header-wrapper--premium .menu-drawer summary,
+  .header-wrapper--premium .menu-drawer a {
+    font-size: var(--hp-mobile-menu-font-size, 16px);
+    padding-top: var(--hp-mobile-menu-padding, 16px);
+    padding-bottom: var(--hp-mobile-menu-padding, 16px);
+  }
+}
+
+/* Mobile text transform */
+.header-wrapper--premium[data-hp-mobile-text-transform="uppercase"] .menu-drawer__menu-item,
+.header-wrapper--premium[data-hp-mobile-text-transform="uppercase"] .menu-drawer summary,
+.header-wrapper--premium[data-hp-mobile-text-transform="uppercase"] .menu-drawer a {
+  text-transform: uppercase;
+}
+
+.header-wrapper--premium[data-hp-mobile-text-transform="capitalize"] .menu-drawer__menu-item,
+.header-wrapper--premium[data-hp-mobile-text-transform="capitalize"] .menu-drawer summary,
+.header-wrapper--premium[data-hp-mobile-text-transform="capitalize"] .menu-drawer a {
+  text-transform: capitalize;
+}
+
+.header-wrapper--premium[data-hp-mobile-text-transform="none"] .menu-drawer__menu-item,
+.header-wrapper--premium[data-hp-mobile-text-transform="none"] .menu-drawer summary,
+.header-wrapper--premium[data-hp-mobile-text-transform="none"] .menu-drawer a {
+  text-transform: none;
+}
+
+/* ============================================================
+   PHASE 5: Smooth scroll on anchor links
+   ============================================================ */
+html:has(.header-wrapper--premium[data-hp-smooth-scroll="true"]) {
+  scroll-behavior: smooth;
+}
+
+/* ============================================================
+   PHASE 5: Reduced Motion (accessibility)
+   When user prefers reduced motion, disable all premium animations
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .header-wrapper--premium[data-hp-reduced-motion="true"],
+  .header-wrapper--premium[data-hp-reduced-motion="true"] *,
+  .header-wrapper--premium[data-hp-reduced-motion="true"] *::before,
+  .header-wrapper--premium[data-hp-reduced-motion="true"] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html:has(.header-wrapper--premium[data-hp-reduced-motion="true"][data-hp-smooth-scroll="true"]) {
+    scroll-behavior: auto;
+  }
+}
+
+/* ============================================================
+   PHASE 5: Final polish - focus rings & accessibility
+   ============================================================ */
+.header-wrapper--premium .header__icon:focus-visible,
+.header-wrapper--premium .header__menu-item:focus-visible,
+.header-wrapper--premium .hp-bottom-nav__item:focus-visible,
+.header-wrapper--premium .hp-inline-search__input:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Ensure transparent header doesn't break tap targets on mobile */
+@media screen and (max-width: 989px) {
+  .header-wrapper--transparent {
+    -webkit-tap-highlight-color: transparent;
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "task_id": "task-ship-premium-header",
+  "task_description": "Reality-check the claimed Premium Shopify Header work on the feature/premium-header-phase-5 branch, then ship the verified files (sections/header.liquid, assets/header-premium.css, assets/header-premium.js) to the main branch in one clean commit. The five phase branches (PRs #5-#9) were never merged to main - main currently only contains Ignore.zip. The reality check (already performed during planning) confirmed that Phase 5 is genuinely complete: all 46 hp_ settings present, schema valid JSON, range math correct, Liquid blocks balanced, every feature wired through Liquid+CSS+JS, full Dawn backward compatibility preserved. Therefore the task is to: (1) run a final validator pass on the cached Phase 5 files, (2) copy them to their target locations, (3) re-validate at the target locations, (4) produce a reality-check.md report, (5) commit to main.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}

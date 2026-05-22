@@ -1,0 +1,97 @@
+========================================================================
+PREMIUM HEADER VALIDATOR
+========================================================================
+liquid : sections/header.liquid  (48947 bytes)
+css    : assets/header-premium.css  (29826 bytes)
+js     : assets/header-premium.js  (6604 bytes)
+
+[1] schema JSON parses cleanly                            : PASS
+[2] hp_ id count == 46                                    : PASS (46 unique)
+[3] range math (min/max/step/default sane)                : PASS (14 ranges)
+[4] liquid block balance (all paired tags)                : PASS
+[5] hp_ usage coverage (each id in body+css+js >= 1)      : PASS
+[6] no bareword 'null' in liquid                          : PASS
+[7] no width="auto" in liquid                             : PASS
+
+Liquid block balance:
+  tag           opens  closes
+  if               54      54
+  for               1       1
+  case              1       1
+  comment          11      11
+  capture           4       4
+  unless            0       0
+  form              2       2
+  style             1       1
+  javascript        1       1
+  schema            1       1
+
+Range math:
+  id                                  min    max   step  default  steps  on_step
+  hp_top_line_height                    1     10      1        2    9.0      YES
+  hp_header_max_width                1000   1600     20     1440   30.0      YES
+  hp_logo_padding                       0     30      2        0   15.0      YES
+  hp_anim_duration                    100    800     50      300   14.0      YES
+  hp_menu_font_size                    12     22      1       14   10.0      YES
+  hp_menu_letter_spacing                0      6      1        1    6.0      YES
+  hp_hover_underline_thickness          1      5      1        2    4.0      YES
+  hp_icon_size                         16     32      2       20    8.0      YES
+  hp_icon_spacing                       0     24      2        8   12.0      YES
+  hp_mobile_menu_font_size             14     24      1       16   10.0      YES
+  hp_mobile_menu_padding                8     24      2       16    8.0      YES
+  margin_bottom                         0    100      4        0   25.0      YES
+  padding_top                           0     36      4       20    9.0      YES
+  padding_bottom                        0     36      4       20    9.0      YES
+
+Per-id hp_ usage:
+  id                                 body    css     js
+  hp_anim_duration                      1      0      0
+  hp_anim_type                          1      0      0
+  hp_cart_badge_bg                      1      0      0
+  hp_cart_badge_position                1      0      0
+  hp_cart_badge_style                   1      0      0
+  hp_cart_badge_text                    1      0      0
+  hp_dropdown_trigger                   1      0      0
+  hp_enable_premium                    12      0      0
+  hp_enable_transparent                 1      0      0
+  hp_header_layout                      1      0      0
+  hp_header_max_width                   1      0      0
+  hp_header_width                       1      0      0
+  hp_hover_style                        1      0      0
+  hp_hover_underline_color              1      0      0
+  hp_hover_underline_thickness          1      0      0
+  hp_icon_hover_color                   1      0      0
+  hp_icon_size                          1      0      0
+  hp_icon_spacing                       1      0      0
+  hp_logo_padding                       1      0      0
+  hp_menu_font_size                     1      0      0
+  hp_menu_font_weight                   1      0      0
+  hp_menu_letter_spacing                1      0      0
+  hp_menu_text_transform                1      0      0
+  hp_mobile_bottom_nav_bg               1      0      0
+  hp_mobile_bottom_nav_border           1      0      0
+  hp_mobile_drawer_position             1      0      0
+  hp_mobile_menu_anim                   1      0      0
+  hp_mobile_menu_font_size              1      0      0
+  hp_mobile_menu_padding                1      0      0
+  hp_mobile_menu_text_transform         1      0      0
+  hp_respect_reduced_motion             1      0      0
+  hp_search_placeholder                 1      0      0
+  hp_show_inline_search                 1      0      0
+  hp_show_mobile_bottom_nav             1      0      0
+  hp_show_top_line                      1      0      0
+  hp_show_wishlist                      2      0      0
+  hp_smooth_scroll                      1      0      0
+  hp_sticky_logo                        4      0      0
+  hp_top_line_color                     1      0      0
+  hp_top_line_height                    1      0      0
+  hp_transparent_apply_on               1      0      0
+  hp_transparent_icon_color             1      0      0
+  hp_transparent_logo                   4      0      0
+  hp_transparent_show_border            1      0      0
+  hp_transparent_text_color             1      0      0
+  hp_wishlist_url                       3      0      0
+
+========================================================================
+ALL CHECKS PASS
+========================================================================
