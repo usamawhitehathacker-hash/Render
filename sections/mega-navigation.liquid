@@ -179,7 +179,25 @@
                 {% endif %}
               </a>
 
-              {% if block.settings.mn_col1_linklist != blank or block.settings.mn_col2_linklist != blank or block.settings.mn_col3_linklist != blank or block.settings.mn_col4_linklist != blank or block.settings.mn_col5_linklist != blank or block.settings.mn_col6_linklist != blank or (block.settings.mn_show_promo and block.settings.mn_promo_image != blank) %}
+              {%- liquid
+                assign has_dropdown_content = false
+                if block.settings.mn_col1_linklist != blank
+                  assign has_dropdown_content = true
+                elsif block.settings.mn_col2_linklist != blank
+                  assign has_dropdown_content = true
+                elsif block.settings.mn_col3_linklist != blank
+                  assign has_dropdown_content = true
+                elsif block.settings.mn_col4_linklist != blank
+                  assign has_dropdown_content = true
+                elsif block.settings.mn_col5_linklist != blank
+                  assign has_dropdown_content = true
+                elsif block.settings.mn_col6_linklist != blank
+                  assign has_dropdown_content = true
+                elsif block.settings.mn_show_promo and block.settings.mn_promo_image != blank
+                  assign has_dropdown_content = true
+                endif
+              -%}
+              {% if has_dropdown_content %}
               <div class="mega-nav-dropdown {% if section.settings.mn_dropdown_shadow %}has-shadow{% endif %} {% if section.settings.mn_dropdown_border %}has-border{% endif %}">
                 <div class="mega-nav-dropdown__inner">
                   <div class="mega-nav-dropdown__columns" data-columns="{{ block.settings.mn_columns }}">
@@ -245,10 +263,22 @@
       <ul class="mega-nav-mobile-menu">
         {% for block in section.blocks %}
           {% if block.type == 'menu_item' %}
-            {% assign has_submenu = false %}
-            {% if block.settings.mn_col1_linklist != blank or block.settings.mn_col2_linklist != blank or block.settings.mn_col3_linklist != blank or block.settings.mn_col4_linklist != blank or block.settings.mn_col5_linklist != blank or block.settings.mn_col6_linklist != blank %}
-              {% assign has_submenu = true %}
-            {% endif %}
+            {%- liquid
+              assign has_submenu = false
+              if block.settings.mn_col1_linklist != blank
+                assign has_submenu = true
+              elsif block.settings.mn_col2_linklist != blank
+                assign has_submenu = true
+              elsif block.settings.mn_col3_linklist != blank
+                assign has_submenu = true
+              elsif block.settings.mn_col4_linklist != blank
+                assign has_submenu = true
+              elsif block.settings.mn_col5_linklist != blank
+                assign has_submenu = true
+              elsif block.settings.mn_col6_linklist != blank
+                assign has_submenu = true
+              endif
+            -%}
 
             <li class="mega-nav-mobile-item">
               {% if has_submenu %}
