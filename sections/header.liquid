@@ -134,8 +134,10 @@
       /* Phase 4: Icons & Actions */
       --hp-icon-size: {{ section.settings.hp_icon_size }}px;
       --hp-icon-spacing: {{ section.settings.hp_icon_spacing }}px;
+      {%- if section.settings.hp_cart_badge_override -%}
       --hp-cart-badge-bg: {{ section.settings.hp_cart_badge_bg }};
       --hp-cart-badge-text: {{ section.settings.hp_cart_badge_text }};
+      {%- endif -%}
       --hp-icon-hover-color: {{ section.settings.hp_icon_hover_color }};
 
       /* Phase 5: Mobile & Polish */
@@ -157,7 +159,9 @@
   {%- endif -%}
 {%- endstyle -%}
 
-<script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
+{%- if settings.cart_type == 'notification' -%}
+  <script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
 
 {%- liquid
   for block in section.blocks
@@ -485,7 +489,7 @@
       {%- endif -%}
 
       {%- comment -%} ===== PHASE 4: Wishlist icon (optional) ===== {%- endcomment -%}
-      {%- if section.settings.hp_enable_premium and section.settings.hp_show_wishlist -%}
+      {%- if section.settings.hp_enable_premium and section.settings.hp_show_wishlist and section.settings.hp_wishlist_url != blank -%}
         <a
           href="{{ section.settings.hp_wishlist_url | default: '#' }}"
           class="header__icon header__icon--wishlist hp-icon-wishlist link focus-inset"
@@ -721,7 +725,7 @@
 
     closeSearchModal() {
       this.searchModal = this.searchModal || this.header.querySelector('details-modal');
-      this.searchModal.close(false);
+      if (this.searchModal) this.searchModal.close(false);
     }
   }
 
@@ -747,7 +751,7 @@
       {{ settings.social_youtube_link | json }},
       {{ settings.social_vimeo_link | json }}
     ],
-    "url": {{ request.origin | append: page.url | json }}
+    "url": {{ request.origin | append: request.path | json }}
   }
 </script>
 
@@ -763,7 +767,7 @@
         "target": {{ potential_action_target | json }},
         "query-input": "required name=search_term_string"
       },
-      "url": {{ request.origin | append: page.url | json }}
+      "url": {{ request.origin | append: request.path | json }}
     }
   </script>
 {%- endif -%}
