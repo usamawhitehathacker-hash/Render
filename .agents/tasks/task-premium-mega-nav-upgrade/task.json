@@ -1,0 +1,14 @@
+{
+  "task_id": "task-premium-mega-nav-upgrade",
+  "task_description": "Fix two critical bugs (black page on menu click, line jumping on header click) and add 116 new customization settings across 6 areas: Header Layout & Structure (14), Hover Effects (15), Navigation & Typography (17), Mobile & Polish (15), Mega Menu Dropdown Styles + Open Behavior (35), and Badge Colors & Spacing (20). Priority order: bugs first, then mega menu behavior, then remaining settings.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004"],
+  "blocked_reason": null,
+  "verification": {
+    "build": "pass",
+    "tests": "pass",
+    "test_quality": "pass",
+    "docker_build": "skipped",
+    "summary": "All JSON schemas parse correctly. Header: 75 settings, Mega-nav: 132 settings (207 total). All 64 range settings have valid step-aligned defaults. All CSS files balanced. All JS files balanced. v2 review fixes applied: (1) heading underline gated by data-mn-col-heading-underline attribute, (2) data-hp-scroll-shrink conditionally output only when > 0, (3) data-hp-bg-opacity added to header template when < 100, (4) triple .mega-nav-column__heading blocks consolidated to one variable-driven block, (5) contained vs boxed distinction documented, (6) z-index: auto stacking context behavior documented."
+  }
+}

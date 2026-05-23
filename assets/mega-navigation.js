@@ -9,28 +9,38 @@
 (function () {
   'use strict';
 
-  var HOVER_OPEN_DELAY = 80;
-  var HOVER_CLOSE_DELAY = 200;
   var hoverTimers = new WeakMap();
 
   function initMegaNavigation() {
     var section = document.querySelector('.mega-navigation-section');
     if (!section) return;
 
-    setupDesktopHover(section);
+    var openTrigger = section.getAttribute('data-mn-open-trigger') || 'hover-with-delay';
+
+    if (openTrigger === 'click') {
+      setupDesktopClick(section);
+    } else {
+      setupDesktopHover(section, openTrigger);
+    }
+
     setupMobileDrawer(section);
     setupMobileAccordion(section);
     setupStickyNav(section);
     setupKeyboard(section);
     setupClickOutside(section);
+    setupCloseOnScroll(section);
   }
 
   /* ============================================================
      DESKTOP HOVER
      ============================================================ */
-  function setupDesktopHover(section) {
+  function setupDesktopHover(section, openTrigger) {
     var items = section.querySelectorAll('.mega-nav-item');
     if (!items || items.length === 0) return;
+
+    var computedStyle = getComputedStyle(section);
+    var openDelay = openTrigger === 'hover-instant' ? 0 : parseInt(computedStyle.getPropertyValue('--mn-open-delay') || '100', 10);
+    var closeDelay = parseInt(computedStyle.getPropertyValue('--mn-close-delay') || '200', 10);
 
     items.forEach(function (item) {
       var timers = { openTimer: undefined, closeTimer: undefined };
@@ -38,12 +48,20 @@
 
       item.addEventListener('mouseenter', function () {
         if (window.innerWidth < 990) return;
+        var dropdown = item.querySelector('.mega-nav-dropdown');
+        if (!dropdown) return;
+        var columns = dropdown.querySelector('.mega-nav-dropdown__columns');
+        if (columns && columns.children.length === 0 && !dropdown.querySelector('.mega-nav-promo')) return;
         var t = hoverTimers.get(item);
         clearTimeout(t.closeTimer);
         t.openTimer = setTimeout(function () {
           closeAllDropdowns(section);
           item.classList.add('is-active');
-        }, HOVER_OPEN_DELAY);
+          hasActiveDropdown = true;
+          applyStaggerIndices(item);
+          addContentAnimating(item);
+          showOverlay(section);
+        }, openDelay);
       });
 
       item.addEventListener('mouseleave', function () {
@@ -52,19 +70,151 @@
         clearTimeout(t.openTimer);
         t.closeTimer = setTimeout(function () {
           item.classList.remove('is-active');
-        }, HOVER_CLOSE_DELAY);
+          hasActiveDropdown = section.querySelectorAll('.mega-nav-item.is-active').length > 0;
+          hideOverlayIfNone(section);
+        }, closeDelay);
       });
     });
   }
 
   /* ============================================================
+     DESKTOP CLICK
+     ============================================================ */
+  function setupDesktopClick(section) {
+    var items = section.querySelectorAll('.mega-nav-item');
+    if (!items || items.length === 0) return;
+
+    items.forEach(function (item) {
+      var link = item.querySelector('.mega-nav-link');
+      if (!link) return;
+
+      link.addEventListener('click', function (e) {
+        if (window.innerWidth < 990) return;
+        var dropdown = item.querySelector('.mega-nav-dropdown');
+        if (!dropdown) return;
+        var columns = dropdown.querySelector('.mega-nav-dropdown__columns');
+        if (columns && columns.children.length === 0 && !dropdown.querySelector('.mega-nav-promo')) return;
+
+        e.preventDefault();
+        var wasActive = item.classList.contains('is-active');
+
+        closeAllDropdowns(section);
+
+        if (!wasActive) {
+          item.classList.add('is-active');
+          hasActiveDropdown = true;
+          applyStaggerIndices(item);
+          addContentAnimating(item);
+          showOverlay(section);
+        } else {
+          hasActiveDropdown = false;
+          hideOverlayIfNone(section);
+        }
+      });
+    });
+  }
+
+  /* ============================================================
+     STAGGER INDEX
+     ============================================================ */
+  function applyStaggerIndices(item) {
+    var dropdown = item.querySelector('.mega-nav-dropdown');
+    if (!dropdown) return;
+
+    var children = dropdown.querySelectorAll('.mega-nav-dropdown__columns > *, .mega-nav-dropdown__inner > .mega-nav-promo');
+    for (var i = 0; i < children.length; i++) {
+      children[i].style.setProperty('--mn-stagger-index', i);
+    }
+  }
+
+  /* ============================================================
+     CONTENT ANIMATING CLASS
+     ============================================================ */
+  function addContentAnimating(item) {
+    var inner = item.querySelector('.mega-nav-dropdown__inner');
+    if (!inner) return;
+
+    inner.classList.add('mn-content-animating');
+
+    var section = item.closest('.mega-navigation-section');
+    var staggerDelay = parseInt(getComputedStyle(section).getPropertyValue('--mn-content-stagger-delay') || '50', 10);
+    var children = inner.querySelectorAll('.mega-nav-dropdown__columns > *, .mega-nav-promo');
+    var duration = parseInt(getComputedStyle(section).getPropertyValue('--mn-dropdown-duration') || '250', 10);
+    var totalTime = duration + (staggerDelay * children.length);
+
+    setTimeout(function () {
+      inner.classList.remove('mn-content-animating');
+    }, totalTime);
+  }
+
+  /* ============================================================
+     OVERLAY MANAGEMENT
+     ============================================================ */
+  function showOverlay(section) {
+    var showOverlayAttr = section.getAttribute('data-mn-show-overlay');
+    if (showOverlayAttr !== 'true') return;
+
+    var overlay = section.querySelector('.mega-nav-overlay');
+    if (overlay) {
+      overlay.classList.add('is-visible');
+    }
+  }
+
+  function hideOverlayIfNone(section) {
+    var activeItems = section.querySelectorAll('.mega-nav-item.is-active');
+    if (activeItems.length === 0) {
+      var overlay = section.querySelector('.mega-nav-overlay');
+      if (overlay) {
+        overlay.classList.remove('is-visible');
+      }
+    }
+  }
+
+  /* ============================================================
      CLOSE ALL DROPDOWNS
      ============================================================ */
+  var hasActiveDropdown = false;
+
   function closeAllDropdowns(section) {
+    var closeAnimation = section.getAttribute('data-mn-close-animation') || 'same-as-open-reverse';
     var activeItems = section.querySelectorAll('.mega-nav-item.is-active');
-    activeItems.forEach(function (item) {
-      item.classList.remove('is-active');
-    });
+
+    if (activeItems.length === 0) return;
+
+    if (closeAnimation === 'same-as-open-reverse' || closeAnimation === 'instant') {
+      activeItems.forEach(function (item) {
+        item.classList.remove('is-active');
+      });
+      hasActiveDropdown = false;
+      hideOverlayIfNone(section);
+    } else {
+      /* Animate close: add .is-closing, wait for transition, then remove classes */
+      var duration = parseInt(getComputedStyle(section).getPropertyValue('--mn-dropdown-duration') || '250', 10);
+      activeItems.forEach(function (item) {
+        item.classList.add('is-closing');
+        item.classList.remove('is-active');
+      });
+      hideOverlayIfNone(section);
+      setTimeout(function () {
+        activeItems.forEach(function (item) {
+          item.classList.remove('is-closing');
+        });
+        hasActiveDropdown = false;
+      }, duration);
+    }
+  }
+
+  /* ============================================================
+     CLOSE ON SCROLL
+     ============================================================ */
+  function setupCloseOnScroll(section) {
+    var closeOnScroll = section.getAttribute('data-mn-close-on-scroll');
+    if (closeOnScroll !== 'true') return;
+
+    window.addEventListener('scroll', function () {
+      if (!hasActiveDropdown) return;
+      closeAllDropdowns(section);
+    }, { passive: true });
   }
 
   /* ============================================================
@@ -96,6 +246,35 @@
       overlay.addEventListener('click', function () {
         closeMobileDrawer(drawer, overlay, hamburger);
       });
+    }
+
+    /* Swipe to close */
+    var swipeEnabled = section.getAttribute('data-mn-swipe-close') === 'true';
+    if (swipeEnabled) {
+      var startX = 0;
+      var startY = 0;
+      var drawerPosition = drawer.getAttribute('data-position') || 'left';
+
+      drawer.addEventListener('touchstart', function (e) {
+        var touch = e.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+      }, { passive: true });
+
+      drawer.addEventListener('touchend', function (e) {
+        var touch = e.changedTouches[0];
+        var diffX = touch.clientX - startX;
+        var diffY = touch.clientY - startY;
+
+        /* Only close on horizontal swipe (not vertical scroll) */
+        if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+          if (drawerPosition === 'left' && diffX < 0) {
+            closeMobileDrawer(drawer, overlay, hamburger);
+          } else if (drawerPosition === 'right' && diffX > 0) {
+            closeMobileDrawer(drawer, overlay, hamburger);
+          }
+        }
+      }, { passive: true });
     }
   }
 

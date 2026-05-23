@@ -6,11 +6,37 @@
    ============================================================ */
 
 /* ============================================================
+   SCHEMA-READY, IMPLEMENTATION PENDING
+   ============================================================
+   The following settings exist in the schema for future use but
+   have no CSS/JS/HTML implementation yet:
+   - mn_dropdown_layout (tabbed, grid-images, promo-left, promo-bottom)
+   - mn_show_description
+   - mn_show_view_all / mn_view_all_style / mn_view_all_color
+   - mn_mobile_header_style (simplified, centered-logo-only)
+   - mn_mobile_menu_style (grid-icons, cards)
+   - mn_mobile_nested_anim (slide-right, fade)
+   - mn_mobile_close_style (arrow-back, text-close)
+   - mn_mobile_show_logo
+   - mn_mobile_footer_social
+   - mn_mobile_bottom_icon_style
+   - mn_mobile_bottom_labels
+   - mn_mobile_bottom_active
+   - mn_badge_position (above-text, superscript)
+   ============================================================ */
+
+/* ============================================================
    NAV BAR
    ============================================================ */
 .mega-navigation-section {
   position: relative;
-  z-index: 100;
+  /* z-index: auto intentionally avoids creating a stacking context on this section.
+     This means the dropdown (z-index: 999) and overlay (position: fixed) compete at
+     the page-root stacking level, which is correct: the overlay escapes the section,
+     and the dropdown layers above most page content. Adjacent sections with their own
+     z-index would need values above 999 to occlude the dropdown, which is unlikely
+     in standard Dawn themes (they use z-index 1-10). */
+  z-index: auto;
   padding-top: var(--mn-section-padding-top, 0px);
   padding-bottom: var(--mn-section-padding-bottom, 0px);
 }
@@ -246,13 +272,13 @@
    COLUMN STYLES
    ============================================================ */
 .mega-navigation-section .mega-nav-column__heading {
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: var(--mn-dropdown-heading-size, 13px);
+  font-weight: var(--mn-dropdown-heading-weight, 700);
+  text-transform: var(--mn-dropdown-heading-transform, uppercase);
+  letter-spacing: var(--mn-dropdown-heading-spacing, 0.5px);
   margin: 0 0 12px 0;
   padding-bottom: 8px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: none;
   color: var(--mn-dropdown-heading-color, #000000);
 }
 
@@ -551,6 +577,756 @@
 /* ============================================================
    RESPONSIVE
    ============================================================ */
+/* ============================================================
+   EMPTY DROPDOWN SAFETY
+   ============================================================ */
+.mega-navigation-section .mega-nav-dropdown:empty {
+  display: none;
+}
+
+/* ============================================================
+   OVERLAY
+   ============================================================ */
+.mega-navigation-section .mega-nav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--mn-overlay-color, #000);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 99;
+  pointer-events: none;
+}
+
+.mega-navigation-section .mega-nav-overlay.is-visible {
+  opacity: var(--mn-overlay-opacity, 0.3);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* ============================================================
+   DROPDOWN WIDTH VARIANTS
+   "Contained" uses Shopify's --page-width variable so the dropdown automatically
+   matches the rest of the page layout width. "Boxed" uses a custom
+   --mn-dropdown-boxed-max-width setting, allowing the merchant to specify an
+   arbitrary max-width independent of the global page width.
+   ============================================================ */
+.mega-navigation-section[data-mn-dropdown-width="contained"] .mega-nav-dropdown {
+  max-width: var(--page-width, 120rem);
+  width: auto;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  transform: none;
+}
+
+.mega-navigation-section[data-mn-dropdown-width="contained"] .mega-nav-item.is-active .mega-nav-dropdown {
+  transform: none;
+}
+
+.mega-navigation-section[data-mn-dropdown-width="boxed"] .mega-nav-dropdown {
+  max-width: var(--mn-dropdown-boxed-max-width, 1000px);
+  width: auto;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  transform: none;
+}
+
+.mega-navigation-section[data-mn-dropdown-width="boxed"] .mega-nav-item.is-active .mega-nav-dropdown {
+  transform: none;
+}
+
+.mega-navigation-section[data-mn-dropdown-width="auto"] .mega-nav-dropdown {
+  width: auto;
+  left: 0;
+  margin-left: 0;
+}
+
+.mega-navigation-section[data-mn-dropdown-width="auto"] .mega-nav-item.is-active .mega-nav-dropdown {
+  transform: none;
+}
+
+/* ============================================================
+   DROPDOWN STYLING
+   ============================================================ */
+.mega-navigation-section .mega-nav-dropdown {
+  border-radius: var(--mn-dropdown-border-radius, 0px);
+  border: var(--mn-dropdown-border-width, 0px) solid var(--mn-dropdown-border-color, #E5E5E5);
+  padding: var(--mn-dropdown-padding-v, 30px) var(--mn-dropdown-padding-h, 40px);
+}
+
+/* Shadow variants */
+.mega-navigation-section[data-mn-dropdown-width] .mega-nav-dropdown {
+  box-shadow: none;
+}
+
+.mega-navigation-section .mega-nav-dropdown[class] {
+  box-shadow: none;
+}
+
+.mega-navigation-section .mega-nav-dropdown.has-shadow {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================
+   DROPDOWN SHADOW STYLES
+   ============================================================ */
+.mega-navigation-section[data-mn-shadow-style="subtle"] .mega-nav-dropdown {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.mega-navigation-section[data-mn-shadow-style="medium"] .mega-nav-dropdown {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.mega-navigation-section[data-mn-shadow-style="strong"] .mega-nav-dropdown {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+/* ============================================================
+   DROPDOWN GRADIENT BACKGROUND
+   ============================================================ */
+.mega-navigation-section[data-mn-bg-type="gradient"] .mega-nav-dropdown {
+  background: linear-gradient(to bottom, var(--mn-dropdown-gradient-start, #FFFFFF), var(--mn-dropdown-gradient-end, #F5F5F5));
+}
+
+.mega-navigation-section[data-mn-bg-type="gradient"][data-mn-gradient-dir="left-right"] .mega-nav-dropdown {
+  background: linear-gradient(to right, var(--mn-dropdown-gradient-start, #FFFFFF), var(--mn-dropdown-gradient-end, #F5F5F5));
+}
+
+.mega-navigation-section[data-mn-bg-type="gradient"][data-mn-gradient-dir="diagonal"] .mega-nav-dropdown {
+  background: linear-gradient(135deg, var(--mn-dropdown-gradient-start, #FFFFFF), var(--mn-dropdown-gradient-end, #F5F5F5));
+}
+
+/* ============================================================
+   COLUMN SEPARATORS
+   ============================================================ */
+.mega-navigation-section[data-mn-col-separators="true"] .mega-nav-column {
+  border-right: 1px var(--mn-col-separator-style, solid) var(--mn-col-separator-color, #E5E5E5);
+  padding-right: 24px;
+}
+
+.mega-navigation-section[data-mn-col-separators="true"] .mega-nav-column:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+
+/* ============================================================
+   COLUMN HEADING UNDERLINE
+   ============================================================ */
+.mega-navigation-section[data-mn-col-heading-underline="true"] .mega-nav-column__heading {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: var(--mn-col-heading-underline-color, #000000);
+}
+
+/* ============================================================
+   DROPDOWN ALIGNMENT
+   ============================================================ */
+.mega-navigation-section[data-mn-dropdown-alignment="left"] .mega-nav-dropdown {
+  margin-left: 0;
+  left: 0;
+}
+
+.mega-navigation-section[data-mn-dropdown-alignment="right"] .mega-nav-dropdown {
+  margin-left: auto;
+  margin-right: 0;
+  left: auto;
+  right: 0;
+}
+
+/* ============================================================
+   TRANSFORM ORIGIN
+   ============================================================ */
+.mega-navigation-section[data-mn-reveal-origin="top-left"] .mega-nav-dropdown {
+  transform-origin: top left;
+}
+
+.mega-navigation-section[data-mn-reveal-origin="top-center"] .mega-nav-dropdown {
+  transform-origin: top center;
+}
+
+.mega-navigation-section[data-mn-reveal-origin="top-full"] .mega-nav-dropdown {
+  transform-origin: top center;
+}
+
+/* ============================================================
+   CONTAINER ANIMATIONS
+   ============================================================ */
+/* Instant */
+.mega-navigation-section[data-mn-container-animation="instant"] .mega-nav-dropdown {
+  transition: none;
+}
+
+.mega-navigation-section[data-mn-container-animation="instant"] .mega-nav-item.is-active .mega-nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Slide-down-smooth */
+.mega-navigation-section[data-mn-container-animation="slide-down-smooth"] .mega-nav-dropdown {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease),
+              transform var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease),
+              visibility var(--mn-dropdown-duration, 250ms);
+}
+
+.mega-navigation-section[data-mn-container-animation="slide-down-smooth"] .mega-nav-item.is-active .mega-nav-dropdown {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Height-grow */
+.mega-navigation-section[data-mn-container-animation="height-grow"] .mega-nav-dropdown {
+  opacity: 1;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease),
+              visibility var(--mn-dropdown-duration, 250ms);
+}
+
+.mega-navigation-section[data-mn-container-animation="height-grow"] .mega-nav-item.is-active .mega-nav-dropdown {
+  clip-path: inset(0 0 0 0);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Fade-slide */
+.mega-navigation-section[data-mn-container-animation="fade-slide"] .mega-nav-dropdown {
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: opacity var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease),
+              transform var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease),
+              visibility var(--mn-dropdown-duration, 250ms);
+}
+
+.mega-navigation-section[data-mn-container-animation="fade-slide"] .mega-nav-item.is-active .mega-nav-dropdown {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Curtain-reveal */
+.mega-navigation-section[data-mn-container-animation="curtain-reveal"] .mega-nav-dropdown {
+  opacity: 1;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease),
+              visibility var(--mn-dropdown-duration, 250ms);
+}
+
+.mega-navigation-section[data-mn-container-animation="curtain-reveal"] .mega-nav-item.is-active .mega-nav-dropdown {
+  clip-path: inset(0 0 0 0);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* ============================================================
+   CLOSE ANIMATIONS
+   ============================================================ */
+/* Fade-out close */
+.mega-navigation-section[data-mn-close-animation="fade-out"] .mega-nav-item.is-closing .mega-nav-dropdown {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--mn-dropdown-duration, 250ms) ease, visibility var(--mn-dropdown-duration, 250ms);
+}
+
+/* Slide-up close */
+.mega-navigation-section[data-mn-close-animation="slide-up"] .mega-nav-item.is-closing .mega-nav-dropdown {
+  opacity: 0;
+  transform: translateY(-10px);
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--mn-dropdown-duration, 250ms) ease,
+              transform var(--mn-dropdown-duration, 250ms) ease,
+              visibility var(--mn-dropdown-duration, 250ms);
+}
+
+/* Instant close */
+.mega-navigation-section[data-mn-close-animation="instant"] .mega-nav-item.is-closing .mega-nav-dropdown {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: none;
+}
+
+/* ============================================================
+   CONTENT ANIMATIONS
+   ============================================================ */
+/* Fade-in */
+.mega-navigation-section[data-mn-content-animation="fade-in"] .mega-nav-dropdown__inner > *,
+.mega-navigation-section[data-mn-content-animation="fade-in"] .mega-nav-dropdown__columns > * {
+  opacity: 0;
+  transition: opacity var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease);
+  transition-delay: calc(var(--mn-stagger-index, 0) * var(--mn-content-stagger-delay, 50ms));
+}
+
+.mega-navigation-section[data-mn-content-animation="fade-in"] .mega-nav-item.is-active .mega-nav-dropdown__inner > *,
+.mega-navigation-section[data-mn-content-animation="fade-in"] .mega-nav-item.is-active .mega-nav-dropdown__columns > * {
+  opacity: 1;
+}
+
+/* Fade-up */
+.mega-navigation-section[data-mn-content-animation="fade-up"] .mega-nav-dropdown__inner > *,
+.mega-navigation-section[data-mn-content-animation="fade-up"] .mega-nav-dropdown__columns > * {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease),
+              transform var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease);
+  transition-delay: calc(var(--mn-stagger-index, 0) * var(--mn-content-stagger-delay, 50ms));
+}
+
+.mega-navigation-section[data-mn-content-animation="fade-up"] .mega-nav-item.is-active .mega-nav-dropdown__inner > *,
+.mega-navigation-section[data-mn-content-animation="fade-up"] .mega-nav-item.is-active .mega-nav-dropdown__columns > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger-left */
+.mega-navigation-section[data-mn-content-animation="stagger-left"] .mega-nav-dropdown__inner > *,
+.mega-navigation-section[data-mn-content-animation="stagger-left"] .mega-nav-dropdown__columns > * {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease),
+              transform var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease);
+  transition-delay: calc(var(--mn-stagger-index, 0) * var(--mn-content-stagger-delay, 50ms));
+}
+
+.mega-navigation-section[data-mn-content-animation="stagger-left"] .mega-nav-item.is-active .mega-nav-dropdown__inner > *,
+.mega-navigation-section[data-mn-content-animation="stagger-left"] .mega-nav-item.is-active .mega-nav-dropdown__columns > * {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Stagger-fade */
+.mega-navigation-section[data-mn-content-animation="stagger-fade"] .mega-nav-dropdown__inner > *,
+.mega-navigation-section[data-mn-content-animation="stagger-fade"] .mega-nav-dropdown__columns > * {
+  opacity: 0;
+  transition: opacity var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease);
+  transition-delay: calc(var(--mn-stagger-index, 0) * var(--mn-content-stagger-delay, 50ms));
+}
+
+.mega-navigation-section[data-mn-content-animation="stagger-fade"] .mega-nav-item.is-active .mega-nav-dropdown__inner > *,
+.mega-navigation-section[data-mn-content-animation="stagger-fade"] .mega-nav-item.is-active .mega-nav-dropdown__columns > * {
+  opacity: 1;
+}
+
+/* Blur-in */
+.mega-navigation-section[data-mn-content-animation="blur-in"] .mega-nav-dropdown__inner > *,
+.mega-navigation-section[data-mn-content-animation="blur-in"] .mega-nav-dropdown__columns > * {
+  opacity: 0;
+  filter: blur(4px);
+  transition: opacity var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease),
+              filter var(--mn-dropdown-duration, 250ms) var(--mn-resolved-easing, ease);
+  transition-delay: calc(var(--mn-stagger-index, 0) * var(--mn-content-stagger-delay, 50ms));
+}
+
+.mega-navigation-section[data-mn-content-animation="blur-in"] .mega-nav-item.is-active .mega-nav-dropdown__inner > *,
+.mega-navigation-section[data-mn-content-animation="blur-in"] .mega-nav-item.is-active .mega-nav-dropdown__columns > * {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* ============================================================
+   ANIMATION EASING VALUES
+   ============================================================ */
+.mega-navigation-section[data-mn-animation-easing="ease"] {
+  --mn-resolved-easing: ease;
+}
+
+.mega-navigation-section[data-mn-animation-easing="ease-in-out"] {
+  --mn-resolved-easing: ease-in-out;
+}
+
+.mega-navigation-section[data-mn-animation-easing="smooth-cubic"] {
+  --mn-resolved-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mega-navigation-section[data-mn-animation-easing="bounce-subtle"] {
+  --mn-resolved-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mega-navigation-section[data-mn-animation-easing="spring"] {
+  --mn-resolved-easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ============================================================
+   CONTENT ANIMATING CLASS
+   ============================================================ */
+.mega-navigation-section .mega-nav-dropdown__inner.mn-content-animating > * {
+  will-change: opacity, transform, filter;
+}
+
+/* ============================================================
+   ADVANCED HOVER EFFECTS
+   ============================================================ */
+
+/* Hover text color */
+.mega-navigation-section .mega-nav-link:hover {
+  color: var(--mn-hover-text-color, var(--mn-hover-color, #000000));
+}
+
+/* Hover easing - mapped to cubic-bezier values */
+.mega-navigation-section[data-mn-hover-easing="ease"] {
+  --mn-hover-resolved-easing: ease;
+}
+
+.mega-navigation-section[data-mn-hover-easing="ease-in-out"] {
+  --mn-hover-resolved-easing: ease-in-out;
+}
+
+.mega-navigation-section[data-mn-hover-easing="cubic-bezier-smooth"] {
+  --mn-hover-resolved-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mega-navigation-section[data-mn-hover-easing="bounce"] {
+  --mn-hover-resolved-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mega-navigation-section[data-mn-hover-easing="elastic"] {
+  --mn-hover-resolved-easing: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Apply easing to underline transition */
+.mega-navigation-section .mega-nav-link::after {
+  transition-timing-function: var(--mn-hover-resolved-easing, ease);
+}
+
+/* ============================================================
+   HOVER UNDERLINE STYLES (dashed/dotted/double)
+   ============================================================ */
+.mega-navigation-section[data-mn-hover-underline-style="dashed"] .mega-nav-link::after {
+  background: none;
+  border-bottom-style: dashed;
+  border-bottom-width: var(--mn-hover-underline-thickness, 2px);
+  border-bottom-color: var(--mn-hover-color, #000000);
+  height: 0;
+}
+
+.mega-navigation-section[data-mn-hover-underline-style="dotted"] .mega-nav-link::after {
+  background: none;
+  border-bottom-style: dotted;
+  border-bottom-width: var(--mn-hover-underline-thickness, 2px);
+  border-bottom-color: var(--mn-hover-color, #000000);
+  height: 0;
+}
+
+.mega-navigation-section[data-mn-hover-underline-style="double"] .mega-nav-link::after {
+  background: none;
+  border-bottom-style: double;
+  border-bottom-width: var(--mn-hover-underline-thickness, 2px);
+  border-bottom-color: var(--mn-hover-color, #000000);
+  height: 0;
+}
+
+/* ============================================================
+   HOVER UNDERLINE POSITION
+   ============================================================ */
+.mega-navigation-section[data-mn-hover-underline-position="bottom"] .mega-nav-link::after {
+  bottom: calc(10px + var(--mn-hover-underline-offset, 0px));
+  top: auto;
+}
+
+.mega-navigation-section[data-mn-hover-underline-position="middle"] .mega-nav-link::after {
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%);
+}
+
+.mega-navigation-section[data-mn-hover-underline-position="top"] .mega-nav-link::after {
+  top: 10px;
+  bottom: auto;
+}
+
+/* ============================================================
+   HOVER UNDERLINE WIDTH MODES
+   ============================================================ */
+.mega-navigation-section[data-mn-hover-underline-width="full-width"] .mega-nav-link::after {
+  left: 0;
+  right: 0;
+}
+
+.mega-navigation-section[data-mn-hover-underline-width="full-width"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-underline-width="full-width"] .mega-nav-item.is-active .mega-nav-link::after {
+  left: 0;
+  right: 0;
+  opacity: 1;
+}
+
+.mega-navigation-section[data-mn-hover-underline-width="custom-px"] .mega-nav-link::after {
+  width: 0;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  transition: width 0.3s var(--mn-hover-resolved-easing, ease), opacity 0.3s var(--mn-hover-resolved-easing, ease);
+}
+
+.mega-navigation-section[data-mn-hover-underline-width="custom-px"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-underline-width="custom-px"] .mega-nav-item.is-active .mega-nav-link::after {
+  width: var(--mn-hover-custom-width, 50px);
+  opacity: 1;
+}
+
+/* ============================================================
+   ADVANCED HOVER ANIMATION STYLES (data-mn-hover-anim-style)
+   ============================================================ */
+
+/* Center-expand */
+.mega-navigation-section[data-mn-hover-anim-style="center-expand"] .mega-nav-link::after {
+  left: 50%;
+  right: 50%;
+}
+
+.mega-navigation-section[data-mn-hover-anim-style="center-expand"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-anim-style="center-expand"] .mega-nav-item.is-active .mega-nav-link::after {
+  left: 20px;
+  right: 20px;
+  opacity: 1;
+}
+
+/* Left-to-right */
+.mega-navigation-section[data-mn-hover-anim-style="left-to-right"] .mega-nav-link::after {
+  left: 20px;
+  right: 100%;
+}
+
+.mega-navigation-section[data-mn-hover-anim-style="left-to-right"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-anim-style="left-to-right"] .mega-nav-item.is-active .mega-nav-link::after {
+  right: 20px;
+  opacity: 1;
+}
+
+/* Right-to-left */
+.mega-navigation-section[data-mn-hover-anim-style="right-to-left"] .mega-nav-link::after {
+  left: 100%;
+  right: 20px;
+}
+
+.mega-navigation-section[data-mn-hover-anim-style="right-to-left"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-anim-style="right-to-left"] .mega-nav-item.is-active .mega-nav-link::after {
+  left: 20px;
+  opacity: 1;
+}
+
+/* Fade-in */
+.mega-navigation-section[data-mn-hover-anim-style="fade-in"] .mega-nav-link::after {
+  left: 20px;
+  right: 20px;
+  opacity: 0;
+}
+
+.mega-navigation-section[data-mn-hover-anim-style="fade-in"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-anim-style="fade-in"] .mega-nav-item.is-active .mega-nav-link::after {
+  opacity: 1;
+}
+
+/* Grow-from-dot */
+.mega-navigation-section[data-mn-hover-anim-style="grow-from-dot"] .mega-nav-link::after {
+  width: 0;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  transition: width 0.3s var(--mn-hover-resolved-easing, ease), opacity 0.3s var(--mn-hover-resolved-easing, ease);
+}
+
+.mega-navigation-section[data-mn-hover-anim-style="grow-from-dot"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-anim-style="grow-from-dot"] .mega-nav-item.is-active .mega-nav-link::after {
+  width: calc(100% - 40px);
+  opacity: 1;
+}
+
+/* Slide-bounce */
+.mega-navigation-section[data-mn-hover-anim-style="slide-bounce"] .mega-nav-link::after {
+  left: 20px;
+  right: 100%;
+  transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+
+.mega-navigation-section[data-mn-hover-anim-style="slide-bounce"] .mega-nav-link:hover::after,
+.mega-navigation-section[data-mn-hover-anim-style="slide-bounce"] .mega-nav-item.is-active .mega-nav-link::after {
+  right: 20px;
+  opacity: 1;
+}
+
+/* ============================================================
+   SCALE EFFECT ON HOVER
+   ============================================================ */
+.mega-navigation-section[data-mn-hover-scale="true"] .mega-nav-link {
+  transition: color 0.2s ease, transform 0.2s var(--mn-hover-resolved-easing, ease);
+}
+
+.mega-navigation-section[data-mn-hover-scale="true"] .mega-nav-link:hover {
+  transform: scale(calc(var(--mn-hover-scale-amount, 105) / 100));
+}
+
+/* ============================================================
+   BACKGROUND HIGHLIGHT ON HOVER
+   ============================================================ */
+.mega-navigation-section[data-mn-hover-bg="true"] .mega-nav-link {
+  transition: color 0.2s ease, background-color 0.2s var(--mn-hover-resolved-easing, ease);
+}
+
+.mega-navigation-section[data-mn-hover-bg="true"] .mega-nav-link:hover {
+  background-color: var(--mn-hover-bg-color, #F5F5F5);
+  border-radius: var(--mn-hover-bg-radius, 4px);
+}
+
+/* ============================================================
+   ACTIVE ITEM INDICATORS
+   ============================================================ */
+/* Underline (default - uses existing ::after) */
+[data-mn-active-indicator="underline"] .mega-nav-item.is-active .mega-nav-link::after {
+  opacity: 1;
+}
+
+/* Background */
+[data-mn-active-indicator="background"] .mega-nav-item.is-active .mega-nav-link {
+  background-color: var(--mn-active-color, #000000);
+  color: #fff;
+  border-radius: 4px;
+}
+
+/* Bold */
+[data-mn-active-indicator="bold"] .mega-nav-item.is-active .mega-nav-link {
+  font-weight: 800;
+}
+
+/* Border-left */
+[data-mn-active-indicator="border-left"] .mega-nav-item.is-active .mega-nav-link {
+  border-left: 3px solid var(--mn-active-color, #000000);
+}
+
+/* Dot */
+[data-mn-active-indicator="dot"] .mega-nav-item.is-active .mega-nav-link::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mn-active-color, #000000);
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ============================================================
+   NAVIGATION & TYPOGRAPHY
+   ============================================================ */
+
+/* Menu item spacing (gap) */
+.mega-navigation-section .mega-nav-menu {
+  gap: var(--mn-item-spacing, 0px);
+}
+
+/* Item padding from variables */
+.mega-navigation-section .mega-nav-link {
+  padding: var(--mn-item-padding-v, 16px) var(--mn-item-padding-h, 20px);
+}
+
+/* Line height */
+.mega-navigation-section .mega-nav-link {
+  line-height: calc(var(--mn-line-height, 14) / 10);
+}
+
+/* Word spacing */
+.mega-navigation-section .mega-nav-link {
+  word-spacing: var(--mn-word-spacing, 0px);
+}
+
+/* Font family */
+[data-mn-font-family="body"] .mega-nav-link {
+  font-family: var(--font-body-family, sans-serif);
+}
+
+[data-mn-font-family="heading"] .mega-nav-link {
+  font-family: var(--font-heading-family, sans-serif);
+}
+
+[data-mn-font-family="monospace"] .mega-nav-link {
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+}
+
+/* ============================================================
+   DROPDOWN HEADING TYPOGRAPHY
+   (Variable-driven overrides consolidated into COLUMN STYLES block above)
+   ============================================================ */
+
+/* ============================================================
+   DROPDOWN LINK TYPOGRAPHY
+   ============================================================ */
+.mega-navigation-section .mega-nav-column__link {
+  font-size: var(--mn-dropdown-link-size, 14px);
+  font-weight: var(--mn-dropdown-link-weight, 400);
+  line-height: calc(var(--mn-dropdown-link-line-height, 16) / 10);
+  transition: padding-left 0.2s ease, color 0.2s ease;
+}
+
+.mega-navigation-section .mega-nav-column__link:hover {
+  padding-left: var(--mn-dropdown-link-hover-indent, 0px);
+}
+
+/* ============================================================
+   SEPARATORS BETWEEN NAV ITEMS
+   ============================================================ */
+[data-mn-separator="dot"] .mega-nav-item + .mega-nav-item::before {
+  content: '\00B7';
+  color: var(--mn-separator-color, #CCCCCC);
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  line-height: 1;
+}
+
+[data-mn-separator="pipe"] .mega-nav-item + .mega-nav-item::before {
+  content: '|';
+  color: var(--mn-separator-color, #CCCCCC);
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1;
+}
+
+[data-mn-separator="slash"] .mega-nav-item + .mega-nav-item::before {
+  content: '/';
+  color: var(--mn-separator-color, #CCCCCC);
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1;
+}
+
+[data-mn-separator="dash"] .mega-nav-item + .mega-nav-item::before {
+  content: '\2013';
+  color: var(--mn-separator-color, #CCCCCC);
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* ============================================================
+   STICKY STATE - Stable underline positioning
+   ============================================================ */
+.mega-navigation-section.is-sticky .mega-nav-link {
+  position: relative;
+  will-change: transform;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media screen and (max-width: 989px) {
   .mega-navigation-section .mega-nav-menu {
     display: none;
@@ -570,5 +1346,92 @@
   .mega-navigation-section .mega-nav-drawer-overlay,
   .mega-navigation-section .mega-nav-hamburger {
     display: none !important;
+  }
+}
+
+/* ============================================================
+   BADGE ENHANCEMENTS
+   ============================================================ */
+
+/* Badge base - use vars */
+.mega-navigation-section .mega-nav-badge,
+.mega-navigation-section .mega-nav-item-badge {
+  color: var(--mn-badge-text-color, #fff);
+  font-size: var(--mn-badge-font-size, 9px);
+  font-weight: var(--mn-badge-font-weight, 700);
+  border-radius: var(--mn-badge-border-radius, 3px);
+  padding: var(--mn-badge-padding-v, 2px) var(--mn-badge-padding-h, 5px);
+}
+
+/* Badge outline style */
+[data-mn-badge-style="outline"] .mega-nav-badge,
+[data-mn-badge-style="outline"] .mega-nav-item-badge {
+  background: transparent !important;
+  border: 1.5px solid currentColor;
+}
+[data-mn-badge-style="outline"] .mega-nav-badge--new,
+[data-mn-badge-style="outline"] .mega-nav-item-badge--new { color: var(--mn-badge-new-color); border-color: var(--mn-badge-new-color); }
+[data-mn-badge-style="outline"] .mega-nav-badge--sale,
+[data-mn-badge-style="outline"] .mega-nav-item-badge--sale { color: var(--mn-badge-sale-color); border-color: var(--mn-badge-sale-color); }
+[data-mn-badge-style="outline"] .mega-nav-badge--hot,
+[data-mn-badge-style="outline"] .mega-nav-item-badge--hot { color: var(--mn-badge-hot-color); border-color: var(--mn-badge-hot-color); }
+
+/* Badge gradient style */
+[data-mn-badge-style="gradient"] .mega-nav-badge--new,
+[data-mn-badge-style="gradient"] .mega-nav-item-badge--new {
+  background: linear-gradient(135deg, var(--mn-badge-new-color), color-mix(in srgb, var(--mn-badge-new-color) 60%, #fff));
+}
+[data-mn-badge-style="gradient"] .mega-nav-badge--sale,
+[data-mn-badge-style="gradient"] .mega-nav-item-badge--sale {
+  background: linear-gradient(135deg, var(--mn-badge-sale-color), color-mix(in srgb, var(--mn-badge-sale-color) 60%, #fff));
+}
+[data-mn-badge-style="gradient"] .mega-nav-badge--hot,
+[data-mn-badge-style="gradient"] .mega-nav-item-badge--hot {
+  background: linear-gradient(135deg, var(--mn-badge-hot-color), color-mix(in srgb, var(--mn-badge-hot-color) 60%, #fff));
+}
+
+/* Badge animations */
+@keyframes mn-badge-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+@keyframes mn-badge-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes mn-badge-shine { 0% { background-position: -100% 0; } 100% { background-position: 200% 0; } }
+
+[data-mn-badge-anim="pulse"] .mega-nav-badge,
+[data-mn-badge-anim="pulse"] .mega-nav-item-badge { animation: mn-badge-pulse 2s ease-in-out infinite; }
+[data-mn-badge-anim="bounce"] .mega-nav-badge,
+[data-mn-badge-anim="bounce"] .mega-nav-item-badge { animation: mn-badge-bounce 1.5s ease-in-out infinite; }
+[data-mn-badge-anim="shine"] .mega-nav-badge,
+[data-mn-badge-anim="shine"] .mega-nav-item-badge { background-size: 200% 100%; animation: mn-badge-shine 3s linear infinite; }
+
+/* ============================================================
+   SPACING ENHANCEMENTS
+   ============================================================ */
+.mega-navigation-section .mega-nav-bar { min-height: var(--mn-nav-bar-height, 50px); padding: 0 var(--mn-nav-bar-padding-h, 0px); }
+.mega-navigation-section .mega-nav-dropdown { margin-top: var(--mn-dropdown-gap, 0px); }
+.mega-navigation-section .mega-nav-promo { max-width: var(--mn-promo-card-width, 280px); }
+.mega-navigation-section .mega-nav-dropdown__inner { gap: var(--mn-promo-card-gap, 32px); }
+.mega-navigation-section .mega-nav-dropdown__columns { gap: var(--mn-col-gap-h, 24px); }
+.mega-navigation-section .mega-nav-column__item { margin-bottom: var(--mn-col-link-gap-v, 4px); }
+
+/* ============================================================
+   MOBILE ENHANCEMENTS
+   ============================================================ */
+@media screen and (max-width: 989px) {
+  .mega-navigation-section .mega-nav-drawer[data-position="left"],
+  .mega-navigation-section .mega-nav-drawer[data-position="right"] {
+    width: var(--mn-mobile-drawer-width, 85%);
+    max-width: none;
+  }
+  .mega-navigation-section .mega-nav-drawer {
+    background: var(--mn-mobile-drawer-bg, #fff);
+  }
+  .mega-navigation-section .mega-nav-drawer-overlay {
+    background: var(--mn-mobile-overlay-color, rgba(0,0,0,0.5));
+    opacity: var(--mn-mobile-overlay-opacity, 0.5);
+  }
+  .mega-navigation-section .mega-nav-drawer-overlay.is-visible {
+    opacity: var(--mn-mobile-overlay-opacity, 0.5);
+  }
+  .mega-navigation-section .mega-nav-mobile-submenu {
+    transition: max-height var(--mn-mobile-accordion-speed, 300ms) ease;
   }
 }

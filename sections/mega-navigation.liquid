@@ -34,6 +34,79 @@
       --mn-section-padding-top: {{ section.settings.mn_section_padding_top }}px;
       --mn-section-padding-bottom: {{ section.settings.mn_section_padding_bottom }}px;
       --mn-border-bottom-width: {{ mn_border_width }};
+      --mn-dropdown-width: {{ section.settings.mn_dropdown_width }};
+      --mn-dropdown-boxed-max-width: {{ section.settings.mn_dropdown_boxed_max_width }}px;
+      --mn-dropdown-layout: {{ section.settings.mn_dropdown_layout }};
+      --mn-dropdown-alignment: {{ section.settings.mn_dropdown_alignment }};
+      --mn-dropdown-padding-h: {{ section.settings.mn_dropdown_padding_h }}px;
+      --mn-dropdown-padding-v: {{ section.settings.mn_dropdown_padding_v }}px;
+      --mn-dropdown-border-radius: {{ section.settings.mn_dropdown_border_radius }}px;
+      --mn-dropdown-border-width: {{ section.settings.mn_dropdown_border_width }}px;
+      --mn-dropdown-border-color: {{ section.settings.mn_dropdown_border_color }};
+      --mn-dropdown-shadow-style: {{ section.settings.mn_dropdown_shadow_style }};
+      --mn-dropdown-bg-type: {{ section.settings.mn_dropdown_bg_type }};
+      --mn-dropdown-gradient-start: {{ section.settings.mn_dropdown_gradient_start }};
+      --mn-dropdown-gradient-end: {{ section.settings.mn_dropdown_gradient_end }};
+      --mn-dropdown-gradient-direction: {{ section.settings.mn_dropdown_gradient_direction }};
+      --mn-col-separator-color: {{ section.settings.mn_col_separator_color }};
+      --mn-col-separator-style: {{ section.settings.mn_col_separator_style }};
+      --mn-col-heading-underline-color: {{ section.settings.mn_col_heading_underline_color }};
+      --mn-view-all-color: {{ section.settings.mn_view_all_color }};
+      --mn-open-delay: {{ section.settings.mn_open_delay }}ms;
+      --mn-close-delay: {{ section.settings.mn_close_delay }}ms;
+      --mn-content-stagger-delay: {{ section.settings.mn_content_stagger_delay }}ms;
+      --mn-animation-easing: {{ section.settings.mn_animation_easing }};
+      --mn-overlay-color: {{ section.settings.mn_overlay_color }};
+      --mn-overlay-opacity: {{ section.settings.mn_overlay_opacity | divided_by: 100.0 }};
+      --mn-dropdown-reveal-origin: {{ section.settings.mn_dropdown_reveal_origin }};
+      --mn-hover-underline-offset: {{ section.settings.mn_hover_underline_offset }}px;
+      --mn-hover-custom-width: {{ section.settings.mn_hover_underline_custom_width }}px;
+      --mn-hover-text-color: {{ section.settings.mn_hover_text_color }};
+      --mn-hover-scale-amount: {{ section.settings.mn_hover_scale_amount }};
+      --mn-hover-bg-color: {{ section.settings.mn_hover_bg_color }};
+      --mn-hover-bg-radius: {{ section.settings.mn_hover_bg_radius }}px;
+      --mn-active-color: {{ section.settings.mn_active_color }};
+      --mn-item-spacing: {{ section.settings.mn_item_spacing }}px;
+      --mn-item-padding-h: {{ section.settings.mn_item_padding_h }}px;
+      --mn-item-padding-v: {{ section.settings.mn_item_padding_v }}px;
+      --mn-line-height: {{ section.settings.mn_line_height }};
+      --mn-word-spacing: {{ section.settings.mn_word_spacing }}px;
+      --mn-dropdown-heading-size: {{ section.settings.mn_dropdown_heading_size }}px;
+      --mn-dropdown-heading-weight: {{ section.settings.mn_dropdown_heading_weight }};
+      --mn-dropdown-heading-transform: {{ section.settings.mn_dropdown_heading_transform }};
+      --mn-dropdown-heading-spacing: {{ section.settings.mn_dropdown_heading_spacing }}px;
+      --mn-dropdown-link-size: {{ section.settings.mn_dropdown_link_size }}px;
+      --mn-dropdown-link-weight: {{ section.settings.mn_dropdown_link_weight }};
+      --mn-dropdown-link-line-height: {{ section.settings.mn_dropdown_link_line_height }};
+      --mn-dropdown-link-hover-indent: {{ section.settings.mn_dropdown_link_hover_indent }}px;
+      --mn-separator-color: {{ section.settings.mn_separator_color }};
+      --mn-hover-easing: {{ section.settings.mn_hover_easing }};
+
+      /* Badge Enhancements */
+      --mn-badge-text-color: {{ section.settings.mn_badge_text_color }};
+      --mn-badge-font-size: {{ section.settings.mn_badge_font_size }}px;
+      --mn-badge-font-weight: {{ section.settings.mn_badge_font_weight }};
+      --mn-badge-border-radius: {{ section.settings.mn_badge_border_radius }}px;
+      --mn-badge-padding-h: {{ section.settings.mn_badge_padding_h }}px;
+      --mn-badge-padding-v: {{ section.settings.mn_badge_padding_v }}px;
+      --mn-custom-badge-1-color: {{ section.settings.mn_custom_badge_1_color }};
+      --mn-custom-badge-2-color: {{ section.settings.mn_custom_badge_2_color }};
+
+      /* Spacing */
+      --mn-nav-bar-height: {{ section.settings.mn_nav_bar_height }}px;
+      --mn-nav-bar-padding-h: {{ section.settings.mn_nav_bar_padding_h }}px;
+      --mn-dropdown-gap: {{ section.settings.mn_dropdown_gap }}px;
+      --mn-promo-card-width: {{ section.settings.mn_promo_card_width }}px;
+      --mn-promo-card-gap: {{ section.settings.mn_promo_card_gap }}px;
+      --mn-col-gap-h: {{ section.settings.mn_col_gap_h }}px;
+      --mn-col-link-gap-v: {{ section.settings.mn_col_link_gap_v }}px;
+
+      /* Mobile & Polish */
+      --mn-mobile-drawer-width: {{ section.settings.mn_mobile_drawer_width }}%;
+      --mn-mobile-drawer-bg: {{ section.settings.mn_mobile_drawer_bg }};
+      --mn-mobile-overlay-color: {{ section.settings.mn_mobile_overlay_color }};
+      --mn-mobile-overlay-opacity: {{ section.settings.mn_mobile_overlay_opacity | divided_by: 100.0 }};
+      --mn-mobile-accordion-speed: {{ section.settings.mn_mobile_accordion_speed }}ms;
     }
   {%- endstyle -%}
 
@@ -46,11 +119,40 @@
   <div
     class="mega-navigation-section"
     data-mn-hover-animation="{{ section.settings.mn_hover_animation }}"
+    data-mn-hover-anim-style="{{ section.settings.mn_hover_anim_style }}"
+    data-mn-hover-underline-style="{{ section.settings.mn_hover_underline_style }}"
+    data-mn-hover-underline-position="{{ section.settings.mn_hover_underline_position }}"
+    data-mn-hover-underline-width="{{ section.settings.mn_hover_underline_width_mode }}"
+    data-mn-hover-scale="{{ section.settings.mn_hover_scale }}"
+    data-mn-hover-bg="{{ section.settings.mn_hover_bg_highlight }}"
+    data-mn-hover-easing="{{ section.settings.mn_hover_easing }}"
+    data-mn-active-indicator="{{ section.settings.mn_active_indicator }}"
+    data-mn-separator="{{ section.settings.mn_separator_style }}"
+    data-mn-font-family="{{ section.settings.mn_font_family_style }}"
     data-mn-dropdown-animation="{{ section.settings.mn_dropdown_animation }}"
     data-mn-sticky="{{ section.settings.mn_sticky }}"
     data-mn-mobile-accordion-icon="{{ section.settings.mn_mobile_accordion_icon }}"
     data-mn-mobile-drawer-position="{{ section.settings.mn_mobile_drawer_position }}"
+    data-mn-open-trigger="{{ section.settings.mn_open_trigger }}"
+    data-mn-container-animation="{{ section.settings.mn_container_animation }}"
+    data-mn-content-animation="{{ section.settings.mn_content_animation }}"
+    data-mn-close-on-scroll="{{ section.settings.mn_close_on_scroll }}"
+    data-mn-close-animation="{{ section.settings.mn_close_animation }}"
+    data-mn-dropdown-width="{{ section.settings.mn_dropdown_width }}"
+    data-mn-show-overlay="{{ section.settings.mn_show_overlay }}"
+    data-mn-badge-style="{{ section.settings.mn_badge_style_type }}"
+    data-mn-badge-anim="{{ section.settings.mn_badge_animation }}"
+    data-mn-swipe-close="{{ section.settings.mn_mobile_swipe_close }}"
+    data-mn-shadow-style="{{ section.settings.mn_dropdown_shadow_style }}"
+    data-mn-bg-type="{{ section.settings.mn_dropdown_bg_type }}"
+    data-mn-gradient-dir="{{ section.settings.mn_dropdown_gradient_direction }}"
+    data-mn-dropdown-alignment="{{ section.settings.mn_dropdown_alignment }}"
+    data-mn-animation-easing="{{ section.settings.mn_animation_easing }}"
+    data-mn-reveal-origin="{{ section.settings.mn_dropdown_reveal_origin }}"
+    data-mn-col-separators="{{ section.settings.mn_col_separator_lines }}"
+    data-mn-col-heading-underline="{{ section.settings.mn_col_heading_underline }}"
   >
+    <div class="mega-nav-overlay" aria-hidden="true"></div>
     <nav class="mega-nav-bar" aria-label="Mega navigation">
       <button class="mega-nav-hamburger" aria-label="Open menu" aria-expanded="false">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
@@ -77,6 +179,25 @@
                 {% endif %}
               </a>
 
+              {%- liquid
+                assign has_dropdown_content = false
+                if block.settings.mn_col1_linklist != blank
+                  assign has_dropdown_content = true
+                elsif block.settings.mn_col2_linklist != blank
+                  assign has_dropdown_content = true
+                elsif block.settings.mn_col3_linklist != blank
+                  assign has_dropdown_content = true
+                elsif block.settings.mn_col4_linklist != blank
+                  assign has_dropdown_content = true
+                elsif block.settings.mn_col5_linklist != blank
+                  assign has_dropdown_content = true
+                elsif block.settings.mn_col6_linklist != blank
+                  assign has_dropdown_content = true
+                elsif block.settings.mn_show_promo and block.settings.mn_promo_image != blank
+                  assign has_dropdown_content = true
+                endif
+              -%}
+              {% if has_dropdown_content %}
               <div class="mega-nav-dropdown {% if section.settings.mn_dropdown_shadow %}has-shadow{% endif %} {% if section.settings.mn_dropdown_border %}has-border{% endif %}">
                 <div class="mega-nav-dropdown__inner">
                   <div class="mega-nav-dropdown__columns" data-columns="{{ block.settings.mn_columns }}">
@@ -124,6 +245,7 @@
                   {% endif %}
                 </div>
               </div>
+              {% endif %}
             </li>
           {% endif %}
         {% endfor %}
@@ -141,10 +263,22 @@
       <ul class="mega-nav-mobile-menu">
         {% for block in section.blocks %}
           {% if block.type == 'menu_item' %}
-            {% assign has_submenu = false %}
-            {% if block.settings.mn_col1_linklist != blank or block.settings.mn_col2_linklist != blank or block.settings.mn_col3_linklist != blank or block.settings.mn_col4_linklist != blank or block.settings.mn_col5_linklist != blank or block.settings.mn_col6_linklist != blank %}
-              {% assign has_submenu = true %}
-            {% endif %}
+            {%- liquid
+              assign has_submenu = false
+              if block.settings.mn_col1_linklist != blank
+                assign has_submenu = true
+              elsif block.settings.mn_col2_linklist != blank
+                assign has_submenu = true
+              elsif block.settings.mn_col3_linklist != blank
+                assign has_submenu = true
+              elsif block.settings.mn_col4_linklist != blank
+                assign has_submenu = true
+              elsif block.settings.mn_col5_linklist != blank
+                assign has_submenu = true
+              elsif block.settings.mn_col6_linklist != blank
+                assign has_submenu = true
+              endif
+            -%}
 
             <li class="mega-nav-mobile-item">
               {% if has_submenu %}
@@ -347,6 +481,328 @@
     },
     {
       "type": "header",
+      "content": "Advanced Hover Effects"
+    },
+    {
+      "type": "select",
+      "id": "mn_hover_underline_style",
+      "label": "Hover underline line style",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "dashed", "label": "Dashed" },
+        { "value": "dotted", "label": "Dotted" },
+        { "value": "double", "label": "Double" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "select",
+      "id": "mn_hover_underline_position",
+      "label": "Hover underline position",
+      "options": [
+        { "value": "bottom", "label": "Bottom" },
+        { "value": "middle", "label": "Middle" },
+        { "value": "top", "label": "Top" }
+      ],
+      "default": "bottom"
+    },
+    {
+      "type": "select",
+      "id": "mn_hover_underline_width_mode",
+      "label": "Hover underline width",
+      "options": [
+        { "value": "full-width", "label": "Full width" },
+        { "value": "text-width", "label": "Text width" },
+        { "value": "custom-px", "label": "Custom width" }
+      ],
+      "default": "text-width"
+    },
+    {
+      "type": "range",
+      "id": "mn_hover_underline_custom_width",
+      "label": "Custom underline width",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_hover_underline_offset",
+      "label": "Underline offset from bottom",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "mn_hover_anim_style",
+      "label": "Hover animation style",
+      "info": "Replaces the basic hover animation above with more options.",
+      "options": [
+        { "value": "center-expand", "label": "Center expand" },
+        { "value": "left-to-right", "label": "Left to right" },
+        { "value": "right-to-left", "label": "Right to left" },
+        { "value": "fade-in", "label": "Fade in" },
+        { "value": "grow-from-dot", "label": "Grow from dot" },
+        { "value": "slide-bounce", "label": "Slide bounce" }
+      ],
+      "default": "center-expand"
+    },
+    {
+      "type": "color",
+      "id": "mn_hover_text_color",
+      "label": "Hover text color",
+      "default": "#000000"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_hover_scale",
+      "label": "Scale effect on hover",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "mn_hover_scale_amount",
+      "label": "Scale amount (100 = no scale, 110 = 10% larger)",
+      "min": 100,
+      "max": 110,
+      "step": 1,
+      "default": 105
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_hover_bg_highlight",
+      "label": "Background highlight on hover",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "mn_hover_bg_color",
+      "label": "Hover background color",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "range",
+      "id": "mn_hover_bg_radius",
+      "label": "Hover background border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "default": 4,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "mn_hover_easing",
+      "label": "Hover transition easing",
+      "options": [
+        { "value": "ease", "label": "Ease" },
+        { "value": "ease-in-out", "label": "Ease in-out" },
+        { "value": "cubic-bezier-smooth", "label": "Cubic bezier smooth" },
+        { "value": "bounce", "label": "Bounce" },
+        { "value": "elastic", "label": "Elastic" }
+      ],
+      "default": "ease"
+    },
+    {
+      "type": "select",
+      "id": "mn_active_indicator",
+      "label": "Active item indicator",
+      "options": [
+        { "value": "underline", "label": "Underline" },
+        { "value": "background", "label": "Background" },
+        { "value": "bold", "label": "Bold" },
+        { "value": "border-left", "label": "Border left" },
+        { "value": "dot", "label": "Dot" }
+      ],
+      "default": "underline"
+    },
+    {
+      "type": "color",
+      "id": "mn_active_color",
+      "label": "Active item color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Navigation & Typography"
+    },
+    {
+      "type": "range",
+      "id": "mn_item_spacing",
+      "label": "Menu item spacing (gap)",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_item_padding_h",
+      "label": "Menu item padding horizontal",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_item_padding_v",
+      "label": "Menu item padding vertical",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_line_height",
+      "label": "Menu line height (x10)",
+      "info": "Value divided by 10. E.g., 14 = 1.4 line-height",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "mn_font_family_style",
+      "label": "Menu font family",
+      "options": [
+        { "value": "body", "label": "Body" },
+        { "value": "heading", "label": "Heading" },
+        { "value": "monospace", "label": "Monospace" }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "range",
+      "id": "mn_word_spacing",
+      "label": "Word spacing",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_heading_size",
+      "label": "Dropdown heading font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_heading_weight",
+      "label": "Dropdown heading font weight",
+      "options": [
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra-bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_heading_transform",
+      "label": "Dropdown heading text transform",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_heading_spacing",
+      "label": "Dropdown heading letter spacing",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "default": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_link_size",
+      "label": "Dropdown link font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_link_weight",
+      "label": "Dropdown link font weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_link_line_height",
+      "label": "Dropdown link line height (x10)",
+      "info": "Divided by 10. E.g., 16 = 1.6",
+      "min": 14,
+      "max": 24,
+      "step": 2,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_link_hover_indent",
+      "label": "Dropdown link hover indent",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_show_description",
+      "label": "Show menu item description",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "mn_separator_style",
+      "label": "Menu item separator",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "dot", "label": "Dot" },
+        { "value": "pipe", "label": "Pipe" },
+        { "value": "slash", "label": "Slash" },
+        { "value": "dash", "label": "Dash" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "color",
+      "id": "mn_separator_color",
+      "label": "Separator color",
+      "default": "#CCCCCC"
+    },
+    {
+      "type": "header",
       "content": "Sticky Navigation"
     },
     {
@@ -435,6 +891,342 @@
     },
     {
       "type": "header",
+      "content": "Dropdown Style Variants"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_width",
+      "label": "Dropdown width",
+      "options": [
+        { "value": "full-width", "label": "Full width" },
+        { "value": "contained", "label": "Contained" },
+        { "value": "boxed", "label": "Boxed" },
+        { "value": "auto", "label": "Auto" }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_boxed_max_width",
+      "label": "Boxed max width",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "default": 1000,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_layout",
+      "label": "Dropdown layout",
+      "options": [
+        { "value": "columns-only", "label": "Columns only" },
+        { "value": "columns-promo-right", "label": "Columns + promo right" },
+        { "value": "columns-promo-left", "label": "Columns + promo left" },
+        { "value": "columns-promo-bottom", "label": "Columns + promo bottom" },
+        { "value": "grid-images", "label": "Grid images" },
+        { "value": "tabbed", "label": "Tabbed" }
+      ],
+      "default": "columns-only"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_alignment",
+      "label": "Dropdown alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_padding_h",
+      "label": "Dropdown horizontal padding",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_padding_v",
+      "label": "Dropdown vertical padding",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_border_radius",
+      "label": "Dropdown border radius",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_border_width",
+      "label": "Dropdown border width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "mn_dropdown_border_color",
+      "label": "Dropdown border color",
+      "default": "#E5E5E5"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_shadow_style",
+      "label": "Dropdown shadow style",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "subtle", "label": "Subtle" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "strong", "label": "Strong" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "subtle"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_bg_type",
+      "label": "Dropdown background type",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "gradient", "label": "Gradient" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "color",
+      "id": "mn_dropdown_gradient_start",
+      "label": "Gradient start color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "mn_dropdown_gradient_end",
+      "label": "Gradient end color",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_gradient_direction",
+      "label": "Gradient direction",
+      "options": [
+        { "value": "top-bottom", "label": "Top to bottom" },
+        { "value": "left-right", "label": "Left to right" },
+        { "value": "diagonal", "label": "Diagonal" }
+      ],
+      "default": "top-bottom"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_col_separator_lines",
+      "label": "Show column separator lines",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "mn_col_separator_color",
+      "label": "Column separator color",
+      "default": "#E5E5E5"
+    },
+    {
+      "type": "select",
+      "id": "mn_col_separator_style",
+      "label": "Column separator style",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "dashed", "label": "Dashed" },
+        { "value": "dotted", "label": "Dotted" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_col_heading_underline",
+      "label": "Show column heading underline",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "mn_col_heading_underline_color",
+      "label": "Column heading underline color",
+      "default": "#000000"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_show_view_all",
+      "label": "Show view all link",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "mn_view_all_style",
+      "label": "View all link style",
+      "options": [
+        { "value": "text-arrow", "label": "Text with arrow" },
+        { "value": "button-small", "label": "Small button" },
+        { "value": "underline", "label": "Underline" }
+      ],
+      "default": "text-arrow"
+    },
+    {
+      "type": "color",
+      "id": "mn_view_all_color",
+      "label": "View all link color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Dropdown Open Behavior (TheJacketMaker Style)"
+    },
+    {
+      "type": "select",
+      "id": "mn_open_trigger",
+      "label": "Open trigger",
+      "options": [
+        { "value": "hover-instant", "label": "Hover instant" },
+        { "value": "hover-with-delay", "label": "Hover with delay" },
+        { "value": "click", "label": "Click" }
+      ],
+      "default": "hover-with-delay"
+    },
+    {
+      "type": "range",
+      "id": "mn_open_delay",
+      "label": "Open delay",
+      "min": 0,
+      "max": 400,
+      "step": 50,
+      "default": 100,
+      "unit": "ms"
+    },
+    {
+      "type": "range",
+      "id": "mn_close_delay",
+      "label": "Close delay",
+      "min": 0,
+      "max": 500,
+      "step": 50,
+      "default": 200,
+      "unit": "ms"
+    },
+    {
+      "type": "select",
+      "id": "mn_container_animation",
+      "label": "Container animation",
+      "options": [
+        { "value": "instant", "label": "Instant" },
+        { "value": "slide-down-smooth", "label": "Slide down smooth" },
+        { "value": "height-grow", "label": "Height grow" },
+        { "value": "fade-slide", "label": "Fade slide" },
+        { "value": "curtain-reveal", "label": "Curtain reveal" }
+      ],
+      "default": "fade-slide"
+    },
+    {
+      "type": "select",
+      "id": "mn_content_animation",
+      "label": "Content animation",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "fade-in", "label": "Fade in" },
+        { "value": "fade-up", "label": "Fade up" },
+        { "value": "stagger-left", "label": "Stagger from left" },
+        { "value": "stagger-fade", "label": "Stagger fade" },
+        { "value": "blur-in", "label": "Blur in" }
+      ],
+      "default": "fade-up"
+    },
+    {
+      "type": "range",
+      "id": "mn_content_stagger_delay",
+      "label": "Content stagger delay",
+      "min": 0,
+      "max": 200,
+      "step": 25,
+      "default": 50,
+      "unit": "ms"
+    },
+    {
+      "type": "select",
+      "id": "mn_animation_easing",
+      "label": "Animation easing",
+      "options": [
+        { "value": "ease", "label": "Ease" },
+        { "value": "ease-in-out", "label": "Ease in-out" },
+        { "value": "smooth-cubic", "label": "Smooth cubic" },
+        { "value": "bounce-subtle", "label": "Bounce subtle" },
+        { "value": "spring", "label": "Spring" }
+      ],
+      "default": "ease"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_show_overlay",
+      "label": "Show overlay behind dropdown",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "mn_overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "mn_overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 10,
+      "max": 70,
+      "step": 5,
+      "default": 30
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_close_on_scroll",
+      "label": "Close dropdown on scroll",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "mn_close_animation",
+      "label": "Close animation",
+      "options": [
+        { "value": "same-as-open-reverse", "label": "Same as open (reverse)" },
+        { "value": "fade-out", "label": "Fade out" },
+        { "value": "slide-up", "label": "Slide up" },
+        { "value": "instant", "label": "Instant" }
+      ],
+      "default": "same-as-open-reverse"
+    },
+    {
+      "type": "select",
+      "id": "mn_dropdown_reveal_origin",
+      "label": "Dropdown reveal origin",
+      "options": [
+        { "value": "top-left", "label": "Top left" },
+        { "value": "top-center", "label": "Top center" },
+        { "value": "top-full", "label": "Top full width" }
+      ],
+      "default": "top-full"
+    },
+    {
+      "type": "header",
       "content": "Badge Colors"
     },
     {
@@ -454,6 +1246,199 @@
       "id": "mn_badge_hot_color",
       "label": "HOT badge color",
       "default": "#ea580c"
+    },
+    {
+      "type": "header",
+      "content": "Badge Enhancements"
+    },
+    {
+      "type": "color",
+      "id": "mn_badge_text_color",
+      "label": "Badge text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "mn_badge_font_size",
+      "label": "Badge font size",
+      "min": 8,
+      "max": 12,
+      "step": 1,
+      "default": 9,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "mn_badge_font_weight",
+      "label": "Badge font weight",
+      "options": [
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra-bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "mn_badge_border_radius",
+      "label": "Badge border radius",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "default": 3,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_badge_padding_h",
+      "label": "Badge padding horizontal",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_badge_padding_v",
+      "label": "Badge padding vertical",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 2,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "mn_badge_style_type",
+      "label": "Badge style",
+      "options": [
+        { "value": "filled", "label": "Filled" },
+        { "value": "outline", "label": "Outline" },
+        { "value": "gradient", "label": "Gradient" }
+      ],
+      "default": "filled"
+    },
+    {
+      "type": "select",
+      "id": "mn_badge_position",
+      "label": "Badge position",
+      "options": [
+        { "value": "after-text", "label": "After text" },
+        { "value": "above-text", "label": "Above text" },
+        { "value": "superscript", "label": "Superscript" }
+      ],
+      "default": "after-text"
+    },
+    {
+      "type": "select",
+      "id": "mn_badge_animation",
+      "label": "Badge animation",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "pulse", "label": "Pulse" },
+        { "value": "bounce", "label": "Bounce" },
+        { "value": "shine", "label": "Shine" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "text",
+      "id": "mn_custom_badge_1_text",
+      "label": "Custom badge 1 text",
+      "default": "LIMITED"
+    },
+    {
+      "type": "color",
+      "id": "mn_custom_badge_1_color",
+      "label": "Custom badge 1 color",
+      "default": "#8B5CF6"
+    },
+    {
+      "type": "text",
+      "id": "mn_custom_badge_2_text",
+      "label": "Custom badge 2 text",
+      "default": "TRENDING"
+    },
+    {
+      "type": "color",
+      "id": "mn_custom_badge_2_color",
+      "label": "Custom badge 2 color",
+      "default": "#0EA5E9"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "mn_nav_bar_height",
+      "label": "Nav bar height",
+      "min": 40,
+      "max": 70,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_nav_bar_padding_h",
+      "label": "Nav bar padding horizontal",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_dropdown_gap",
+      "label": "Dropdown gap from nav",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_promo_card_width",
+      "label": "Promo card width",
+      "min": 180,
+      "max": 400,
+      "step": 20,
+      "default": 280,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_promo_card_gap",
+      "label": "Promo card gap from columns",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_col_gap_h",
+      "label": "Column gap horizontal",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mn_col_link_gap_v",
+      "label": "Column link gap vertical",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "unit": "px"
     },
     {
       "type": "header",
@@ -500,6 +1485,142 @@
         { "value": "arrow", "label": "Arrow" }
       ],
       "default": "plus"
+    },
+    {
+      "type": "header",
+      "content": "Mobile & Polish (Advanced)"
+    },
+    {
+      "type": "select",
+      "id": "mn_mobile_header_style",
+      "label": "Mobile header style",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "simplified", "label": "Simplified" },
+        { "value": "centered-logo-only", "label": "Centered logo only" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "select",
+      "id": "mn_mobile_menu_style",
+      "label": "Mobile menu style",
+      "options": [
+        { "value": "list", "label": "List" },
+        { "value": "grid-icons", "label": "Grid with icons" },
+        { "value": "cards", "label": "Cards" }
+      ],
+      "default": "list"
+    },
+    {
+      "type": "select",
+      "id": "mn_mobile_nested_anim",
+      "label": "Mobile nested menu animation",
+      "options": [
+        { "value": "slide-right", "label": "Slide right" },
+        { "value": "accordion-expand", "label": "Accordion expand" },
+        { "value": "fade", "label": "Fade" }
+      ],
+      "default": "accordion-expand"
+    },
+    {
+      "type": "range",
+      "id": "mn_mobile_drawer_width",
+      "label": "Mobile drawer width (%)",
+      "info": "Percentage of screen width",
+      "min": 70,
+      "max": 100,
+      "step": 5,
+      "default": 85
+    },
+    {
+      "type": "color",
+      "id": "mn_mobile_drawer_bg",
+      "label": "Mobile drawer background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "mn_mobile_overlay_color",
+      "label": "Mobile overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "mn_mobile_overlay_opacity",
+      "label": "Mobile overlay opacity",
+      "info": "10 = 10%, 90 = 90%",
+      "min": 10,
+      "max": 90,
+      "step": 10,
+      "default": 50
+    },
+    {
+      "type": "select",
+      "id": "mn_mobile_close_style",
+      "label": "Close button style",
+      "options": [
+        { "value": "x-icon", "label": "X icon" },
+        { "value": "arrow-back", "label": "Back arrow" },
+        { "value": "text-close", "label": "Text: Close" }
+      ],
+      "default": "x-icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_mobile_show_logo",
+      "label": "Show logo in mobile drawer",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_mobile_footer_social",
+      "label": "Show social icons in drawer footer",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "mn_mobile_accordion_speed",
+      "label": "Accordion animation speed",
+      "min": 150,
+      "max": 500,
+      "step": 50,
+      "default": 300,
+      "unit": "ms"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_mobile_swipe_close",
+      "label": "Swipe to close drawer",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "mn_mobile_bottom_icon_style",
+      "label": "Mobile bottom nav icon style",
+      "options": [
+        { "value": "outline", "label": "Outline" },
+        { "value": "filled", "label": "Filled" },
+        { "value": "minimal", "label": "Minimal" }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "checkbox",
+      "id": "mn_mobile_bottom_labels",
+      "label": "Show bottom nav labels",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "mn_mobile_bottom_active",
+      "label": "Bottom nav active indicator",
+      "options": [
+        { "value": "dot", "label": "Dot" },
+        { "value": "line", "label": "Line" },
+        { "value": "color-fill", "label": "Color fill" }
+      ],
+      "default": "dot"
     },
     {
       "type": "header",
