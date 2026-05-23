@@ -152,7 +152,9 @@
       --hp-header-bg-opacity: {{ section.settings.hp_header_bg_opacity | divided_by: 100.0 }};
       --hp-border-top-color: {{ section.settings.hp_border_top_color }};
       --hp-border-top-width: {{ section.settings.hp_border_top_width }}px;
+      {%- if section.settings.hp_scroll_shrink > 0 -%}
       --hp-scroll-shrink: {{ section.settings.hp_scroll_shrink | divided_by: 100.0 }};
+      {%- endif -%}
       --hp-scroll-bg-color: {{ section.settings.hp_scroll_bg_color }};
       --hp-nav-alignment: {{ section.settings.hp_nav_alignment }};
     }
@@ -165,9 +167,11 @@
 
 {%- liquid
   for block in section.blocks
-    if block.type == '@app'
-      assign has_app_block = true
-    endif
+    unless has_app_block
+      if block.type == '@app'
+        assign has_app_block = true
+      endif
+    endunless
   endfor
 -%}
 
@@ -265,62 +269,7 @@
         <h1 class="header__heading">
       {%- endif -%}
       <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
-        {%- if settings.logo != blank -%}
-          <div class="header__heading-logo-wrapper">
-            {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
-            {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
-            {% capture sizes %}(max-width: {{ settings.logo_width | times: 2 }}px) 50vw, {{ settings.logo_width }}px{% endcapture %}
-            {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
-            {{
-              settings.logo
-              | image_url: width: 600
-              | image_tag:
-                class: 'header__heading-logo motion-reduce',
-                widths: widths,
-                height: logo_height,
-                width: settings.logo_width,
-                alt: logo_alt,
-                sizes: sizes,
-                preload: true
-            }}
-
-            {%- comment -%} ===== PHASE 2: Transparent logo (alternate logo for transparent header) ===== {%- endcomment -%}
-            {%- if hp_transparent_active and section.settings.hp_transparent_logo != blank -%}
-              {%- assign hp_t_logo = section.settings.hp_transparent_logo -%}
-              {%- assign hp_t_logo_alt = hp_t_logo.alt | default: shop.name | escape -%}
-              {%- assign hp_t_logo_height = settings.logo_width | divided_by: hp_t_logo.aspect_ratio -%}
-              <img
-                src="{{ hp_t_logo | image_url: width: 600 }}"
-                srcset="{{ hp_t_logo | image_url: width: settings.logo_width }} {{ settings.logo_width }}w, {{ hp_t_logo | image_url: width: settings.logo_width | times: 2 }} {{ settings.logo_width | times: 2 }}w"
-                sizes="{{ settings.logo_width }}px"
-                width="{{ settings.logo_width }}"
-                height="{{ hp_t_logo_height }}"
-                alt="{{ hp_t_logo_alt }}"
-                class="header__heading-logo header__heading-logo--transparent motion-reduce"
-                loading="eager"
-              >
-            {%- endif -%}
-
-            {%- comment -%} ===== PHASE 2: Sticky logo (alternate logo when scrolled/sticky) ===== {%- endcomment -%}
-            {%- if section.settings.hp_enable_premium and section.settings.hp_sticky_logo != blank -%}
-              {%- assign hp_s_logo = section.settings.hp_sticky_logo -%}
-              {%- assign hp_s_logo_alt = hp_s_logo.alt | default: shop.name | escape -%}
-              {%- assign hp_s_logo_height = settings.logo_width | divided_by: hp_s_logo.aspect_ratio -%}
-              <img
-                src="{{ hp_s_logo | image_url: width: 600 }}"
-                srcset="{{ hp_s_logo | image_url: width: settings.logo_width }} {{ settings.logo_width }}w, {{ hp_s_logo | image_url: width: settings.logo_width | times: 2 }} {{ settings.logo_width | times: 2 }}w"
-                sizes="{{ settings.logo_width }}px"
-                width="{{ settings.logo_width }}"
-                height="{{ hp_s_logo_height }}"
-                alt="{{ hp_s_logo_alt }}"
-                class="header__heading-logo header__heading-logo--sticky motion-reduce"
-                loading="lazy"
-              >
-            {%- endif -%}
-          </div>
-        {%- else -%}
-          <span class="h2">{{ shop.name }}</span>
-        {%- endif -%}
+        {%- render 'header-logo', logo_position: section.settings.logo_position, hp_transparent_active: hp_transparent_active -%}
       </a>
       {%- if request.page_type == 'index' -%}
         </h1>
@@ -342,62 +291,7 @@
         <h1 class="header__heading">
       {%- endif -%}
       <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
-        {%- if settings.logo != blank -%}
-          <div class="header__heading-logo-wrapper">
-            {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
-            {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
-            {% capture sizes %}(min-width: 750px) {{ settings.logo_width }}px, 50vw{% endcapture %}
-            {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
-            {{
-              settings.logo
-              | image_url: width: 600
-              | image_tag:
-                class: 'header__heading-logo',
-                widths: widths,
-                height: logo_height,
-                width: settings.logo_width,
-                alt: logo_alt,
-                sizes: sizes,
-                preload: true
-            }}
-
-            {%- comment -%} ===== PHASE 2: Transparent logo (middle-center variant) ===== {%- endcomment -%}
-            {%- if hp_transparent_active and section.settings.hp_transparent_logo != blank -%}
-              {%- assign hp_t_logo = section.settings.hp_transparent_logo -%}
-              {%- assign hp_t_logo_alt = hp_t_logo.alt | default: shop.name | escape -%}
-              {%- assign hp_t_logo_height = settings.logo_width | divided_by: hp_t_logo.aspect_ratio -%}
-              <img
-                src="{{ hp_t_logo | image_url: width: 600 }}"
-                srcset="{{ hp_t_logo | image_url: width: settings.logo_width }} {{ settings.logo_width }}w, {{ hp_t_logo | image_url: width: settings.logo_width | times: 2 }} {{ settings.logo_width | times: 2 }}w"
-                sizes="(min-width: 750px) {{ settings.logo_width }}px, 50vw"
-                width="{{ settings.logo_width }}"
-                height="{{ hp_t_logo_height }}"
-                alt="{{ hp_t_logo_alt }}"
-                class="header__heading-logo header__heading-logo--transparent"
-                loading="eager"
-              >
-            {%- endif -%}
-
-            {%- comment -%} ===== PHASE 2: Sticky logo (middle-center variant) ===== {%- endcomment -%}
-            {%- if section.settings.hp_enable_premium and section.settings.hp_sticky_logo != blank -%}
-              {%- assign hp_s_logo = section.settings.hp_sticky_logo -%}
-              {%- assign hp_s_logo_alt = hp_s_logo.alt | default: shop.name | escape -%}
-              {%- assign hp_s_logo_height = settings.logo_width | divided_by: hp_s_logo.aspect_ratio -%}
-              <img
-                src="{{ hp_s_logo | image_url: width: 600 }}"
-                srcset="{{ hp_s_logo | image_url: width: settings.logo_width }} {{ settings.logo_width }}w, {{ hp_s_logo | image_url: width: settings.logo_width | times: 2 }} {{ settings.logo_width | times: 2 }}w"
-                sizes="(min-width: 750px) {{ settings.logo_width }}px, 50vw"
-                width="{{ settings.logo_width }}"
-                height="{{ hp_s_logo_height }}"
-                alt="{{ hp_s_logo_alt }}"
-                class="header__heading-logo header__heading-logo--sticky"
-                loading="lazy"
-              >
-            {%- endif -%}
-          </div>
-        {%- else -%}
-          <span class="h2">{{ shop.name }}</span>
-        {%- endif -%}
+        {%- render 'header-logo', logo_position: 'middle-center', hp_transparent_active: hp_transparent_active -%}
       </a>
       {%- if request.page_type == 'index' -%}
         </h1>
@@ -448,7 +342,6 @@
             class="hp-inline-search__input"
             autocomplete="off"
           >
-          <input type="hidden" name="options[prefix]" value="last">
           <button type="submit" class="hp-inline-search__submit" aria-label="{{ 'general.search.search' | t }}">
             <span class="svg-wrapper">{{ 'icon-search.svg' | inline_asset_content }}</span>
           </button>
