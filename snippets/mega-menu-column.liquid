@@ -1,0 +1,49 @@
+{% comment %}
+  ============================================================
+  SNIPPET: Mega Menu Column
+  ============================================================
+  Renders a single column inside the mega menu dropdown.
+  
+  Parameters:
+  - col_title: (string) Column heading text
+  - linklist_handle: (string) Handle of the linklist to render
+  - column_index: (number) Column index for styling (1-6)
+  
+  Note: We receive linklist_handle (a string) and look up
+  the linklist via linklists[linklist_handle]. This is the
+  correct pattern for snippets called with render tag, since
+  render does not allow passing full objects.
+  ============================================================
+{% endcomment %}
+
+<div class="cmm__column" data-column="{{ column_index }}">
+  
+  {%- if col_title != blank -%}
+    <h3 class="cmm__column-title">{{ col_title }}</h3>
+  {%- endif -%}
+  
+  {%- if linklist_handle != blank -%}
+    {%- assign column_linklist = linklists[linklist_handle] -%}
+    {%- if column_linklist.links.size > 0 -%}
+      <ul class="cmm__column-list">
+        {%- for link in column_linklist.links -%}
+          <li class="cmm__column-item">
+            <a href="{{ link.url }}" class="cmm__column-link">
+              <span class="cmm__column-link-text">{{ link.title }}</span>
+              
+              {%- comment -%} Show badge if title contains [NEW] or [SALE] or [HOT] {%- endcomment -%}
+              {%- if link.title contains '[NEW]' -%}
+                <span class="cmm__badge cmm__badge--new">NEW</span>
+              {%- elsif link.title contains '[SALE]' -%}
+                <span class="cmm__badge cmm__badge--sale">SALE</span>
+              {%- elsif link.title contains '[HOT]' -%}
+                <span class="cmm__badge cmm__badge--hot">HOT</span>
+              {%- endif -%}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  {%- endif -%}
+  
+</div>

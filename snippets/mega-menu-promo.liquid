@@ -1,0 +1,62 @@
+{% comment %}
+  ============================================================
+  SNIPPET: Mega Menu Promo
+  ============================================================
+  Renders the featured image / promotional banner inside mega menu.
+  
+  Parameters (passed individually via render tag):
+  - featured_image: (image object) The promo image
+  - promo_heading: (string) Promo heading text
+  - promo_subheading: (string) Promo subheading text
+  - promo_button_text: (string) Button label
+  - promo_button_link: (url) Button URL
+  
+  Note: We receive individual parameters, NOT the block object,
+  because render tag does not pass full objects reliably.
+  ============================================================
+{% endcomment %}
+
+<div class="cmm__promo">
+  
+  <a href="{{ promo_button_link | default: '#' }}" class="cmm__promo-link">
+    
+    <div class="cmm__promo-image-wrapper">
+      {%- if featured_image != blank -%}
+        <img
+          src="{{ featured_image | image_url: width: 600 }}"
+          srcset="{{ featured_image | image_url: width: 300 }} 300w, {{ featured_image | image_url: width: 400 }} 400w, {{ featured_image | image_url: width: 500 }} 500w, {{ featured_image | image_url: width: 600 }} 600w"
+          sizes="(min-width: 990px) 300px, 100vw"
+          class="cmm__promo-image"
+          loading="lazy"
+          width="600"
+          height="{{ 600 | divided_by: featured_image.aspect_ratio | round }}"
+          alt="{{ promo_heading | escape }}"
+        >
+      {%- endif -%}
+      
+      <div class="cmm__promo-overlay"></div>
+    </div>
+    
+    <div class="cmm__promo-content">
+      {%- if promo_heading != blank -%}
+        <h4 class="cmm__promo-heading">{{ promo_heading }}</h4>
+      {%- endif -%}
+      
+      {%- if promo_subheading != blank -%}
+        <p class="cmm__promo-subheading">{{ promo_subheading }}</p>
+      {%- endif -%}
+      
+      {%- if promo_button_text != blank -%}
+        <span class="cmm__promo-button">
+          {{ promo_button_text }}
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </span>
+      {%- endif -%}
+    </div>
+    
+  </a>
+  
+</div>
